@@ -378,3 +378,13 @@ header .study-tools .lesson-link { min-width: 0; width: auto; flex: 0 1 auto; pa
 
 .listening-kind { display: grid; gap: 6px; margin-bottom: 16px; }
 .listening-kind .toggle { text-align: left; }
+
+.study-navbar { display: flex; align-items: flex-start; gap: 16px; padding-right: 24px; }
+.study-navbar .study-tools { flex: 1; min-width: 0; }
+.theme-toggle { flex: 0 0 auto; padding: 10px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 700; }
+.theme-toggle:hover { background: var(--tint); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 680px) {
+  .study-navbar { gap: 8px; padding-right: 14px; }
+  .theme-toggle { padding: 10px; }
+}

@@ -96,6 +96,9 @@
 
   function applyTheme() {
     document.documentElement.classList.toggle('dark-mode', appSettings.darkMode);
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.textContent = appSettings.darkMode ? '☀ Light mode' : '☾ Dark mode';
+    themeToggle.setAttribute('aria-pressed', String(appSettings.darkMode));
   }
 
   applyTheme();
@@ -262,7 +265,6 @@
       ? renderSetting('listPinyin', 'Show Pinyin by default', 'Reveal pronunciation in the word list.') + renderSetting('listEnglish', 'Show English by default', 'Reveal meanings in the word list.')
       : `<p class="mode-description">${currentLesson === 'home' ? 'Choose a mode above or study material on the left. Its controls will appear here.' : currentLesson === 'reading' ? 'Choose a passage below and read at your own pace.' : 'Click a sentence to reveal Pinyin and English. Use Hide all hints to practise without help.'}</p>`;
     panel.insertAdjacentHTML('afterbegin', `<section class="settings-card">${settings}</section>`);
-    panel.insertAdjacentHTML('beforeend', `<section class="settings-card">${renderSetting('darkMode', 'Dark mode', 'Appearance is saved on this browser.')}</section>`);
   }
 
   function drawContent() {
@@ -410,7 +412,7 @@
 
   function drawSettings() {
     document.getElementById('lessonTitle').textContent = 'Settings';
-    content.innerHTML = `<div class="settings-grid"><section class="settings-card"><div class="settings-card-head"><span class="settings-icon">◆</span><div><h3>Quiz</h3><p>Control flashcard behavior.</p></div></div>${renderSetting('autoAdvance', 'Automatic next card', 'Move to the next flashcard after choosing OK or X.')}</section><section class="settings-card"><div class="settings-card-head"><span class="settings-icon">字</span><div><h3>Words & expressions</h3><p>Choose the default hints for the complete list.</p></div></div>${renderSetting('listPinyin', 'Show Pinyin by default', 'Reveal Pinyin when the complete list opens.')}${renderSetting('listEnglish', 'Show English by default', 'Reveal English meanings when the complete list opens.')}</section><section class="settings-card"><div class="settings-card-head"><span class="settings-icon">◐</span><div><h3>General</h3><p>Change the appearance of the whole website.</p></div></div>${renderSetting('darkMode', 'Dark color mode', 'Use darker colors throughout the study interface.')}</section></div>`;
+    content.innerHTML = `<div class="settings-grid"><section class="settings-card"><div class="settings-card-head"><span class="settings-icon">◆</span><div><h3>Quiz</h3><p>Control flashcard behavior.</p></div></div>${renderSetting('autoAdvance', 'Automatic next card', 'Move to the next flashcard after choosing OK or X.')}</section><section class="settings-card"><div class="settings-card-head"><span class="settings-icon">字</span><div><h3>Words & expressions</h3><p>Choose the default hints for the complete list.</p></div></div>${renderSetting('listPinyin', 'Show Pinyin by default', 'Reveal Pinyin when the complete list opens.')}${renderSetting('listEnglish', 'Show English by default', 'Reveal English meanings when the complete list opens.')}</section></div>`;
   }
 
   function drawReading() {
@@ -546,6 +548,9 @@
   }
 
   function renderQuizFace(word, type, side) {
+    if (type === 'english') {
+      return `<span class="flashcard-face flashcard-${side} flashcard-answer-face"><span class="flashcard-face-label">English</span><span class="flashcard-english">${escapeHtml(word.english)}</span></span>`;
+    }
     if (type === 'chinese') {
       return `<span class="flashcard-face flashcard-${side} flashcard-chinese-face"><span class="flashcard-face-label">Chinese</span><span class="flashcard-hanzi" lang="zh-Hant">${escapeHtml(word.chinese)}</span></span>`;
     }
@@ -610,7 +615,7 @@
     const answerMessage = quizState.answered === 'correct' ? 'Marked as known' : quizState.answered === 'incorrect' ? 'Marked for more practice' : 'Do you know this word?';
     const flashcard = `<button type="button" class="flashcard ${isLong ? 'flashcard-long' : ''} ${quizState.flipped ? 'flipped' : ''}" data-flashcard-flip aria-pressed="${quizState.flipped}" aria-label="Flip flashcard"><span class="flashcard-inner">${renderQuizFace(word, frontType, 'front')}${renderQuizFace(word, backType, 'back')}</span></button>`;
     const flashcardAudio = `<button type="button" class="flashcard-audio" data-quiz-audio aria-label="Play pronunciation">${renderSpeakerIcon()}<span>Listen</span></button><audio preload="metadata" data-quiz-audio-player src="${encodeURI(word.audio)}">Your browser does not support audio playback.</audio>`;
-    content.innerHTML = `<section class="quiz-panel"><div class="quiz-options">${filter}</div><div class="quiz-mode" role="group" aria-label="Choose the front of each flashcard"><button type="button" class="toggle ${frontType === 'chinese' ? 'active' : ''}" data-quiz-mode="chinese" aria-pressed="${frontType === 'chinese'}">Chinese first</button><button type="button" class="toggle ${frontType === 'answer' ? 'active' : ''}" data-quiz-mode="answer" aria-pressed="${frontType === 'answer'}">English + Pinyin first</button></div><div class="quiz-progress"><strong>${quizState.index + 1}</strong> / ${words.length}<span>Click the card to reveal the other side</span></div><div class="flashcard-stage"><button type="button" class="quiz-arrow" data-quiz-nav="-1" aria-label="Previous flashcard">←</button><div class="flashcard-wrap">${flashcard}${flashcardAudio}</div><button type="button" class="quiz-arrow" data-quiz-nav="1" aria-label="Next flashcard">→</button></div><div class="quiz-grade"><button type="button" class="quiz-grade-button incorrect ${quizState.answered === 'incorrect' ? 'selected' : ''}" data-quiz-answer="incorrect" ${quizState.answered ? 'disabled' : ''} aria-label="I do not know this word"><span aria-hidden="true">×</span> X</button><div class="quiz-grade-status"><strong>${answerMessage}</strong><span>Shown: <b data-current-shown>${stats.shown}</b> · Correct: <b data-current-correct>${stats.correct}</b> · <b data-current-accuracy>${getAccuracy(stats)}%</b></span></div><button type="button" class="quiz-grade-button correct ${quizState.answered === 'correct' ? 'selected' : ''}" data-quiz-answer="correct" ${quizState.answered ? 'disabled' : ''} aria-label="I know this word"><span aria-hidden="true">✓</span> OK</button></div><div class="quiz-keyboard-hint">Space: flip · ↑ know · ↓ don't know · ←/→ change card</div></section>`;
+    content.innerHTML = `<section class="quiz-panel"><div class="quiz-options">${filter}</div><div class="quiz-mode" role="group" aria-label="Choose the front of each flashcard"><button type="button" class="toggle ${frontType === 'chinese' ? 'active' : ''}" data-quiz-mode="chinese" aria-pressed="${frontType === 'chinese'}">Chinese first</button><button type="button" class="toggle ${frontType === 'answer' ? 'active' : ''}" data-quiz-mode="answer" aria-pressed="${frontType === 'answer'}">English + Pinyin first</button><button type="button" class="toggle ${frontType === 'english' ? 'active' : ''}" data-quiz-mode="english" aria-pressed="${frontType === 'english'}">English only</button></div><div class="quiz-progress"><strong>${quizState.index + 1}</strong> / ${words.length}<span>Click the card to reveal the other side</span></div><div class="flashcard-stage"><button type="button" class="quiz-arrow" data-quiz-nav="-1" aria-label="Previous flashcard">←</button><div class="flashcard-wrap">${flashcard}${flashcardAudio}</div><button type="button" class="quiz-arrow" data-quiz-nav="1" aria-label="Next flashcard">→</button></div><div class="quiz-grade"><button type="button" class="quiz-grade-button incorrect ${quizState.answered === 'incorrect' ? 'selected' : ''}" data-quiz-answer="incorrect" ${quizState.answered ? 'disabled' : ''} aria-label="I do not know this word"><span aria-hidden="true">×</span> X</button><div class="quiz-grade-status"><strong>${answerMessage}</strong><span>Shown: <b data-current-shown>${stats.shown}</b> · Correct: <b data-current-correct>${stats.correct}</b> · <b data-current-accuracy>${getAccuracy(stats)}%</b></span></div><button type="button" class="quiz-grade-button correct ${quizState.answered === 'correct' ? 'selected' : ''}" data-quiz-answer="correct" ${quizState.answered ? 'disabled' : ''} aria-label="I know this word"><span aria-hidden="true">✓</span> OK</button></div><div class="quiz-keyboard-hint">Space: flip · ↑ know · ↓ don't know · ←/→ change card</div></section>`;
     drawModeSettings();
     const audio = content.querySelector('[data-quiz-audio-player]');
     const audioButton = content.querySelector('[data-quiz-audio]');
@@ -709,6 +714,11 @@
 
   nav.addEventListener('click', handleNavigation);
   toolsNav.addEventListener('click', handleNavigation);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    appSettings.darkMode = !appSettings.darkMode;
+    saveSettings();
+    applyTheme();
+  });
   document.getElementById('homeButton').addEventListener('click', () => {
     currentLesson = 'home';
     expandedLesson = null;
