@@ -1,0 +1,1 @@
+window.CHINESE_AUDIO_EXTENSION = 'mp3';

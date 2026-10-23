@@ -1,0 +1,1796 @@
+{
+  "provider": "ElevenLabs",
+  "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+  "modelId": "eleven_multilingual_v2",
+  "outputFormat": "mp3_44100_128",
+  "items": [
+    {
+      "chinese": "陳月美",
+      "pinyin": "Chén Yuèměi",
+      "english": "a woman from Vietnam",
+      "audio": "audio/vocabulary/word-001.mp3"
+    },
+    {
+      "chinese": "李明華",
+      "pinyin": "Lǐ Mínghuá",
+      "english": "a man from Taiwan",
+      "audio": "audio/vocabulary/word-002.mp3"
+    },
+    {
+      "chinese": "王開文",
+      "pinyin": "Wáng Kāiwén",
+      "english": "a man from the US",
+      "audio": "audio/vocabulary/word-003.mp3"
+    },
+    {
+      "chinese": "你",
+      "pinyin": "nǐ",
+      "english": "you",
+      "audio": "audio/vocabulary/word-004.mp3"
+    },
+    {
+      "chinese": "來",
+      "pinyin": "lái",
+      "english": "to come",
+      "audio": "audio/vocabulary/word-005.mp3"
+    },
+    {
+      "chinese": "是",
+      "pinyin": "shì",
+      "english": "to be",
+      "audio": "audio/vocabulary/word-006.mp3"
+    },
+    {
+      "chinese": "小姐",
+      "pinyin": "xiǎojiě",
+      "english": "Miss, Ms.",
+      "audio": "audio/vocabulary/word-007.mp3"
+    },
+    {
+      "chinese": "嗎",
+      "pinyin": "ma",
+      "english": "sentence-final particle",
+      "audio": "audio/vocabulary/word-008.mp3"
+    },
+    {
+      "chinese": "接",
+      "pinyin": "jiē",
+      "english": "to pick somebody up",
+      "audio": "audio/vocabulary/word-009.mp3"
+    },
+    {
+      "chinese": "我們",
+      "pinyin": "wǒmen",
+      "english": "we, us",
+      "audio": "audio/vocabulary/word-010.mp3"
+    },
+    {
+      "chinese": "我",
+      "pinyin": "wǒ",
+      "english": "I, me",
+      "audio": "audio/vocabulary/word-011.mp3"
+    },
+    {
+      "chinese": "這",
+      "pinyin": "zhè / zhèi",
+      "english": "this",
+      "audio": "audio/vocabulary/word-012.mp3"
+    },
+    {
+      "chinese": "先生",
+      "pinyin": "xiānsheng",
+      "english": "Mr.",
+      "audio": "audio/vocabulary/word-013.mp3"
+    },
+    {
+      "chinese": "好",
+      "pinyin": "hǎo",
+      "english": "fine, well",
+      "audio": "audio/vocabulary/word-014.mp3"
+    },
+    {
+      "chinese": "姓",
+      "pinyin": "xìng",
+      "english": "to be surnamed",
+      "audio": "audio/vocabulary/word-015.mp3"
+    },
+    {
+      "chinese": "叫",
+      "pinyin": "jiào",
+      "english": "to be called; to have the first name",
+      "audio": "audio/vocabulary/word-016.mp3"
+    },
+    {
+      "chinese": "你們",
+      "pinyin": "nǐmen",
+      "english": "you (plural)",
+      "audio": "audio/vocabulary/word-017.mp3"
+    },
+    {
+      "chinese": "請",
+      "pinyin": "qǐng",
+      "english": "please",
+      "audio": "audio/vocabulary/word-018.mp3"
+    },
+    {
+      "chinese": "喝",
+      "pinyin": "hē",
+      "english": "to drink",
+      "audio": "audio/vocabulary/word-019.mp3"
+    },
+    {
+      "chinese": "茶",
+      "pinyin": "chá",
+      "english": "tea",
+      "audio": "audio/vocabulary/word-020.mp3"
+    },
+    {
+      "chinese": "很",
+      "pinyin": "hěn",
+      "english": "very",
+      "audio": "audio/vocabulary/word-021.mp3"
+    },
+    {
+      "chinese": "好喝",
+      "pinyin": "hǎohē",
+      "english": "(literally: good to drink) to taste good",
+      "audio": "audio/vocabulary/word-022.mp3"
+    },
+    {
+      "chinese": "什麼",
+      "pinyin": "shénme",
+      "english": "what",
+      "audio": "audio/vocabulary/word-023.mp3"
+    },
+    {
+      "chinese": "人",
+      "pinyin": "rén",
+      "english": "person, people",
+      "audio": "audio/vocabulary/word-024.mp3"
+    },
+    {
+      "chinese": "喜歡",
+      "pinyin": "xǐhuan",
+      "english": "to like",
+      "audio": "audio/vocabulary/word-025.mp3"
+    },
+    {
+      "chinese": "呢",
+      "pinyin": "ne",
+      "english": "sentence-final particle",
+      "audio": "audio/vocabulary/word-026.mp3"
+    },
+    {
+      "chinese": "他",
+      "pinyin": "tā",
+      "english": "he, him",
+      "audio": "audio/vocabulary/word-027.mp3"
+    },
+    {
+      "chinese": "不",
+      "pinyin": "bù",
+      "english": "not",
+      "audio": "audio/vocabulary/word-028.mp3"
+    },
+    {
+      "chinese": "哪",
+      "pinyin": "nǎ / něi",
+      "english": "which",
+      "audio": "audio/vocabulary/word-029.mp3"
+    },
+    {
+      "chinese": "要",
+      "pinyin": "yào",
+      "english": "to want to",
+      "audio": "audio/vocabulary/word-030.mp3"
+    },
+    {
+      "chinese": "咖啡",
+      "pinyin": "kāfēi",
+      "english": "coffee",
+      "audio": "audio/vocabulary/word-031.mp3"
+    },
+    {
+      "chinese": "烏龍茶",
+      "pinyin": "Wūlóng chá",
+      "english": "Oolong tea",
+      "audio": "audio/vocabulary/word-032.mp3"
+    },
+    {
+      "chinese": "日本",
+      "pinyin": "Rìběn",
+      "english": "Japan",
+      "audio": "audio/vocabulary/word-033.mp3"
+    },
+    {
+      "chinese": "美國",
+      "pinyin": "Měiguó",
+      "english": "America",
+      "audio": "audio/vocabulary/word-034.mp3"
+    },
+    {
+      "chinese": "對不起",
+      "pinyin": "duìbuqǐ",
+      "english": "I’m sorry.",
+      "audio": "audio/vocabulary/word-035.mp3"
+    },
+    {
+      "chinese": "哪國",
+      "pinyin": "nǎ guó / něi guó",
+      "english": "Which country?",
+      "audio": "audio/vocabulary/word-036.mp3"
+    },
+    {
+      "chinese": "張怡君",
+      "pinyin": "Zhāng Yíjūn",
+      "english": "a woman from Taiwan",
+      "audio": "audio/vocabulary/word-037.mp3"
+    },
+    {
+      "chinese": "馬安同",
+      "pinyin": "Mǎ Āntóng",
+      "english": "a man from the Republic of Honduras",
+      "audio": "audio/vocabulary/word-038.mp3"
+    },
+    {
+      "chinese": "的",
+      "pinyin": "de",
+      "english": "modification marker",
+      "audio": "audio/vocabulary/word-039.mp3"
+    },
+    {
+      "chinese": "家人",
+      "pinyin": "jiārén",
+      "english": "family (members)",
+      "audio": "audio/vocabulary/word-040.mp3"
+    },
+    {
+      "chinese": "家",
+      "pinyin": "jiā",
+      "english": "home, house",
+      "audio": "audio/vocabulary/word-041.mp3"
+    },
+    {
+      "chinese": "漂亮",
+      "pinyin": "piàoliang",
+      "english": "pretty",
+      "audio": "audio/vocabulary/word-042.mp3"
+    },
+    {
+      "chinese": "房子",
+      "pinyin": "fángzi",
+      "english": "house",
+      "audio": "audio/vocabulary/word-043.mp3"
+    },
+    {
+      "chinese": "坐",
+      "pinyin": "zuò",
+      "english": "to sit",
+      "audio": "audio/vocabulary/word-044.mp3"
+    },
+    {
+      "chinese": "有",
+      "pinyin": "yǒu",
+      "english": "to have",
+      "audio": "audio/vocabulary/word-045.mp3"
+    },
+    {
+      "chinese": "多",
+      "pinyin": "duō",
+      "english": "many",
+      "audio": "audio/vocabulary/word-046.mp3"
+    },
+    {
+      "chinese": "照片",
+      "pinyin": "zhàopiàn",
+      "english": "photo",
+      "audio": "audio/vocabulary/word-047.mp3"
+    },
+    {
+      "chinese": "都",
+      "pinyin": "dōu",
+      "english": "all, both",
+      "audio": "audio/vocabulary/word-048.mp3"
+    },
+    {
+      "chinese": "照相",
+      "pinyin": "zhàoxiàng",
+      "english": "to take a photo",
+      "audio": "audio/vocabulary/word-049.mp3"
+    },
+    {
+      "chinese": "張",
+      "pinyin": "zhāng",
+      "english": "measure word for flat objects (e.g., paper, tickets)",
+      "audio": "audio/vocabulary/word-050.mp3"
+    },
+    {
+      "chinese": "好看",
+      "pinyin": "hǎokàn",
+      "english": "good-looking",
+      "audio": "audio/vocabulary/word-051.mp3"
+    },
+    {
+      "chinese": "誰",
+      "pinyin": "shéi",
+      "english": "who",
+      "audio": "audio/vocabulary/word-052.mp3"
+    },
+    {
+      "chinese": "姐姐",
+      "pinyin": "jiějie",
+      "english": "older sister",
+      "audio": "audio/vocabulary/word-053.mp3"
+    },
+    {
+      "chinese": "妹妹",
+      "pinyin": "mèimei",
+      "english": "younger sister",
+      "audio": "audio/vocabulary/word-054.mp3"
+    },
+    {
+      "chinese": "爸爸",
+      "pinyin": "bàba",
+      "english": "dad",
+      "audio": "audio/vocabulary/word-055.mp3"
+    },
+    {
+      "chinese": "媽媽",
+      "pinyin": "māma",
+      "english": "mom",
+      "audio": "audio/vocabulary/word-056.mp3"
+    },
+    {
+      "chinese": "請進",
+      "pinyin": "qǐng jìn",
+      "english": "Please come in!",
+      "audio": "audio/vocabulary/word-057.mp3"
+    },
+    {
+      "chinese": "田中誠一",
+      "pinyin": "Tiánzhōng Chéngyī",
+      "english": "a man from Japan",
+      "audio": "audio/vocabulary/word-058.mp3"
+    },
+    {
+      "chinese": "伯母",
+      "pinyin": "bómǔ",
+      "english": "aunt; a polite term for a friend’s mother regardless of age",
+      "audio": "audio/vocabulary/word-059.mp3"
+    },
+    {
+      "chinese": "您",
+      "pinyin": "nín",
+      "english": "you (honorific)",
+      "audio": "audio/vocabulary/word-060.mp3"
+    },
+    {
+      "chinese": "名字",
+      "pinyin": "míngzi",
+      "english": "name",
+      "audio": "audio/vocabulary/word-061.mp3"
+    },
+    {
+      "chinese": "書",
+      "pinyin": "shū",
+      "english": "book",
+      "audio": "audio/vocabulary/word-062.mp3"
+    },
+    {
+      "chinese": "哥哥",
+      "pinyin": "gēge",
+      "english": "older brother",
+      "audio": "audio/vocabulary/word-063.mp3"
+    },
+    {
+      "chinese": "老師",
+      "pinyin": "lǎoshī",
+      "english": "teacher",
+      "audio": "audio/vocabulary/word-064.mp3"
+    },
+    {
+      "chinese": "看書",
+      "pinyin": "kànshū",
+      "english": "to read",
+      "audio": "audio/vocabulary/word-065.mp3"
+    },
+    {
+      "chinese": "幾",
+      "pinyin": "jǐ",
+      "english": "how many",
+      "audio": "audio/vocabulary/word-066.mp3"
+    },
+    {
+      "chinese": "個",
+      "pinyin": "ge",
+      "english": "general measure word",
+      "audio": "audio/vocabulary/word-067.mp3"
+    },
+    {
+      "chinese": "沒",
+      "pinyin": "méi",
+      "english": "not",
+      "audio": "audio/vocabulary/word-068.mp3"
+    },
+    {
+      "chinese": "兄弟",
+      "pinyin": "xiōngdì",
+      "english": "brothers",
+      "audio": "audio/vocabulary/word-069.mp3"
+    },
+    {
+      "chinese": "姐妹",
+      "pinyin": "jiěmèi",
+      "english": "sisters",
+      "audio": "audio/vocabulary/word-070.mp3"
+    },
+    {
+      "chinese": "五",
+      "pinyin": "wǔ",
+      "english": "five",
+      "audio": "audio/vocabulary/word-071.mp3"
+    },
+    {
+      "chinese": "兩",
+      "pinyin": "liǎng",
+      "english": "two",
+      "audio": "audio/vocabulary/word-072.mp3"
+    },
+    {
+      "chinese": "週末",
+      "pinyin": "zhōumò",
+      "english": "weekend",
+      "audio": "audio/vocabulary/word-073.mp3"
+    },
+    {
+      "chinese": "聽",
+      "pinyin": "tīng",
+      "english": "to listen",
+      "audio": "audio/vocabulary/word-074.mp3"
+    },
+    {
+      "chinese": "音樂",
+      "pinyin": "yīnyuè",
+      "english": "music",
+      "audio": "audio/vocabulary/word-075.mp3"
+    },
+    {
+      "chinese": "運動",
+      "pinyin": "yùndòng",
+      "english": "to exercise",
+      "audio": "audio/vocabulary/word-076.mp3"
+    },
+    {
+      "chinese": "打",
+      "pinyin": "dǎ",
+      "english": "to play (ball games)",
+      "audio": "audio/vocabulary/word-077.mp3"
+    },
+    {
+      "chinese": "網球",
+      "pinyin": "wǎngqiú",
+      "english": "tennis",
+      "audio": "audio/vocabulary/word-078.mp3"
+    },
+    {
+      "chinese": "棒球",
+      "pinyin": "bàngqiú",
+      "english": "baseball",
+      "audio": "audio/vocabulary/word-079.mp3"
+    },
+    {
+      "chinese": "和",
+      "pinyin": "hàn",
+      "english": "and, as well as",
+      "audio": "audio/vocabulary/word-080.mp3"
+    },
+    {
+      "chinese": "游泳",
+      "pinyin": "yóuyǒng",
+      "english": "to swim",
+      "audio": "audio/vocabulary/word-081.mp3"
+    },
+    {
+      "chinese": "常",
+      "pinyin": "cháng",
+      "english": "often",
+      "audio": "audio/vocabulary/word-082.mp3"
+    },
+    {
+      "chinese": "籃球",
+      "pinyin": "lánqiú",
+      "english": "basketball",
+      "audio": "audio/vocabulary/word-083.mp3"
+    },
+    {
+      "chinese": "也",
+      "pinyin": "yě",
+      "english": "also",
+      "audio": "audio/vocabulary/word-084.mp3"
+    },
+    {
+      "chinese": "踢",
+      "pinyin": "tī",
+      "english": "to kick",
+      "audio": "audio/vocabulary/word-085.mp3"
+    },
+    {
+      "chinese": "足球",
+      "pinyin": "zúqiú",
+      "english": "soccer",
+      "audio": "audio/vocabulary/word-086.mp3"
+    },
+    {
+      "chinese": "覺得",
+      "pinyin": "juéde",
+      "english": "to feel, to think",
+      "audio": "audio/vocabulary/word-087.mp3"
+    },
+    {
+      "chinese": "好玩",
+      "pinyin": "hǎowán",
+      "english": "interesting, fun",
+      "audio": "audio/vocabulary/word-088.mp3"
+    },
+    {
+      "chinese": "明天",
+      "pinyin": "míngtiān",
+      "english": "tomorrow",
+      "audio": "audio/vocabulary/word-089.mp3"
+    },
+    {
+      "chinese": "早上",
+      "pinyin": "zǎoshang",
+      "english": "morning",
+      "audio": "audio/vocabulary/word-090.mp3"
+    },
+    {
+      "chinese": "去",
+      "pinyin": "qù",
+      "english": "to go",
+      "audio": "audio/vocabulary/word-091.mp3"
+    },
+    {
+      "chinese": "怎麼樣",
+      "pinyin": "zěnmeyàng",
+      "english": "How about it? How does that sound? What do you think?",
+      "audio": "audio/vocabulary/word-092.mp3"
+    },
+    {
+      "chinese": "啊",
+      "pinyin": "a",
+      "english": "sentence-final particle",
+      "audio": "audio/vocabulary/word-093.mp3"
+    },
+    {
+      "chinese": "做什麼",
+      "pinyin": "zuò shénme",
+      "english": "do what",
+      "audio": "audio/vocabulary/word-094.mp3"
+    },
+    {
+      "chinese": "好啊",
+      "pinyin": "hǎo a",
+      "english": "OK",
+      "audio": "audio/vocabulary/word-095.mp3"
+    },
+    {
+      "chinese": "白如玉",
+      "pinyin": "Bái Rúyù",
+      "english": "a woman from the US",
+      "audio": "audio/vocabulary/word-096.mp3"
+    },
+    {
+      "chinese": "今天",
+      "pinyin": "jīntiān",
+      "english": "today",
+      "audio": "audio/vocabulary/word-097.mp3"
+    },
+    {
+      "chinese": "晚上",
+      "pinyin": "wǎnshang",
+      "english": "evening, night",
+      "audio": "audio/vocabulary/word-098.mp3"
+    },
+    {
+      "chinese": "看",
+      "pinyin": "kàn",
+      "english": "to see, to watch",
+      "audio": "audio/vocabulary/word-099.mp3"
+    },
+    {
+      "chinese": "電影",
+      "pinyin": "diànyǐng",
+      "english": "movie",
+      "audio": "audio/vocabulary/word-100.mp3"
+    },
+    {
+      "chinese": "妳",
+      "pinyin": "nǐ",
+      "english": "you (female)",
+      "audio": "audio/vocabulary/word-101.mp3"
+    },
+    {
+      "chinese": "想",
+      "pinyin": "xiǎng",
+      "english": "to want, to think",
+      "audio": "audio/vocabulary/word-102.mp3"
+    },
+    {
+      "chinese": "還是",
+      "pinyin": "háishi",
+      "english": "or (used in a question)",
+      "audio": "audio/vocabulary/word-103.mp3"
+    },
+    {
+      "chinese": "吧",
+      "pinyin": "ba",
+      "english": "sentence-final particle for suggestion",
+      "audio": "audio/vocabulary/word-104.mp3"
+    },
+    {
+      "chinese": "可以",
+      "pinyin": "kěyǐ",
+      "english": "could (possibility)",
+      "audio": "audio/vocabulary/word-105.mp3"
+    },
+    {
+      "chinese": "學",
+      "pinyin": "xué",
+      "english": "to learn, to study",
+      "audio": "audio/vocabulary/word-106.mp3"
+    },
+    {
+      "chinese": "中文",
+      "pinyin": "Zhōngwén",
+      "english": "Chinese language",
+      "audio": "audio/vocabulary/word-107.mp3"
+    },
+    {
+      "chinese": "一起",
+      "pinyin": "yìqǐ",
+      "english": "together",
+      "audio": "audio/vocabulary/word-108.mp3"
+    },
+    {
+      "chinese": "吃",
+      "pinyin": "chī",
+      "english": "to eat",
+      "audio": "audio/vocabulary/word-109.mp3"
+    },
+    {
+      "chinese": "晚飯",
+      "pinyin": "wǎnfàn",
+      "english": "dinner",
+      "audio": "audio/vocabulary/word-110.mp3"
+    },
+    {
+      "chinese": "菜",
+      "pinyin": "cài",
+      "english": "cuisine",
+      "audio": "audio/vocabulary/word-111.mp3"
+    },
+    {
+      "chinese": "越南",
+      "pinyin": "Yuènán",
+      "english": "Vietnam",
+      "audio": "audio/vocabulary/word-112.mp3"
+    },
+    {
+      "chinese": "好不好",
+      "pinyin": "hǎo bù hǎo",
+      "english": "How about…? How does that sound?",
+      "audio": "audio/vocabulary/word-113.mp3"
+    },
+    {
+      "chinese": "一共",
+      "pinyin": "yígòng",
+      "english": "altogether",
+      "audio": "audio/vocabulary/word-114.mp3"
+    },
+    {
+      "chinese": "多少",
+      "pinyin": "duōshǎo",
+      "english": "how much, how many",
+      "audio": "audio/vocabulary/word-115.mp3"
+    },
+    {
+      "chinese": "錢",
+      "pinyin": "qián",
+      "english": "money",
+      "audio": "audio/vocabulary/word-116.mp3"
+    },
+    {
+      "chinese": "老闆",
+      "pinyin": "lǎobǎn",
+      "english": "store owner, boss",
+      "audio": "audio/vocabulary/word-117.mp3"
+    },
+    {
+      "chinese": "買",
+      "pinyin": "mǎi",
+      "english": "to buy",
+      "audio": "audio/vocabulary/word-118.mp3"
+    },
+    {
+      "chinese": "杯",
+      "pinyin": "bēi",
+      "english": "cup",
+      "audio": "audio/vocabulary/word-119.mp3"
+    },
+    {
+      "chinese": "熱",
+      "pinyin": "rè",
+      "english": "hot",
+      "audio": "audio/vocabulary/word-120.mp3"
+    },
+    {
+      "chinese": "包子",
+      "pinyin": "bāozi",
+      "english": "steamed buns with meat stuffing",
+      "audio": "audio/vocabulary/word-121.mp3"
+    },
+    {
+      "chinese": "大",
+      "pinyin": "dà",
+      "english": "large",
+      "audio": "audio/vocabulary/word-122.mp3"
+    },
+    {
+      "chinese": "中",
+      "pinyin": "zhōng",
+      "english": "medium",
+      "audio": "audio/vocabulary/word-123.mp3"
+    },
+    {
+      "chinese": "小",
+      "pinyin": "xiǎo",
+      "english": "small",
+      "audio": "audio/vocabulary/word-124.mp3"
+    },
+    {
+      "chinese": "幫",
+      "pinyin": "bāng",
+      "english": "for",
+      "audio": "audio/vocabulary/word-125.mp3"
+    },
+    {
+      "chinese": "微波",
+      "pinyin": "wéibō",
+      "english": "to microwave",
+      "audio": "audio/vocabulary/word-126.mp3"
+    },
+    {
+      "chinese": "百",
+      "pinyin": "bǎi",
+      "english": "hundred",
+      "audio": "audio/vocabulary/word-127.mp3"
+    },
+    {
+      "chinese": "塊",
+      "pinyin": "kuài",
+      "english": "measure word for Chinese money",
+      "audio": "audio/vocabulary/word-128.mp3"
+    },
+    {
+      "chinese": "好的",
+      "pinyin": "hǎode",
+      "english": "OK",
+      "audio": "audio/vocabulary/word-129.mp3"
+    },
+    {
+      "chinese": "外帶",
+      "pinyin": "wàidài",
+      "english": "take out, to go",
+      "audio": "audio/vocabulary/word-130.mp3"
+    },
+    {
+      "chinese": "內用",
+      "pinyin": "nèiyòng",
+      "english": "for here",
+      "audio": "audio/vocabulary/word-131.mp3"
+    },
+    {
+      "chinese": "支",
+      "pinyin": "zhī",
+      "english": "measure word for cell phones",
+      "audio": "audio/vocabulary/word-132.mp3"
+    },
+    {
+      "chinese": "新",
+      "pinyin": "xīn",
+      "english": "new",
+      "audio": "audio/vocabulary/word-133.mp3"
+    },
+    {
+      "chinese": "手機",
+      "pinyin": "shǒujī",
+      "english": "cell phone",
+      "audio": "audio/vocabulary/word-134.mp3"
+    },
+    {
+      "chinese": "太",
+      "pinyin": "tài",
+      "english": "too",
+      "audio": "audio/vocabulary/word-135.mp3"
+    },
+    {
+      "chinese": "舊",
+      "pinyin": "jiù",
+      "english": "old",
+      "audio": "audio/vocabulary/word-136.mp3"
+    },
+    {
+      "chinese": "了",
+      "pinyin": "le",
+      "english": "sentence-final particle indicating the speaker’s sense of certainty",
+      "audio": "audio/vocabulary/word-137.mp3"
+    },
+    {
+      "chinese": "種",
+      "pinyin": "zhǒng",
+      "english": "kind, type",
+      "audio": "audio/vocabulary/word-138.mp3"
+    },
+    {
+      "chinese": "能",
+      "pinyin": "néng",
+      "english": "can, to be able to",
+      "audio": "audio/vocabulary/word-139.mp3"
+    },
+    {
+      "chinese": "上網",
+      "pinyin": "shàngwǎng",
+      "english": "to access the internet, to use the internet",
+      "audio": "audio/vocabulary/word-140.mp3"
+    },
+    {
+      "chinese": "那",
+      "pinyin": "nà / nèi",
+      "english": "that",
+      "audio": "audio/vocabulary/word-141.mp3"
+    },
+    {
+      "chinese": "貴",
+      "pinyin": "guì",
+      "english": "expensive",
+      "audio": "audio/vocabulary/word-142.mp3"
+    },
+    {
+      "chinese": "賣",
+      "pinyin": "mài",
+      "english": "to sell",
+      "audio": "audio/vocabulary/word-143.mp3"
+    },
+    {
+      "chinese": "便宜",
+      "pinyin": "piányí",
+      "english": "cheap, inexpensive",
+      "audio": "audio/vocabulary/word-144.mp3"
+    },
+    {
+      "chinese": "萬",
+      "pinyin": "wàn",
+      "english": "ten thousand",
+      "audio": "audio/vocabulary/word-145.mp3"
+    },
+    {
+      "chinese": "千",
+      "pinyin": "qiān",
+      "english": "thousand",
+      "audio": "audio/vocabulary/word-146.mp3"
+    },
+    {
+      "chinese": "為什麼",
+      "pinyin": "wèishénme",
+      "english": "why",
+      "audio": "audio/vocabulary/word-147.mp3"
+    },
+    {
+      "chinese": "牛肉",
+      "pinyin": "niúròu",
+      "english": "beef",
+      "audio": "audio/vocabulary/word-148.mp3"
+    },
+    {
+      "chinese": "麵",
+      "pinyin": "miàn",
+      "english": "noodles",
+      "audio": "audio/vocabulary/word-149.mp3"
+    },
+    {
+      "chinese": "真",
+      "pinyin": "zhēn",
+      "english": "really",
+      "audio": "audio/vocabulary/word-150.mp3"
+    },
+    {
+      "chinese": "好吃",
+      "pinyin": "hǎochī",
+      "english": "delicious",
+      "audio": "audio/vocabulary/word-151.mp3"
+    },
+    {
+      "chinese": "說",
+      "pinyin": "shuō",
+      "english": "to say",
+      "audio": "audio/vocabulary/word-152.mp3"
+    },
+    {
+      "chinese": "少",
+      "pinyin": "shǎo",
+      "english": "few in number",
+      "audio": "audio/vocabulary/word-153.mp3"
+    },
+    {
+      "chinese": "有名",
+      "pinyin": "yǒumíng",
+      "english": "well known, famous",
+      "audio": "audio/vocabulary/word-154.mp3"
+    },
+    {
+      "chinese": "小吃",
+      "pinyin": "xiǎochī",
+      "english": "light repast, snack",
+      "audio": "audio/vocabulary/word-155.mp3"
+    },
+    {
+      "chinese": "最",
+      "pinyin": "zuì",
+      "english": "most",
+      "audio": "audio/vocabulary/word-156.mp3"
+    },
+    {
+      "chinese": "湯",
+      "pinyin": "tāng",
+      "english": "soup, broth",
+      "audio": "audio/vocabulary/word-157.mp3"
+    },
+    {
+      "chinese": "這麼",
+      "pinyin": "zhème",
+      "english": "so",
+      "audio": "audio/vocabulary/word-158.mp3"
+    },
+    {
+      "chinese": "知道",
+      "pinyin": "zhīdào",
+      "english": "to know",
+      "audio": "audio/vocabulary/word-159.mp3"
+    },
+    {
+      "chinese": "店",
+      "pinyin": "diàn",
+      "english": "shop, store",
+      "audio": "audio/vocabulary/word-160.mp3"
+    },
+    {
+      "chinese": "一定",
+      "pinyin": "yídìng",
+      "english": "really must, definitely",
+      "audio": "audio/vocabulary/word-161.mp3"
+    },
+    {
+      "chinese": "點",
+      "pinyin": "diǎn",
+      "english": "to order (meals)",
+      "audio": "audio/vocabulary/word-162.mp3"
+    },
+    {
+      "chinese": "碗",
+      "pinyin": "wǎn",
+      "english": "a bowl of",
+      "audio": "audio/vocabulary/word-163.mp3"
+    },
+    {
+      "chinese": "是啊",
+      "pinyin": "shì a",
+      "english": "That’s right.",
+      "audio": "audio/vocabulary/word-164.mp3"
+    },
+    {
+      "chinese": "小籠包",
+      "pinyin": "xiǎolóngbāo",
+      "english": "small meat- and cabbage-filled steamed buns",
+      "audio": "audio/vocabulary/word-165.mp3"
+    },
+    {
+      "chinese": "臭豆腐",
+      "pinyin": "chòu dòufu",
+      "english": "stinky tofu (fermented tofu)",
+      "audio": "audio/vocabulary/word-166.mp3"
+    },
+    {
+      "chinese": "太好了",
+      "pinyin": "tài hǎo le",
+      "english": "Excellent. Great.",
+      "audio": "audio/vocabulary/word-167.mp3"
+    },
+    {
+      "chinese": "昨天",
+      "pinyin": "zuótiān",
+      "english": "yesterday",
+      "audio": "audio/vocabulary/word-168.mp3"
+    },
+    {
+      "chinese": "餐廳",
+      "pinyin": "cāntīng",
+      "english": "restaurant",
+      "audio": "audio/vocabulary/word-169.mp3"
+    },
+    {
+      "chinese": "可是",
+      "pinyin": "kěshì",
+      "english": "but, however",
+      "audio": "audio/vocabulary/word-170.mp3"
+    },
+    {
+      "chinese": "辣",
+      "pinyin": "là",
+      "english": "hot (spicy)",
+      "audio": "audio/vocabulary/word-171.mp3"
+    },
+    {
+      "chinese": "怕",
+      "pinyin": "pà",
+      "english": "(here) to not like, to fear",
+      "audio": "audio/vocabulary/word-172.mp3"
+    },
+    {
+      "chinese": "所以",
+      "pinyin": "suǒyǐ",
+      "english": "therefore, so",
+      "audio": "audio/vocabulary/word-173.mp3"
+    },
+    {
+      "chinese": "自己",
+      "pinyin": "zìjǐ",
+      "english": "self",
+      "audio": "audio/vocabulary/word-174.mp3"
+    },
+    {
+      "chinese": "做飯",
+      "pinyin": "zuòfàn",
+      "english": "to cook",
+      "audio": "audio/vocabulary/word-175.mp3"
+    },
+    {
+      "chinese": "得",
+      "pinyin": "de",
+      "english": "complement marker",
+      "audio": "audio/vocabulary/word-176.mp3"
+    },
+    {
+      "chinese": "會",
+      "pinyin": "huì",
+      "english": "to be able to, can",
+      "audio": "audio/vocabulary/word-177.mp3"
+    },
+    {
+      "chinese": "甜點",
+      "pinyin": "tiándiǎn",
+      "english": "dessert",
+      "audio": "audio/vocabulary/word-178.mp3"
+    },
+    {
+      "chinese": "不錯",
+      "pinyin": "búcuò",
+      "english": "not bad",
+      "audio": "audio/vocabulary/word-179.mp3"
+    },
+    {
+      "chinese": "教",
+      "pinyin": "jiāo",
+      "english": "to teach",
+      "audio": "audio/vocabulary/word-180.mp3"
+    },
+    {
+      "chinese": "到",
+      "pinyin": "dào",
+      "english": "to",
+      "audio": "audio/vocabulary/word-181.mp3"
+    },
+    {
+      "chinese": "有一點",
+      "pinyin": "yǒu yìdiǎn",
+      "english": "a little",
+      "audio": "audio/vocabulary/word-182.mp3"
+    },
+    {
+      "chinese": "不好",
+      "pinyin": "bù hǎo",
+      "english": "not well",
+      "audio": "audio/vocabulary/word-183.mp3"
+    },
+    {
+      "chinese": "他們",
+      "pinyin": "tāmen",
+      "english": "they (used for people only)",
+      "audio": "audio/vocabulary/word-184.mp3"
+    },
+    {
+      "chinese": "學校",
+      "pinyin": "xuéxiào",
+      "english": "school",
+      "audio": "audio/vocabulary/word-185.mp3"
+    },
+    {
+      "chinese": "在",
+      "pinyin": "zài",
+      "english": "to be located at",
+      "audio": "audio/vocabulary/word-186.mp3"
+    },
+    {
+      "chinese": "山上",
+      "pinyin": "shānshàng",
+      "english": "on a mountain, in the mountains",
+      "audio": "audio/vocabulary/word-187.mp3"
+    },
+    {
+      "chinese": "哪裡",
+      "pinyin": "nǎlǐ",
+      "english": "where",
+      "audio": "audio/vocabulary/word-188.mp3"
+    },
+    {
+      "chinese": "遠",
+      "pinyin": "yuǎn",
+      "english": "far",
+      "audio": "audio/vocabulary/word-189.mp3"
+    },
+    {
+      "chinese": "那裡",
+      "pinyin": "nàlǐ",
+      "english": "that place, there",
+      "audio": "audio/vocabulary/word-190.mp3"
+    },
+    {
+      "chinese": "風景",
+      "pinyin": "fēngjǐng",
+      "english": "scenery, landscape",
+      "audio": "audio/vocabulary/word-191.mp3"
+    },
+    {
+      "chinese": "美",
+      "pinyin": "měi",
+      "english": "beautiful",
+      "audio": "audio/vocabulary/word-192.mp3"
+    },
+    {
+      "chinese": "前面",
+      "pinyin": "qiánmiàn",
+      "english": "front",
+      "audio": "audio/vocabulary/word-193.mp3"
+    },
+    {
+      "chinese": "海",
+      "pinyin": "hǎi",
+      "english": "ocean",
+      "audio": "audio/vocabulary/word-194.mp3"
+    },
+    {
+      "chinese": "後面",
+      "pinyin": "hòumiàn",
+      "english": "back",
+      "audio": "audio/vocabulary/word-195.mp3"
+    },
+    {
+      "chinese": "山",
+      "pinyin": "shān",
+      "english": "mountain",
+      "audio": "audio/vocabulary/word-196.mp3"
+    },
+    {
+      "chinese": "真的",
+      "pinyin": "zhēnde",
+      "english": "really, truly",
+      "audio": "audio/vocabulary/word-197.mp3"
+    },
+    {
+      "chinese": "地方",
+      "pinyin": "dìfang",
+      "english": "place",
+      "audio": "audio/vocabulary/word-198.mp3"
+    },
+    {
+      "chinese": "現在",
+      "pinyin": "xiànzài",
+      "english": "now",
+      "audio": "audio/vocabulary/word-199.mp3"
+    },
+    {
+      "chinese": "附近",
+      "pinyin": "fùjìn",
+      "english": "vicinity, near",
+      "audio": "audio/vocabulary/word-200.mp3"
+    },
+    {
+      "chinese": "樓下",
+      "pinyin": "lóuxià",
+      "english": "downstairs",
+      "audio": "audio/vocabulary/word-201.mp3"
+    },
+    {
+      "chinese": "找",
+      "pinyin": "zhǎo",
+      "english": "to meet, to see",
+      "audio": "audio/vocabulary/word-202.mp3"
+    },
+    {
+      "chinese": "朋友",
+      "pinyin": "péngyǒu",
+      "english": "friend",
+      "audio": "audio/vocabulary/word-203.mp3"
+    },
+    {
+      "chinese": "上課",
+      "pinyin": "shàngkè",
+      "english": "to go to class",
+      "audio": "audio/vocabulary/word-204.mp3"
+    },
+    {
+      "chinese": "花蓮",
+      "pinyin": "Huālián",
+      "english": "name of a city on the eastern coast of Taiwan",
+      "audio": "audio/vocabulary/word-205.mp3"
+    },
+    {
+      "chinese": "聽說",
+      "pinyin": "tīngshuō",
+      "english": "to hear that",
+      "audio": "audio/vocabulary/word-206.mp3"
+    },
+    {
+      "chinese": "近",
+      "pinyin": "jìn",
+      "english": "near",
+      "audio": "audio/vocabulary/word-207.mp3"
+    },
+    {
+      "chinese": "方便",
+      "pinyin": "fāngbiàn",
+      "english": "convenient",
+      "audio": "audio/vocabulary/word-208.mp3"
+    },
+    {
+      "chinese": "這裡",
+      "pinyin": "zhèlǐ",
+      "english": "here, this place",
+      "audio": "audio/vocabulary/word-209.mp3"
+    },
+    {
+      "chinese": "學生",
+      "pinyin": "xuésheng",
+      "english": "student",
+      "audio": "audio/vocabulary/word-210.mp3"
+    },
+    {
+      "chinese": "東西",
+      "pinyin": "dōngxi",
+      "english": "things, stuff",
+      "audio": "audio/vocabulary/word-211.mp3"
+    },
+    {
+      "chinese": "外面",
+      "pinyin": "wàimiàn",
+      "english": "outside",
+      "audio": "audio/vocabulary/word-212.mp3"
+    },
+    {
+      "chinese": "裡面",
+      "pinyin": "lǐmiàn",
+      "english": "inside",
+      "audio": "audio/vocabulary/word-213.mp3"
+    },
+    {
+      "chinese": "商店",
+      "pinyin": "shāngdiàn",
+      "english": "store, shop",
+      "audio": "audio/vocabulary/word-214.mp3"
+    },
+    {
+      "chinese": "吃飯",
+      "pinyin": "chīfàn",
+      "english": "to have a meal",
+      "audio": "audio/vocabulary/word-215.mp3"
+    },
+    {
+      "chinese": "宿舍",
+      "pinyin": "sùshè",
+      "english": "dormitory",
+      "audio": "audio/vocabulary/word-216.mp3"
+    },
+    {
+      "chinese": "樓",
+      "pinyin": "lóu",
+      "english": "a storey, a floor",
+      "audio": "audio/vocabulary/word-217.mp3"
+    },
+    {
+      "chinese": "棟",
+      "pinyin": "dòng",
+      "english": "measure word for buildings",
+      "audio": "audio/vocabulary/word-218.mp3"
+    },
+    {
+      "chinese": "大樓",
+      "pinyin": "dàlóu",
+      "english": "a multi-storey building",
+      "audio": "audio/vocabulary/word-219.mp3"
+    },
+    {
+      "chinese": "圖書館",
+      "pinyin": "túshūguǎn",
+      "english": "library",
+      "audio": "audio/vocabulary/word-220.mp3"
+    },
+    {
+      "chinese": "旁邊",
+      "pinyin": "pángbiān",
+      "english": "(by the) side, next to",
+      "audio": "audio/vocabulary/word-221.mp3"
+    },
+    {
+      "chinese": "教室",
+      "pinyin": "jiàoshì",
+      "english": "classroom",
+      "audio": "audio/vocabulary/word-222.mp3"
+    },
+    {
+      "chinese": "游泳池",
+      "pinyin": "yóuyǒngchí",
+      "english": "swimming pool",
+      "audio": "audio/vocabulary/word-223.mp3"
+    },
+    {
+      "chinese": "KTV",
+      "pinyin": "KTV",
+      "english": "karaoke",
+      "audio": "audio/vocabulary/word-224.mp3"
+    },
+    {
+      "chinese": "唱歌",
+      "pinyin": "chànggē",
+      "english": "to sing",
+      "audio": "audio/vocabulary/word-225.mp3"
+    },
+    {
+      "chinese": "分",
+      "pinyin": "fēn",
+      "english": "minute",
+      "audio": "audio/vocabulary/word-226.mp3"
+    },
+    {
+      "chinese": "見面",
+      "pinyin": "jiànmiàn",
+      "english": "to meet",
+      "audio": "audio/vocabulary/word-227.mp3"
+    },
+    {
+      "chinese": "從",
+      "pinyin": "cóng",
+      "english": "from",
+      "audio": "audio/vocabulary/word-228.mp3"
+    },
+    {
+      "chinese": "中午",
+      "pinyin": "zhōngwǔ",
+      "english": "noon",
+      "audio": "audio/vocabulary/word-229.mp3"
+    },
+    {
+      "chinese": "銀行",
+      "pinyin": "yínháng",
+      "english": "bank",
+      "audio": "audio/vocabulary/word-230.mp3"
+    },
+    {
+      "chinese": "時候",
+      "pinyin": "shíhou",
+      "english": "when",
+      "audio": "audio/vocabulary/word-231.mp3"
+    },
+    {
+      "chinese": "後天",
+      "pinyin": "hòutiān",
+      "english": "the day after tomorrow",
+      "audio": "audio/vocabulary/word-232.mp3"
+    },
+    {
+      "chinese": "大安",
+      "pinyin": "Dà’ān",
+      "english": "Daan, the name of a district in Taipei where Shida is also located",
+      "audio": "audio/vocabulary/word-233.mp3"
+    },
+    {
+      "chinese": "下次",
+      "pinyin": "xià cì",
+      "english": "next time",
+      "audio": "audio/vocabulary/word-234.mp3"
+    },
+    {
+      "chinese": "沒問題",
+      "pinyin": "méi wèntí",
+      "english": "No problem.",
+      "audio": "audio/vocabulary/word-235.mp3"
+    },
+    {
+      "chinese": "對了",
+      "pinyin": "duìle",
+      "english": "by the way",
+      "audio": "audio/vocabulary/word-236.mp3"
+    },
+    {
+      "chinese": "有空",
+      "pinyin": "yǒu kòng",
+      "english": "to have free time",
+      "audio": "audio/vocabulary/word-237.mp3"
+    },
+    {
+      "chinese": "再見",
+      "pinyin": "zàijiàn",
+      "english": "Goodbye.",
+      "audio": "audio/vocabulary/word-238.mp3"
+    },
+    {
+      "chinese": "午餐",
+      "pinyin": "wǔcān",
+      "english": "lunch",
+      "audio": "audio/vocabulary/word-239.mp3"
+    },
+    {
+      "chinese": "剛",
+      "pinyin": "gāng",
+      "english": "just now",
+      "audio": "audio/vocabulary/word-240.mp3"
+    },
+    {
+      "chinese": "下課",
+      "pinyin": "xiàkè",
+      "english": "to finish class",
+      "audio": "audio/vocabulary/word-241.mp3"
+    },
+    {
+      "chinese": "下午",
+      "pinyin": "xiàwǔ",
+      "english": "afternoon",
+      "audio": "audio/vocabulary/word-242.mp3"
+    },
+    {
+      "chinese": "半",
+      "pinyin": "bàn",
+      "english": "half",
+      "audio": "audio/vocabulary/word-243.mp3"
+    },
+    {
+      "chinese": "比賽",
+      "pinyin": "bǐsài",
+      "english": "game, competition",
+      "audio": "audio/vocabulary/word-244.mp3"
+    },
+    {
+      "chinese": "結束",
+      "pinyin": "jiéshù",
+      "english": "to finish",
+      "audio": "audio/vocabulary/word-245.mp3"
+    },
+    {
+      "chinese": "最近",
+      "pinyin": "zuìjìn",
+      "english": "recently, lately",
+      "audio": "audio/vocabulary/word-246.mp3"
+    },
+    {
+      "chinese": "忙",
+      "pinyin": "máng",
+      "english": "busy",
+      "audio": "audio/vocabulary/word-247.mp3"
+    },
+    {
+      "chinese": "每",
+      "pinyin": "měi",
+      "english": "every, each",
+      "audio": "audio/vocabulary/word-248.mp3"
+    },
+    {
+      "chinese": "天",
+      "pinyin": "tiān",
+      "english": "measure word for day",
+      "audio": "audio/vocabulary/word-249.mp3"
+    },
+    {
+      "chinese": "書法",
+      "pinyin": "shūfǎ",
+      "english": "calligraphy",
+      "audio": "audio/vocabulary/word-250.mp3"
+    },
+    {
+      "chinese": "課",
+      "pinyin": "kè",
+      "english": "class",
+      "audio": "audio/vocabulary/word-251.mp3"
+    },
+    {
+      "chinese": "開始",
+      "pinyin": "kāishǐ",
+      "english": "to begin, to start",
+      "audio": "audio/vocabulary/word-252.mp3"
+    },
+    {
+      "chinese": "字",
+      "pinyin": "zì",
+      "english": "character",
+      "audio": "audio/vocabulary/word-253.mp3"
+    },
+    {
+      "chinese": "寫",
+      "pinyin": "xiě",
+      "english": "to write",
+      "audio": "audio/vocabulary/word-254.mp3"
+    },
+    {
+      "chinese": "問",
+      "pinyin": "wèn",
+      "english": "to ask",
+      "audio": "audio/vocabulary/word-255.mp3"
+    },
+    {
+      "chinese": "等一下",
+      "pinyin": "děng yíxià",
+      "english": "later",
+      "audio": "audio/vocabulary/word-256.mp3"
+    },
+    {
+      "chinese": "有事",
+      "pinyin": "yǒu shì",
+      "english": "to be busy, to be engaged",
+      "audio": "audio/vocabulary/word-257.mp3"
+    },
+    {
+      "chinese": "有意思",
+      "pinyin": "yǒu yìsi",
+      "english": "to be interesting, to be fun",
+      "audio": "audio/vocabulary/word-258.mp3"
+    },
+    {
+      "chinese": "你是哪國人？你現在在臺灣的家在哪裡？",
+      "pinyin": "Nǐ shì nǎ guó rén? Nǐ xiànzài zài Táiwān de jiā zài nǎlǐ?",
+      "english": "Which country are you from? Where is your current home in Taiwan?",
+      "audio": "audio/vocabulary/word-259.mp3"
+    },
+    {
+      "chinese": "你家前面有什麼？後面呢？",
+      "pinyin": "Nǐ jiā qiánmiàn yǒu shénme? Hòumiàn ne?",
+      "english": "What is in front of your home? What about behind it?",
+      "audio": "audio/vocabulary/word-260.mp3"
+    },
+    {
+      "chinese": "從你家到學校遠不遠？方便不方便？",
+      "pinyin": "Cóng nǐ jiā dào xuéxiào yuǎn bù yuǎn? Fāngbiàn bù fāngbiàn?",
+      "english": "Is it far from your home to school? Is it convenient?",
+      "audio": "audio/vocabulary/word-261.mp3"
+    },
+    {
+      "chinese": "你家附近有咖啡店嗎？那家店在哪裡？",
+      "pinyin": "Nǐ jiā fùjìn yǒu kāfēidiàn ma? Nà jiā diàn zài nǎlǐ?",
+      "english": "Is there a coffee shop near your home? Where is that shop?",
+      "audio": "audio/vocabulary/word-262.mp3"
+    },
+    {
+      "chinese": "你常幾點到咖啡店去？在那裡做什麼？",
+      "pinyin": "Nǐ cháng jǐ diǎn dào kāfēidiàn qù? Zài nàlǐ zuò shénme?",
+      "english": "What time do you usually go to the coffee shop? What do you do there?",
+      "audio": "audio/vocabulary/word-263.mp3"
+    },
+    {
+      "chinese": "你中午常幾點吃飯？在哪裡吃？",
+      "pinyin": "Nǐ zhōngwǔ cháng jǐ diǎn chīfàn? Zài nǎlǐ chī?",
+      "english": "What time do you usually eat lunch? Where do you eat?",
+      "audio": "audio/vocabulary/word-264.mp3"
+    },
+    {
+      "chinese": "那家餐廳的什麼最好吃？一碗或一個多少錢？",
+      "pinyin": "Nà jiā cāntīng de shénme zuì hǎochī? Yì wǎn huò yí ge duōshao qián?",
+      "english": "What is the most delicious thing at that restaurant? How much is one bowl or one item?",
+      "audio": "audio/vocabulary/word-265.mp3"
+    },
+    {
+      "chinese": "你週末從幾點到幾點有空？有空的時候喜歡做什麼？",
+      "pinyin": "Nǐ zhōumò cóng jǐ diǎn dào jǐ diǎn yǒu kòng? Yǒu kòng de shíhou xǐhuan zuò shénme?",
+      "english": "From what time until what time are you free on weekends? What do you like doing when you are free?",
+      "audio": "audio/vocabulary/word-266.mp3"
+    },
+    {
+      "chinese": "我們的教室在幾樓？教室外面有什麼？",
+      "pinyin": "Wǒmen de jiàoshì zài jǐ lóu? Jiàoshì wàimiàn yǒu shénme?",
+      "english": "Which floor is our classroom on? What is outside the classroom?",
+      "audio": "audio/vocabulary/word-267.mp3"
+    },
+    {
+      "chinese": "學校的圖書館在哪裡？旁邊有什麼？",
+      "pinyin": "Xuéxiào de túshūguǎn zài nǎlǐ? Pángbiān yǒu shénme?",
+      "english": "Where is the school library? What is beside it?",
+      "audio": "audio/vocabulary/word-268.mp3"
+    },
+    {
+      "chinese": "你今天從幾點到幾點上中文課？在哪裡上課？",
+      "pinyin": "Nǐ jīntiān cóng jǐ diǎn dào jǐ diǎn shàng Zhōngwén kè? Zài nǎlǐ shàngkè?",
+      "english": "From what time until what time do you have Chinese class today? Where do you have class?",
+      "audio": "audio/vocabulary/word-269.mp3"
+    },
+    {
+      "chinese": "你喜歡在學校做什麼？常什麼時候做？",
+      "pinyin": "Nǐ xǐhuan zài xuéxiào zuò shénme? Cháng shénme shíhou zuò?",
+      "english": "What do you like doing at school? When do you usually do it?",
+      "audio": "audio/vocabulary/word-270.mp3"
+    },
+    {
+      "chinese": "你常到哪家商店買東西？那家店在哪裡？",
+      "pinyin": "Nǐ cháng dào nǎ jiā shāngdiàn mǎi dōngxi? Nà jiā diàn zài nǎlǐ?",
+      "english": "Which store do you often go to for shopping? Where is that store?",
+      "audio": "audio/vocabulary/word-271.mp3"
+    },
+    {
+      "chinese": "你喜歡唱歌嗎？會不會唱中文歌？",
+      "pinyin": "Nǐ xǐhuan chànggē ma? Huì bú huì chàng Zhōngwén gē?",
+      "english": "Do you like singing? Can you sing Chinese songs?",
+      "audio": "audio/vocabulary/word-272.mp3"
+    },
+    {
+      "chinese": "你明天晚上有空嗎？想不想一起到學校附近吃飯？",
+      "pinyin": "Nǐ míngtiān wǎnshang yǒu kòng ma? Xiǎng bù xiǎng yìqǐ dào xuéxiào fùjìn chīfàn?",
+      "english": "Are you free tomorrow evening? Would you like to eat together near the school?",
+      "audio": "audio/vocabulary/word-273.mp3"
+    },
+    {
+      "chinese": "你後天什麼時候有空？想去哪裡？我們幾點在哪裡見面？",
+      "pinyin": "Nǐ hòutiān shénme shíhou yǒu kòng? Xiǎng qù nǎlǐ? Wǒmen jǐ diǎn zài nǎlǐ jiànmiàn?",
+      "english": "When are you free the day after tomorrow? Where would you like to go? What time and where should we meet?",
+      "audio": "audio/vocabulary/word-274.mp3"
+    },
+    {
+      "chinese": "你想買一本書，要到哪裡買？那個地方在學校裡面還是外面？",
+      "pinyin": "Nǐ xiǎng mǎi yì běn shū, yào dào nǎlǐ mǎi? Nà ge dìfang zài xuéxiào lǐmiàn háishi wàimiàn?",
+      "english": "You want to buy a book. Where should you go to buy it? Is that place inside or outside the school?",
+      "audio": "audio/vocabulary/word-275.mp3"
+    },
+    {
+      "chinese": "你不想在宿舍吃飯，想到哪裡吃？那家餐廳的旁邊有什麼？",
+      "pinyin": "Nǐ bù xiǎng zài sùshè chīfàn, xiǎng dào nǎlǐ chī? Nà jiā cāntīng de pángbiān yǒu shénme?",
+      "english": "You do not want to eat in the dormitory. Where would you like to eat? What is beside that restaurant?",
+      "audio": "audio/vocabulary/word-276.mp3"
+    },
+    {
+      "chinese": "學校的游泳池在哪裡？附近有沒有商店或餐廳？",
+      "pinyin": "Xuéxiào de yóuyǒngchí zài nǎlǐ? Fùjìn yǒu méiyǒu shāngdiàn huò cāntīng?",
+      "english": "Where is the school swimming pool? Are there any stores or restaurants nearby?",
+      "audio": "audio/vocabulary/word-277.mp3"
+    },
+    {
+      "chinese": "朋友到學校找你，你想在哪裡和他見面？為什麼？",
+      "pinyin": "Péngyǒu dào xuéxiào zhǎo nǐ, nǐ xiǎng zài nǎlǐ hàn tā jiànmiàn? Wèishénme?",
+      "english": "A friend comes to school to meet you. Where would you like to meet them? Why?",
+      "audio": "audio/vocabulary/word-278.mp3"
+    },
+    {
+      "chinese": "你常去的商店裡面有什麼？你想在那裡買什麼？",
+      "pinyin": "Nǐ cháng qù de shāngdiàn lǐmiàn yǒu shénme? Nǐ xiǎng zài nàlǐ mǎi shénme?",
+      "english": "What is inside the store you often visit? What would you like to buy there?",
+      "audio": "audio/vocabulary/word-279.mp3"
+    },
+    {
+      "chinese": "有個學校在山上，附近沒有商店和餐廳。你想去那裡上課嗎？為什麼？",
+      "pinyin": "Yǒu ge xuéxiào zài shānshàng, fùjìn méiyǒu shāngdiàn hàn cāntīng. Nǐ xiǎng qù nàlǐ shàngkè ma? Wèishénme?",
+      "english": "There is a school in the mountains with no stores or restaurants nearby. Would you like to attend class there? Why?",
+      "audio": "audio/vocabulary/word-280.mp3"
+    },
+    {
+      "chinese": "你想在咖啡店教朋友中文，還是在家裡教？為什麼？",
+      "pinyin": "Nǐ xiǎng zài kāfēidiàn jiāo péngyǒu Zhōngwén, háishi zài jiālǐ jiāo? Wèishénme?",
+      "english": "Would you prefer to teach your friend Chinese in a coffee shop or at home? Why?",
+      "audio": "audio/vocabulary/word-281.mp3"
+    },
+    {
+      "chinese": "教室裡面，老師的前面有什麼？後面有什麼？",
+      "pinyin": "Jiàoshì lǐmiàn, lǎoshī de qiánmiàn yǒu shénme? Hòumiàn yǒu shénme?",
+      "english": "Inside the classroom, what is in front of the teacher? What is behind the teacher?",
+      "audio": "audio/vocabulary/word-282.mp3"
+    },
+    {
+      "chinese": "朋友想看看學校的風景，你想帶他去哪個地方？那裡有什麼？",
+      "pinyin": "Péngyǒu xiǎng kànkan xuéxiào de fēngjǐng, nǐ xiǎng dài tā qù nǎ ge dìfang? Nàlǐ yǒu shénme?",
+      "english": "Your friend wants to see the school scenery. Where would you take them? What is there?",
+      "audio": "audio/vocabulary/word-283.mp3"
+    },
+    {
+      "chinese": "你常去的咖啡店在大樓裡面還是外面？你覺得那裡怎麼樣？",
+      "pinyin": "Nǐ cháng qù de kāfēidiàn zài dàlóu lǐmiàn háishi wàimiàn? Nǐ juéde nàlǐ zěnmeyàng?",
+      "english": "Is the coffee shop you often visit inside or outside a building? What do you think of that place?",
+      "audio": "audio/vocabulary/word-284.mp3"
+    },
+    {
+      "chinese": "學校附近的餐廳，有的很有名，有的很便宜。你想去哪家吃飯？為什麼？",
+      "pinyin": "Xuéxiào fùjìn de cāntīng, yǒude hěn yǒumíng, yǒude hěn piányí. Nǐ xiǎng qù nǎ jiā chīfàn? Wèishénme?",
+      "english": "Some restaurants near the school are famous, while others are inexpensive. Which one would you like to eat at? Why?",
+      "audio": "audio/vocabulary/word-285.mp3"
+    },
+    {
+      "chinese": "你喜歡在圖書館裡面還是外面看書？為什麼？",
+      "pinyin": "Nǐ xǐhuan zài túshūguǎn lǐmiàn háishi wàimiàn kànshū? Wèishénme?",
+      "english": "Do you prefer reading inside or outside the library? Why?",
+      "audio": "audio/vocabulary/word-286.mp3"
+    },
+    {
+      "chinese": "現在幾點幾分？今天的中文課幾點結束？",
+      "pinyin": "Xiànzài jǐ diǎn jǐ fēn? Jīntiān de Zhōngwén kè jǐ diǎn jiéshù?",
+      "english": "What time is it now? What time does today’s Chinese class end?",
+      "audio": "audio/vocabulary/word-287.mp3"
+    },
+    {
+      "chinese": "你的朋友想早上九點去KTV，你覺得怎麼樣？你想和他一起去嗎？為什麼？",
+      "pinyin": "Nǐ de péngyǒu xiǎng zǎoshang jiǔ diǎn qù KTV, nǐ juéde zěnmeyàng? Nǐ xiǎng hàn tā yìqǐ qù ma? Wèishénme?",
+      "english": "Your friend wants to go to KTV at nine in the morning. What do you think? Would you like to go together? Why?",
+      "audio": "audio/vocabulary/word-288.mp3"
+    },
+    {
+      "chinese": "你今天四點半有空一起打球嗎？你今天得做什麼？",
+      "pinyin": "Nǐ jīntiān sì diǎn bàn yǒu kòng yìqǐ dǎqiú ma? Nǐ jīntiān děi zuò shénme?",
+      "english": "Are you free to play ball together at 4:30 today? What do you have to do today?",
+      "audio": "audio/vocabulary/word-289.mp3"
+    },
+    {
+      "chinese": "我晚上七點想和你一起吃飯，你有空嗎？你從幾點到幾點有空？",
+      "pinyin": "Wǒ wǎnshang qī diǎn xiǎng hàn nǐ yìqǐ chīfàn, nǐ yǒu kòng ma? Nǐ cóng jǐ diǎn dào jǐ diǎn yǒu kòng?",
+      "english": "I would like to eat with you at seven tonight. Are you free? From what time until what time are you free?",
+      "audio": "audio/vocabulary/word-290.mp3"
+    },
+    {
+      "chinese": "你在聽音樂嗎？你想聽哪國的音樂？",
+      "pinyin": "Nǐ zài tīng yīnyuè ma? Nǐ xiǎng tīng nǎ guó de yīnyuè?",
+      "english": "Are you listening to music? Which country’s music would you like to hear?",
+      "audio": "audio/vocabulary/word-291.mp3"
+    },
+    {
+      "chinese": "你每天都在家裡吃晚餐嗎？不在家吃的時候，你在哪裡吃？",
+      "pinyin": "Nǐ měitiān dōu zài jiālǐ chī wǎncān ma? Bú zài jiā chī de shíhou, nǐ zài nǎlǐ chī?",
+      "english": "Do you eat dinner at home every day? When you do not eat at home, where do you eat?",
+      "audio": "audio/vocabulary/word-292.mp3"
+    },
+    {
+      "chinese": "你喜歡看籃球比賽，還是打籃球？為什麼？",
+      "pinyin": "Nǐ xǐhuan kàn lánqiú bǐsài, háishi dǎ lánqiú? Wèishénme?",
+      "english": "Do you prefer watching basketball games or playing basketball? Why?",
+      "audio": "audio/vocabulary/word-293.mp3"
+    },
+    {
+      "chinese": "你每天都上中文課嗎？不上中文課的時候，你做什麼？",
+      "pinyin": "Nǐ měitiān dōu shàng Zhōngwén kè ma? Bú shàng Zhōngwén kè de shíhou, nǐ zuò shénme?",
+      "english": "Do you attend Chinese class every day? What do you do when you do not have Chinese class?",
+      "audio": "audio/vocabulary/word-294.mp3"
+    },
+    {
+      "chinese": "你會唱哪國的歌？唱得怎麼樣？你想學唱哪國的歌？",
+      "pinyin": "Nǐ huì chàng nǎ guó de gē? Chàng de zěnmeyàng? Nǐ xiǎng xué chàng nǎ guó de gē?",
+      "english": "Which country’s songs can you sing? How well do you sing them? Which country’s songs would you like to learn?",
+      "audio": "audio/vocabulary/word-295.mp3"
+    },
+    {
+      "chinese": "你晚上常從幾點到幾點上網？在家裡還是在圖書館？",
+      "pinyin": "Nǐ wǎnshang cháng cóng jǐ diǎn dào jǐ diǎn shàngwǎng? Zài jiālǐ háishi zài túshūguǎn?",
+      "english": "From what time until what time do you usually use the internet at night? At home or in the library?",
+      "audio": "audio/vocabulary/word-296.mp3"
+    },
+    {
+      "chinese": "你可以在圖書館裡面喝咖啡嗎？你想在哪裡喝咖啡？",
+      "pinyin": "Nǐ kěyǐ zài túshūguǎn lǐmiàn hē kāfēi ma? Nǐ xiǎng zài nǎlǐ hē kāfēi?",
+      "english": "May you drink coffee inside the library? Where would you like to drink coffee?",
+      "audio": "audio/vocabulary/word-297.mp3"
+    },
+    {
+      "chinese": "你想學書法嗎？想什麼時候學？在哪裡學？",
+      "pinyin": "Nǐ xiǎng xué shūfǎ ma? Xiǎng shénme shíhou xué? Zài nǎlǐ xué?",
+      "english": "Would you like to learn calligraphy? When would you like to learn it? Where would you study it?",
+      "audio": "audio/vocabulary/word-298.mp3"
+    }
+  ]
+}

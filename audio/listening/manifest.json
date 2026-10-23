@@ -1,0 +1,864 @@
+{
+  "provider": "ElevenLabs",
+  "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+  "modelId": "eleven_multilingual_v2",
+  "outputFormat": "mp3_44100_128",
+  "items": [
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "他們都會做甜點。",
+      "pinyin": "Tāmen dōu huì zuò tiándiǎn.",
+      "english": "They can all make desserts.",
+      "audio": "audio/listening/6-dialog1-example-01.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "你們學校很有名。",
+      "pinyin": "Nǐmen xuéxiào hěn yǒumíng.",
+      "english": "Your school is very famous.",
+      "audio": "audio/listening/6-dialog1-example-02.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "請問我的手機在不在你家？",
+      "pinyin": "Qǐngwèn wǒ de shǒujī zài bú zài nǐ jiā?",
+      "english": "May I ask whether my mobile phone is at your home?",
+      "audio": "audio/listening/6-dialog1-example-03.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "他常常到山上去運動。",
+      "pinyin": "Tā chángcháng dào shānshàng qù yùndòng.",
+      "english": "He often goes to the mountains to exercise.",
+      "audio": "audio/listening/6-dialog1-example-04.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "週末你想去哪裡？",
+      "pinyin": "Zhōumò nǐ xiǎng qù nǎlǐ?",
+      "english": "Where would you like to go this weekend?",
+      "audio": "audio/listening/6-dialog1-example-05.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "那家餐廳有一點遠，我不想去。",
+      "pinyin": "Nà jiā cāntīng yǒu yìdiǎn yuǎn, wǒ bù xiǎng qù.",
+      "english": "That restaurant is a little far away. I do not want to go.",
+      "audio": "audio/listening/6-dialog1-example-06.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "那裡有一家有名的咖啡店。",
+      "pinyin": "Nàlǐ yǒu yì jiā yǒumíng de kāfēidiàn.",
+      "english": "There is a famous coffee shop there.",
+      "audio": "audio/listening/6-dialog1-example-07.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "那裡的風景不錯，我們去那裡吧。",
+      "pinyin": "Nàlǐ de fēngjǐng búcuò, wǒmen qù nàlǐ ba.",
+      "english": "The scenery there is nice. Let’s go there.",
+      "audio": "audio/listening/6-dialog1-example-08.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "很多人都說我姐姐很美。",
+      "pinyin": "Hěn duō rén dōu shuō wǒ jiějie hěn měi.",
+      "english": "Many people say that my older sister is beautiful.",
+      "audio": "audio/listening/6-dialog1-example-09.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "那家店的前面常常有很多人。",
+      "pinyin": "Nà jiā diàn de qiánmiàn chángcháng yǒu hěn duō rén.",
+      "english": "There are often many people in front of that store.",
+      "audio": "audio/listening/6-dialog1-example-10.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "李小姐很喜歡看海。",
+      "pinyin": "Lǐ xiǎojiě hěn xǐhuan kàn hǎi.",
+      "english": "Miss Li really likes looking at the sea.",
+      "audio": "audio/listening/6-dialog1-example-11.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "你家在這家咖啡店的後面嗎？",
+      "pinyin": "Nǐ jiā zài zhè jiā kāfēidiàn de hòumiàn ma?",
+      "english": "Is your home behind this coffee shop?",
+      "audio": "audio/listening/6-dialog1-example-12.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "你覺得那裡的山美不美？",
+      "pinyin": "Nǐ juéde nàlǐ de shān měi bù měi?",
+      "english": "Do you think the mountains there are beautiful?",
+      "audio": "audio/listening/6-dialog1-example-13.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "那家店的牛肉麵真的很好吃。",
+      "pinyin": "Nà jiā diàn de niúròu miàn zhēnde hěn hǎochī.",
+      "english": "The beef noodles at that restaurant are really delicious.",
+      "audio": "audio/listening/6-dialog1-example-14.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "我一定要去吃。",
+      "pinyin": "Wǒ yídìng yào qù chī.",
+      "english": "I definitely have to go eat there.",
+      "audio": "audio/listening/6-dialog1-example-15.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "你覺得這個地方怎麼樣？",
+      "pinyin": "Nǐ juéde zhè ge dìfang zěnmeyàng?",
+      "english": "What do you think of this place?",
+      "audio": "audio/listening/6-dialog1-example-16.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "你爸爸媽媽現在在家嗎？",
+      "pinyin": "Nǐ bàba māma xiànzài zài jiā ma?",
+      "english": "Are your father and mother at home now?",
+      "audio": "audio/listening/6-dialog1-example-17.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "他家附近的山真的很漂亮。",
+      "pinyin": "Tā jiā fùjìn de shān zhēnde hěn piàoliang.",
+      "english": "The mountains near his home are really beautiful.",
+      "audio": "audio/listening/6-dialog1-example-18.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "他去樓下做什麼？",
+      "pinyin": "Tā qù lóuxià zuò shénme?",
+      "english": "What is he going downstairs to do?",
+      "audio": "audio/listening/6-dialog1-example-19.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "你們要去哪裡？",
+      "pinyin": "Nǐmen yào qù nǎlǐ?",
+      "english": "Where are you going?",
+      "audio": "audio/listening/6-dialog1-example-20.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "我們要去學校找王老師。",
+      "pinyin": "Wǒmen yào qù xuéxiào zhǎo Wáng lǎoshī.",
+      "english": "We are going to the school to find Teacher Wang.",
+      "audio": "audio/listening/6-dialog1-example-21.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "他沒有很多朋友。",
+      "pinyin": "Tā méiyǒu hěn duō péngyǒu.",
+      "english": "He does not have many friends.",
+      "audio": "audio/listening/6-dialog1-example-22.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "你明天早上要去學校上課嗎？",
+      "pinyin": "Nǐ míngtiān zǎoshang yào qù xuéxiào shàngkè ma?",
+      "english": "Are you going to school for class tomorrow morning?",
+      "audio": "audio/listening/6-dialog1-example-23.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "我朋友的家在花蓮。",
+      "pinyin": "Wǒ péngyǒu de jiā zài Huālián.",
+      "english": "My friend’s home is in Hualien.",
+      "audio": "audio/listening/6-dialog1-example-24.mp3"
+    },
+    {
+      "sourceKey": "6-dialog1",
+      "sourceLabel": "Lesson 6 · Dialog 1",
+      "chinese": "聽說你做飯做得很好，可以教我嗎？",
+      "pinyin": "Tīngshuō nǐ zuòfàn zuò de hěn hǎo, kěyǐ jiāo wǒ ma?",
+      "english": "I heard that you cook very well. Can you teach me?",
+      "audio": "audio/listening/6-dialog1-example-25.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "我家很近，來我家喝咖啡吧！",
+      "pinyin": "Wǒ jiā hěn jìn, lái wǒ jiā hē kāfēi ba!",
+      "english": "My home is nearby. Come to my home for coffee!",
+      "audio": "audio/listening/6-dialog2-example-01.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "好啊。",
+      "pinyin": "Hǎo a.",
+      "english": "Sure.",
+      "audio": "audio/listening/6-dialog2-example-02.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "老師的家在山上，很漂亮，可是不方便。",
+      "pinyin": "Lǎoshī de jiā zài shānshàng, hěn piàoliang, kěshì bù fāngbiàn.",
+      "english": "The teacher’s home is in the mountains. It is beautiful, but inconvenient.",
+      "audio": "audio/listening/6-dialog2-example-03.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "這裡的風景很美，我們在這裡照相吧。",
+      "pinyin": "Zhèlǐ de fēngjǐng hěn měi, wǒmen zài zhèlǐ zhàoxiàng ba.",
+      "english": "The scenery here is beautiful. Let’s take pictures here.",
+      "audio": "audio/listening/6-dialog2-example-04.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "那個學校的學生常來這家店喝咖啡、看書。",
+      "pinyin": "Nà ge xuéxiào de xuésheng cháng lái zhè jiā diàn hē kāfēi, kànshū.",
+      "english": "Students from that school often come to this shop to drink coffee and read.",
+      "audio": "audio/listening/6-dialog2-example-05.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "我和朋友想在那家餐廳吃飯。",
+      "pinyin": "Wǒ hàn péngyǒu xiǎng zài nà jiā cāntīng chīfàn.",
+      "english": "My friend and I would like to eat at that restaurant.",
+      "audio": "audio/listening/6-dialog2-example-06.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "我爸爸常做好吃的東西。",
+      "pinyin": "Wǒ bàba cháng zuò hǎochī de dōngxi.",
+      "english": "My father often makes delicious food.",
+      "audio": "audio/listening/6-dialog2-example-07.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "你哥哥在圖書館外面做什麼？",
+      "pinyin": "Nǐ gēge zài túshūguǎn wàimiàn zuò shénme?",
+      "english": "What is your older brother doing outside the library?",
+      "audio": "audio/listening/6-dialog2-example-08.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "這家牛肉麵店外面不好看，可是裡面很漂亮。",
+      "pinyin": "Zhè jiā niúròu miàn diàn wàimiàn bù hǎokàn, kěshì lǐmiàn hěn piàoliang.",
+      "english": "This beef noodle shop does not look nice outside, but it is beautiful inside.",
+      "audio": "audio/listening/6-dialog2-example-09.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "那家商店的東西很多也不貴，我朋友常去那裡買東西。",
+      "pinyin": "Nà jiā shāngdiàn de dōngxi hěn duō yě bú guì, wǒ péngyǒu cháng qù nàlǐ mǎi dōngxi.",
+      "english": "That store has many things and they are not expensive. My friend often goes there to shop.",
+      "audio": "audio/listening/6-dialog2-example-10.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "我家附近有很多餐廳，吃飯很方便，所以我不常自己做飯。",
+      "pinyin": "Wǒ jiā fùjìn yǒu hěn duō cāntīng, chīfàn hěn fāngbiàn, suǒyǐ wǒ bù cháng zìjǐ zuòfàn.",
+      "english": "There are many restaurants near my home, so eating is convenient and I do not often cook for myself.",
+      "audio": "audio/listening/6-dialog2-example-11.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "我覺得你們的宿舍很新也很漂亮。",
+      "pinyin": "Wǒ juéde nǐmen de sùshè hěn xīn yě hěn piàoliang.",
+      "english": "I think your dormitory is very new and beautiful.",
+      "audio": "audio/listening/6-dialog2-example-12.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "那家商店在二樓，不是在一樓。",
+      "pinyin": "Nà jiā shāngdiàn zài èr lóu, bú shì zài yì lóu.",
+      "english": "That store is on the second floor, not the first floor.",
+      "audio": "audio/listening/6-dialog2-example-13.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "張小姐想在那棟大樓的前面照相。",
+      "pinyin": "Zhāng xiǎojiě xiǎng zài nà dòng dàlóu de qiánmiàn zhàoxiàng.",
+      "english": "Miss Zhang wants to take a picture in front of that building.",
+      "audio": "audio/listening/6-dialog2-example-14.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "他家在這棟大樓的四樓。",
+      "pinyin": "Tā jiā zài zhè dòng dàlóu de sì lóu.",
+      "english": "His home is on the fourth floor of this building.",
+      "audio": "audio/listening/6-dialog2-example-15.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "聽說那個圖書館很美，我想去看看。",
+      "pinyin": "Tīngshuō nà ge túshūguǎn hěn měi, wǒ xiǎng qù kànkan.",
+      "english": "I heard that library is beautiful. I would like to go and see it.",
+      "audio": "audio/listening/6-dialog2-example-16.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "你們宿舍旁邊那家店的小籠包怎麼樣？",
+      "pinyin": "Nǐmen sùshè pángbiān nà jiā diàn de xiǎolóngbāo zěnmeyàng?",
+      "english": "How are the soup dumplings at the shop beside your dormitory?",
+      "audio": "audio/listening/6-dialog2-example-17.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "我們現在要去教室上課。",
+      "pinyin": "Wǒmen xiànzài yào qù jiàoshì shàngkè.",
+      "english": "We are going to the classroom for class now.",
+      "audio": "audio/listening/6-dialog2-example-18.mp3"
+    },
+    {
+      "sourceKey": "6-dialog2",
+      "sourceLabel": "Lesson 6 · Dialog 2",
+      "chinese": "那個游泳池常有很多人，所以我們不常去那裡游泳。",
+      "pinyin": "Nà ge yóuyǒngchí cháng yǒu hěn duō rén, suǒyǐ wǒmen bù cháng qù nàlǐ yóuyǒng.",
+      "english": "That swimming pool is often crowded, so we do not often go swimming there.",
+      "audio": "audio/listening/6-dialog2-example-19.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "他們明天早上十點要去打籃球。",
+      "pinyin": "Tāmen míngtiān zǎoshang shí diǎn yào qù dǎ lánqiú.",
+      "english": "They are going to play basketball at ten tomorrow morning.",
+      "audio": "audio/listening/7-dialog1-example-01.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "臺灣有很多KTV，在那裡可以唱歌，也可以吃東西。",
+      "pinyin": "Táiwān yǒu hěn duō KTV, zài nàlǐ kěyǐ chànggē, yě kěyǐ chī dōngxi.",
+      "english": "There are many KTVs in Taiwan. You can sing and also eat there.",
+      "audio": "audio/listening/7-dialog1-example-02.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我媽媽很喜歡唱歌。陳月美常唱中文歌。",
+      "pinyin": "Wǒ māma hěn xǐhuan chànggē. Chén Yuèměi cháng chàng Zhōngwén gē.",
+      "english": "My mother really likes singing. Chen Yuemei often sings Chinese songs.",
+      "audio": "audio/listening/7-dialog1-example-03.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我早上八點十分上課。",
+      "pinyin": "Wǒ zǎoshang bā diǎn shí fēn shàngkè.",
+      "english": "My class starts at 8:10 in the morning.",
+      "audio": "audio/listening/7-dialog1-example-04.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "明天我們幾點見面？",
+      "pinyin": "Míngtiān wǒmen jǐ diǎn jiànmiàn?",
+      "english": "What time will we meet tomorrow?",
+      "audio": "audio/listening/7-dialog1-example-05.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "晚上六點。",
+      "pinyin": "Wǎnshang liù diǎn.",
+      "english": "At six in the evening.",
+      "audio": "audio/listening/7-dialog1-example-06.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "田中從他們宿舍到圖書館去看書。",
+      "pinyin": "Tiánzhōng cóng tāmen sùshè dào túshūguǎn qù kànshū.",
+      "english": "Tianzhong goes from their dormitory to the library to read.",
+      "audio": "audio/listening/7-dialog1-example-07.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "月美和安同今天中午一起在學校餐廳吃飯。",
+      "pinyin": "Yuèměi hàn Āntóng jīntiān zhōngwǔ yìqǐ zài xuéxiào cāntīng chīfàn.",
+      "english": "Yuemei and Antong are eating together in the school restaurant at noon today.",
+      "audio": "audio/listening/7-dialog1-example-08.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "這個週末，我得在家做飯。",
+      "pinyin": "Zhè ge zhōumò, wǒ děi zài jiā zuòfàn.",
+      "english": "This weekend, I have to cook at home.",
+      "audio": "audio/listening/7-dialog1-example-09.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我們學校後面有一家銀行。",
+      "pinyin": "Wǒmen xuéxiào hòumiàn yǒu yì jiā yínháng.",
+      "english": "There is a bank behind our school.",
+      "audio": "audio/listening/7-dialog1-example-10.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "你明天什麼時候去銀行？",
+      "pinyin": "Nǐ míngtiān shénme shíhou qù yínháng?",
+      "english": "When are you going to the bank tomorrow?",
+      "audio": "audio/listening/7-dialog1-example-11.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "早上十一點。",
+      "pinyin": "Zǎoshang shíyī diǎn.",
+      "english": "At eleven in the morning.",
+      "audio": "audio/listening/7-dialog1-example-12.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我後天晚上想去看電影。",
+      "pinyin": "Wǒ hòutiān wǎnshang xiǎng qù kàn diànyǐng.",
+      "english": "I want to go see a movie the evening after tomorrow.",
+      "audio": "audio/listening/7-dialog1-example-13.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我和朋友常去大安圖書館看書。",
+      "pinyin": "Wǒ hàn péngyǒu cháng qù Dà’ān túshūguǎn kànshū.",
+      "english": "My friend and I often go to the Daan Library to read.",
+      "audio": "audio/listening/7-dialog1-example-14.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "下次你想什麼時候來臺灣？",
+      "pinyin": "Xià cì nǐ xiǎng shénme shíhou lái Táiwān?",
+      "english": "When would you like to come to Taiwan next time?",
+      "audio": "audio/listening/7-dialog1-example-15.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我們週末要去KTV唱歌，你一定要來。",
+      "pinyin": "Wǒmen zhōumò yào qù KTV chànggē, nǐ yídìng yào lái.",
+      "english": "We are going to sing at KTV this weekend. You must come.",
+      "audio": "audio/listening/7-dialog1-example-16.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "沒問題。",
+      "pinyin": "Méi wèntí.",
+      "english": "No problem.",
+      "audio": "audio/listening/7-dialog1-example-17.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我哥哥昨天來臺灣找我。",
+      "pinyin": "Wǒ gēge zuótiān lái Táiwān zhǎo wǒ.",
+      "english": "My older brother came to Taiwan to see me yesterday.",
+      "audio": "audio/listening/7-dialog1-example-18.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "真好。對了，他想學中文嗎？",
+      "pinyin": "Zhēn hǎo. Duì le, tā xiǎng xué Zhōngwén ma?",
+      "english": "That is great. By the way, does he want to learn Chinese?",
+      "audio": "audio/listening/7-dialog1-example-19.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "你什麼時候有空？我們去吃越南菜。",
+      "pinyin": "Nǐ shénme shíhou yǒu kòng? Wǒmen qù chī Yuènán cài.",
+      "english": "When are you free? Let’s go eat Vietnamese food.",
+      "audio": "audio/listening/7-dialog1-example-20.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "我後天中午有空。",
+      "pinyin": "Wǒ hòutiān zhōngwǔ yǒu kòng.",
+      "english": "I am free at noon the day after tomorrow.",
+      "audio": "audio/listening/7-dialog1-example-21.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "明天早上九點我們去打網球，怎麼樣？",
+      "pinyin": "Míngtiān zǎoshang jiǔ diǎn wǒmen qù dǎ wǎngqiú, zěnmeyàng?",
+      "english": "How about playing tennis at nine tomorrow morning?",
+      "audio": "audio/listening/7-dialog1-example-22.mp3"
+    },
+    {
+      "sourceKey": "7-dialog1",
+      "sourceLabel": "Lesson 7 · Dialog 1",
+      "chinese": "沒問題，再見。",
+      "pinyin": "Méi wèntí, zàijiàn.",
+      "english": "No problem. Goodbye.",
+      "audio": "audio/listening/7-dialog1-example-23.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你是哪國人？你現在在臺灣的家在哪裡？",
+      "pinyin": "Nǐ shì nǎ guó rén? Nǐ xiànzài zài Táiwān de jiā zài nǎlǐ?",
+      "english": "Which country are you from? Where is your current home in Taiwan?",
+      "audio": "audio/listening/midterm1-question-01.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你家前面有什麼？後面呢？",
+      "pinyin": "Nǐ jiā qiánmiàn yǒu shénme? Hòumiàn ne?",
+      "english": "What is in front of your home? What about behind it?",
+      "audio": "audio/listening/midterm1-question-02.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "從你家到學校遠不遠？方便不方便？",
+      "pinyin": "Cóng nǐ jiā dào xuéxiào yuǎn bù yuǎn? Fāngbiàn bù fāngbiàn?",
+      "english": "Is it far from your home to school? Is it convenient?",
+      "audio": "audio/listening/midterm1-question-03.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你家附近有咖啡店嗎？那家店在哪裡？",
+      "pinyin": "Nǐ jiā fùjìn yǒu kāfēidiàn ma? Nà jiā diàn zài nǎlǐ?",
+      "english": "Is there a coffee shop near your home? Where is that shop?",
+      "audio": "audio/listening/midterm1-question-04.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你常幾點到咖啡店去？在那裡做什麼？",
+      "pinyin": "Nǐ cháng jǐ diǎn dào kāfēidiàn qù? Zài nàlǐ zuò shénme?",
+      "english": "What time do you usually go to the coffee shop? What do you do there?",
+      "audio": "audio/listening/midterm1-question-05.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你中午常幾點吃飯？在哪裡吃？",
+      "pinyin": "Nǐ zhōngwǔ cháng jǐ diǎn chīfàn? Zài nǎlǐ chī?",
+      "english": "What time do you usually eat lunch? Where do you eat?",
+      "audio": "audio/listening/midterm1-question-06.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "那家餐廳的什麼最好吃？一碗或一個多少錢？",
+      "pinyin": "Nà jiā cāntīng de shénme zuì hǎochī? Yì wǎn huò yí ge duōshao qián?",
+      "english": "What is the most delicious thing at that restaurant? How much is one bowl or one item?",
+      "audio": "audio/listening/midterm1-question-07.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你週末從幾點到幾點有空？有空的時候喜歡做什麼？",
+      "pinyin": "Nǐ zhōumò cóng jǐ diǎn dào jǐ diǎn yǒu kòng? Yǒu kòng de shíhou xǐhuan zuò shénme?",
+      "english": "From what time until what time are you free on weekends? What do you like doing when you are free?",
+      "audio": "audio/listening/midterm1-question-08.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "我們的教室在幾樓？教室外面有什麼？",
+      "pinyin": "Wǒmen de jiàoshì zài jǐ lóu? Jiàoshì wàimiàn yǒu shénme?",
+      "english": "Which floor is our classroom on? What is outside the classroom?",
+      "audio": "audio/listening/midterm1-question-09.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "學校的圖書館在哪裡？旁邊有什麼？",
+      "pinyin": "Xuéxiào de túshūguǎn zài nǎlǐ? Pángbiān yǒu shénme?",
+      "english": "Where is the school library? What is beside it?",
+      "audio": "audio/listening/midterm1-question-10.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你今天從幾點到幾點上中文課？在哪裡上課？",
+      "pinyin": "Nǐ jīntiān cóng jǐ diǎn dào jǐ diǎn shàng Zhōngwén kè? Zài nǎlǐ shàngkè?",
+      "english": "From what time until what time do you have Chinese class today? Where do you have class?",
+      "audio": "audio/listening/midterm1-question-11.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你喜歡在學校做什麼？常什麼時候做？",
+      "pinyin": "Nǐ xǐhuan zài xuéxiào zuò shénme? Cháng shénme shíhou zuò?",
+      "english": "What do you like doing at school? When do you usually do it?",
+      "audio": "audio/listening/midterm1-question-12.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你常到哪家商店買東西？那家店在哪裡？",
+      "pinyin": "Nǐ cháng dào nǎ jiā shāngdiàn mǎi dōngxi? Nà jiā diàn zài nǎlǐ?",
+      "english": "Which store do you often go to for shopping? Where is that store?",
+      "audio": "audio/listening/midterm1-question-13.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你喜歡唱歌嗎？會不會唱中文歌？",
+      "pinyin": "Nǐ xǐhuan chànggē ma? Huì bú huì chàng Zhōngwén gē?",
+      "english": "Do you like singing? Can you sing Chinese songs?",
+      "audio": "audio/listening/midterm1-question-14.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你明天晚上有空嗎？想不想一起到學校附近吃飯？",
+      "pinyin": "Nǐ míngtiān wǎnshang yǒu kòng ma? Xiǎng bù xiǎng yìqǐ dào xuéxiào fùjìn chīfàn?",
+      "english": "Are you free tomorrow evening? Would you like to eat together near the school?",
+      "audio": "audio/listening/midterm1-question-15.mp3"
+    },
+    {
+      "sourceKey": "midterm1",
+      "sourceLabel": "Mid Term Questions 1",
+      "chinese": "你後天什麼時候有空？想去哪裡？我們幾點在哪裡見面？",
+      "pinyin": "Nǐ hòutiān shénme shíhou yǒu kòng? Xiǎng qù nǎlǐ? Wǒmen jǐ diǎn zài nǎlǐ jiànmiàn?",
+      "english": "When are you free the day after tomorrow? Where would you like to go? What time and where should we meet?",
+      "audio": "audio/listening/midterm1-question-16.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你想買一本書，要到哪裡買？那個地方在學校裡面還是外面？",
+      "pinyin": "Nǐ xiǎng mǎi yì běn shū, yào dào nǎlǐ mǎi? Nà ge dìfang zài xuéxiào lǐmiàn háishi wàimiàn?",
+      "english": "You want to buy a book. Where should you go to buy it? Is that place inside or outside the school?",
+      "audio": "audio/listening/midterm2-question-01.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你不想在宿舍吃飯，想到哪裡吃？那家餐廳的旁邊有什麼？",
+      "pinyin": "Nǐ bù xiǎng zài sùshè chīfàn, xiǎng dào nǎlǐ chī? Nà jiā cāntīng de pángbiān yǒu shénme?",
+      "english": "You do not want to eat in the dormitory. Where would you like to eat? What is beside that restaurant?",
+      "audio": "audio/listening/midterm2-question-02.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "學校的游泳池在哪裡？附近有沒有商店或餐廳？",
+      "pinyin": "Xuéxiào de yóuyǒngchí zài nǎlǐ? Fùjìn yǒu méiyǒu shāngdiàn huò cāntīng?",
+      "english": "Where is the school swimming pool? Are there any stores or restaurants nearby?",
+      "audio": "audio/listening/midterm2-question-03.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "朋友到學校找你，你想在哪裡和他見面？為什麼？",
+      "pinyin": "Péngyǒu dào xuéxiào zhǎo nǐ, nǐ xiǎng zài nǎlǐ hàn tā jiànmiàn? Wèishénme?",
+      "english": "A friend comes to school to meet you. Where would you like to meet them? Why?",
+      "audio": "audio/listening/midterm2-question-04.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你常去的商店裡面有什麼？你想在那裡買什麼？",
+      "pinyin": "Nǐ cháng qù de shāngdiàn lǐmiàn yǒu shénme? Nǐ xiǎng zài nàlǐ mǎi shénme?",
+      "english": "What is inside the store you often visit? What would you like to buy there?",
+      "audio": "audio/listening/midterm2-question-05.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "有個學校在山上，附近沒有商店和餐廳。你想去那裡上課嗎？為什麼？",
+      "pinyin": "Yǒu ge xuéxiào zài shānshàng, fùjìn méiyǒu shāngdiàn hàn cāntīng. Nǐ xiǎng qù nàlǐ shàngkè ma? Wèishénme?",
+      "english": "There is a school in the mountains with no stores or restaurants nearby. Would you like to attend class there? Why?",
+      "audio": "audio/listening/midterm2-question-06.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你想在咖啡店教朋友中文，還是在家裡教？為什麼？",
+      "pinyin": "Nǐ xiǎng zài kāfēidiàn jiāo péngyǒu Zhōngwén, háishi zài jiālǐ jiāo? Wèishénme?",
+      "english": "Would you prefer to teach your friend Chinese in a coffee shop or at home? Why?",
+      "audio": "audio/listening/midterm2-question-07.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "教室裡面，老師的前面有什麼？後面有什麼？",
+      "pinyin": "Jiàoshì lǐmiàn, lǎoshī de qiánmiàn yǒu shénme? Hòumiàn yǒu shénme?",
+      "english": "Inside the classroom, what is in front of the teacher? What is behind the teacher?",
+      "audio": "audio/listening/midterm2-question-08.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "朋友想看看學校的風景，你想帶他去哪個地方？那裡有什麼？",
+      "pinyin": "Péngyǒu xiǎng kànkan xuéxiào de fēngjǐng, nǐ xiǎng dài tā qù nǎ ge dìfang? Nàlǐ yǒu shénme?",
+      "english": "Your friend wants to see the school scenery. Where would you take them? What is there?",
+      "audio": "audio/listening/midterm2-question-09.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你常去的咖啡店在大樓裡面還是外面？你覺得那裡怎麼樣？",
+      "pinyin": "Nǐ cháng qù de kāfēidiàn zài dàlóu lǐmiàn háishi wàimiàn? Nǐ juéde nàlǐ zěnmeyàng?",
+      "english": "Is the coffee shop you often visit inside or outside a building? What do you think of that place?",
+      "audio": "audio/listening/midterm2-question-10.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "學校附近的餐廳，有的很有名，有的很便宜。你想去哪家吃飯？為什麼？",
+      "pinyin": "Xuéxiào fùjìn de cāntīng, yǒude hěn yǒumíng, yǒude hěn piányí. Nǐ xiǎng qù nǎ jiā chīfàn? Wèishénme?",
+      "english": "Some restaurants near the school are famous, while others are inexpensive. Which one would you like to eat at? Why?",
+      "audio": "audio/listening/midterm2-question-11.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你喜歡在圖書館裡面還是外面看書？為什麼？",
+      "pinyin": "Nǐ xǐhuan zài túshūguǎn lǐmiàn háishi wàimiàn kànshū? Wèishénme?",
+      "english": "Do you prefer reading inside or outside the library? Why?",
+      "audio": "audio/listening/midterm2-question-12.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "現在幾點幾分？今天的中文課幾點結束？",
+      "pinyin": "Xiànzài jǐ diǎn jǐ fēn? Jīntiān de Zhōngwén kè jǐ diǎn jiéshù?",
+      "english": "What time is it now? What time does today’s Chinese class end?",
+      "audio": "audio/listening/midterm2-question-13.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你的朋友想早上九點去KTV，你覺得怎麼樣？你想和他一起去嗎？為什麼？",
+      "pinyin": "Nǐ de péngyǒu xiǎng zǎoshang jiǔ diǎn qù KTV, nǐ juéde zěnmeyàng? Nǐ xiǎng hàn tā yìqǐ qù ma? Wèishénme?",
+      "english": "Your friend wants to go to KTV at nine in the morning. What do you think? Would you like to go together? Why?",
+      "audio": "audio/listening/midterm2-question-14.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你今天四點半有空一起打球嗎？你今天得做什麼？",
+      "pinyin": "Nǐ jīntiān sì diǎn bàn yǒu kòng yìqǐ dǎqiú ma? Nǐ jīntiān děi zuò shénme?",
+      "english": "Are you free to play ball together at 4:30 today? What do you have to do today?",
+      "audio": "audio/listening/midterm2-question-15.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "我晚上七點想和你一起吃飯，你有空嗎？你從幾點到幾點有空？",
+      "pinyin": "Wǒ wǎnshang qī diǎn xiǎng hàn nǐ yìqǐ chīfàn, nǐ yǒu kòng ma? Nǐ cóng jǐ diǎn dào jǐ diǎn yǒu kòng?",
+      "english": "I would like to eat with you at seven tonight. Are you free? From what time until what time are you free?",
+      "audio": "audio/listening/midterm2-question-16.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你在聽音樂嗎？你想聽哪國的音樂？",
+      "pinyin": "Nǐ zài tīng yīnyuè ma? Nǐ xiǎng tīng nǎ guó de yīnyuè?",
+      "english": "Are you listening to music? Which country’s music would you like to hear?",
+      "audio": "audio/listening/midterm2-question-17.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你每天都在家裡吃晚餐嗎？不在家吃的時候，你在哪裡吃？",
+      "pinyin": "Nǐ měitiān dōu zài jiālǐ chī wǎncān ma? Bú zài jiā chī de shíhou, nǐ zài nǎlǐ chī?",
+      "english": "Do you eat dinner at home every day? When you do not eat at home, where do you eat?",
+      "audio": "audio/listening/midterm2-question-18.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你喜歡看籃球比賽，還是打籃球？為什麼？",
+      "pinyin": "Nǐ xǐhuan kàn lánqiú bǐsài, háishi dǎ lánqiú? Wèishénme?",
+      "english": "Do you prefer watching basketball games or playing basketball? Why?",
+      "audio": "audio/listening/midterm2-question-19.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你每天都上中文課嗎？不上中文課的時候，你做什麼？",
+      "pinyin": "Nǐ měitiān dōu shàng Zhōngwén kè ma? Bú shàng Zhōngwén kè de shíhou, nǐ zuò shénme?",
+      "english": "Do you attend Chinese class every day? What do you do when you do not have Chinese class?",
+      "audio": "audio/listening/midterm2-question-20.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你會唱哪國的歌？唱得怎麼樣？你想學唱哪國的歌？",
+      "pinyin": "Nǐ huì chàng nǎ guó de gē? Chàng de zěnmeyàng? Nǐ xiǎng xué chàng nǎ guó de gē?",
+      "english": "Which country’s songs can you sing? How well do you sing them? Which country’s songs would you like to learn?",
+      "audio": "audio/listening/midterm2-question-21.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你晚上常從幾點到幾點上網？在家裡還是在圖書館？",
+      "pinyin": "Nǐ wǎnshang cháng cóng jǐ diǎn dào jǐ diǎn shàngwǎng? Zài jiālǐ háishi zài túshūguǎn?",
+      "english": "From what time until what time do you usually use the internet at night? At home or in the library?",
+      "audio": "audio/listening/midterm2-question-22.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你可以在圖書館裡面喝咖啡嗎？你想在哪裡喝咖啡？",
+      "pinyin": "Nǐ kěyǐ zài túshūguǎn lǐmiàn hē kāfēi ma? Nǐ xiǎng zài nǎlǐ hē kāfēi?",
+      "english": "May you drink coffee inside the library? Where would you like to drink coffee?",
+      "audio": "audio/listening/midterm2-question-23.mp3"
+    },
+    {
+      "sourceKey": "midterm2",
+      "sourceLabel": "Mid Term Questions 2",
+      "chinese": "你想學書法嗎？想什麼時候學？在哪裡學？",
+      "pinyin": "Nǐ xiǎng xué shūfǎ ma? Xiǎng shénme shíhou xué? Zài nǎlǐ xué?",
+      "english": "Would you like to learn calligraphy? When would you like to learn it? Where would you study it?",
+      "audio": "audio/listening/midterm2-question-24.mp3"
+    }
+  ]
+}
