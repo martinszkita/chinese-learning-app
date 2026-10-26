@@ -1,4 +1,4 @@
-# Chinese Exam Prep — Lessons 1–7
+# Chinese Exam Prep — Lessons 1–8
 
 Open `index.html` in a browser. No installation or internet access needed.
 
@@ -80,3 +80,5 @@ node scripts/generate-elevenlabs-audio.mjs
 ```
 
 Use `--scope=listening` or `--scope=vocabulary` to generate one group at a time. Re-running the command resumes missing files; add `--force` only when every existing MP3 should be replaced. The generator reads shell variables first, then `.env.local`, then `.env`; both environment files are ignored by Git. George uses voice ID `JBFqnCBsd6RMkjVDRZzb`.
+
+Lesson 8 · Dialog 1 includes the scanned dialogue, vocabulary and textbook examples. Its audio is generated locally with the Mandarin Meijia voice and stored in `audio/lesson8/`. Listening grades advance immediately; saved progress stores the latest status and cumulative learned/not-learned counts, while buttons stay neutral on revisits.

@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -24,8 +25,8 @@ const dryRun = process.argv.includes('--dry-run');
 const outputFormat = 'mp3_44100_128';
 const scopes = scope === 'all' ? ['listening', 'vocabulary'] : [scope];
 
-if (!['all', 'listening', 'vocabulary'].includes(scope)) {
-  throw new Error('Use --scope=all, --scope=listening, or --scope=vocabulary.');
+if (!['all', 'listening', 'vocabulary', 'lesson8'].includes(scope)) {
+  throw new Error('Use --scope=all, --scope=listening, --scope=vocabulary, or --scope=lesson8.');
 }
 if (!dryRun && !apiKey) throw new Error('Missing ELEVENLABS_API_KEY. Add it to .env.local or your shell environment.');
 if (!dryRun && !voiceId) throw new Error('Missing ELEVENLABS_VOICE_ID. Add it to .env.local or pass --voice-id=...');
@@ -51,7 +52,12 @@ async function createSpeech(text) {
         }
       })
     });
-    if (response.ok) return Buffer.from(await response.arrayBuffer());
+    if (response.ok) {
+      if (!response.headers.get('content-type')?.includes('audio/')) throw new Error('ElevenLabs did not return audio.');
+      const audio = Buffer.from(await response.arrayBuffer());
+      if (audio.length < 1000) throw new Error('ElevenLabs returned incomplete audio.');
+      return audio;
+    }
     const details = (await response.text()).slice(0, 500);
     if (attempt === 4 || (response.status !== 429 && response.status < 500)) {
       throw new Error(`ElevenLabs returned ${response.status}: ${details}`);
@@ -63,6 +69,16 @@ async function createSpeech(text) {
 
 function loadManifest(name) {
   const manifestPath = path.join(repoRoot, 'audio', name, 'manifest.json');
+  if (name === 'lesson8') {
+    const context = vm.createContext({ window: {} });
+    vm.runInContext(fs.readFileSync(path.join(repoRoot, 'lesson8/dialog1/data.js'), 'utf8'), context);
+    const lesson = context.window.CHINESE_LESSONS['8-dialog1'];
+    const items = ['words', 'examples'].flatMap((kind) => lesson[kind].map((item) => ({
+      chinese: item.chinese, pinyin: item.pinyin, english: item.english,
+      audio: item.audio, sourceKey: '8-dialog1', kind
+    })));
+    return { manifestPath, data: { items } };
+  }
   return { manifestPath, data: JSON.parse(fs.readFileSync(manifestPath, 'utf8')) };
 }
 
@@ -89,6 +105,7 @@ for (const name of scopes) {
       continue;
     }
     const audio = await createSpeech(item.chinese);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     const temporaryPath = `${outputPath}.tmp`;
     fs.writeFileSync(temporaryPath, audio);
     fs.renameSync(temporaryPath, outputPath);

@@ -2,7 +2,7 @@
   const database = window.CHINESE_LESSONS || {};
   const midterms = window.CHINESE_MIDTERMS || {};
   const audioExtension = window.CHINESE_AUDIO_EXTENSION === 'mp3' ? 'mp3' : 'm4a';
-  const lessonCount = 7;
+  const lessonCount = 8;
   let currentLesson = 'home';
   let currentPart = 'dialog1';
   let expandedLesson = null;
@@ -11,7 +11,50 @@
   const rowHintState = {};
   const openState = {};
   const quizState = { index: 0, flipped: false, unansweredOnly: false, needsViewRecord: false, answered: null, currentChinese: null, advanceTimer: null, order: [], sourceKeys: null };
-  const listeningState = { kind: 'sentences', sourceKey: 'all', index: 0, rate: 1, revealStage: 0, transitionDirection: 0 };
+  const listeningState = { unlearnedOnly: false, kind: 'sentences', sourceKey: 'all', index: 0, rate: 1, revealStage: 0, transitionDirection: 0 };
+  const listeningProgressKey = 'chinese-listening-progress-v1';
+  const listeningProgress = (() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(listeningProgressKey) || '{}');
+      return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
+    } catch { return {}; }
+  })();
+  function getListeningStatus(chinese) {
+    const entry = listeningProgress[chinese];
+    return typeof entry === 'string' ? entry : entry?.status;
+  }
+
+  function gradeListeningItem(status) {
+    const before = getListeningItems();
+    const item = before[listeningState.index];
+    if (!item || !['learned', 'unlearned'].includes(status)) return;
+    const previous = listeningProgress[item.chinese];
+    const stats = previous && typeof previous === 'object' ? previous : {};
+    const attempts = Number(stats.attempts) || 0;
+    listeningProgress[item.chinese] = {
+      status, attempts: attempts + 1,
+      learned: (Number(stats.learned) || 0) + (status === 'learned' ? 1 : 0),
+      unlearned: (Number(stats.unlearned) || 0) + (status === 'unlearned' ? 1 : 0)
+    };
+    try { localStorage.setItem(listeningProgressKey, JSON.stringify(listeningProgress)); }
+    catch {
+      if (previous === undefined) delete listeningProgress[item.chinese];
+      else listeningProgress[item.chinese] = previous;
+      window.alert('Learning status could not be saved. Please check browser storage.');
+      return;
+    }
+    const remaining = getListeningItems();
+    // When the filter removes this card, its successor takes the same index.
+    const removed = listeningState.unlearnedOnly && status === 'learned';
+    listeningState.index = remaining.length ? (listeningState.index + (removed ? 0 : 1)) % remaining.length : 0;
+    listeningState.transitionDirection = 1;
+    resetListeningHints();
+    drawListening();
+  }
+
+  function renderListeningProgressFilter() {
+    return `<section class="listening-control-card"><label class="setting-row"><span><strong>Only not learned yet</strong><small>Hide recordings marked as learned</small></span><input type="checkbox" data-listening-unlearned ${listeningState.unlearnedOnly ? 'checked' : ''}><span class="setting-switch" aria-hidden="true"></span></label></section>`;
+  }
   const quizStatsStorageKey = 'chinese-exam-quiz-stats-v3';
   const settingsStorageKey = 'chinese-exam-settings-v1';
   const vocabularyFilterState = Object.fromEntries([
@@ -286,13 +329,17 @@
       panel.insertAdjacentHTML('beforeend', controls);
     }
     const settings = currentLesson === 'listening'
-      ? renderSetting('listeningChinese', 'Show Chinese by default', 'Display Chinese characters when opening a recording.')
+      ? renderSetting('listeningChinese', 'Show Chinese by default', 'Display Chinese characters when opening a recording.') + renderListeningProgressFilter()
       : currentLesson === 'quiz'
       ? renderSetting('autoAdvance', 'Automatic next card', 'Continue after choosing OK or X.')
       : currentLesson === 'vocabulary'
       ? renderSetting('listPinyin', 'Show Pinyin by default', 'Reveal pronunciation in the word list.') + renderSetting('listEnglish', 'Show English by default', 'Reveal meanings in the word list.')
       : `<p class="mode-description">${currentLesson === 'home' ? 'Choose a mode above or study material on the left. Its controls will appear here.' : currentLesson === 'reading' ? 'Choose a passage below and read at your own pace.' : 'Click a sentence to reveal Pinyin and English. Use Hide all hints to practise without help.'}</p>`;
     panel.insertAdjacentHTML('afterbegin', `<section class="settings-card">${settings}</section>`);
+    if (currentLesson === 'quiz') {
+      const switches = panel.querySelector('.quiz-switches');
+      if (switches) panel.querySelector('.settings-card').append(switches);
+    }
   }
 
   function drawContent() {
@@ -396,7 +443,7 @@
     const listeningAudio = new Map(collectListeningItems().map((item) => [item.chinese, item.audio]));
     const result = vocabulary.map((item, index) => ({
       ...item,
-      audio: listeningAudio.get(item.chinese) || `audio/vocabulary/word-${String(index + 1).padStart(3, '0')}.${audioExtension}`
+      audio: item.audio || listeningAudio.get(item.chinese) || `audio/vocabulary/word-${String(index + 1).padStart(3, '0')}.${audioExtension}`
     }));
     personalList.items.forEach((item) => {
       const existing = result.find((word) => word.chinese === item.chinese);
@@ -438,7 +485,7 @@
     ].map((filter) => `<label class="vocabulary-filter"><input type="checkbox" data-vocabulary-filter="${filter.key}" ${vocabularyFilterState[filter.key] ? 'checked' : ''}><span>${filter.label}</span></label>`).join('');
     document.getElementById('lessonTitle').textContent = 'All words & expressions';
     hintState[key] ||= { pinyin: appSettings.listPinyin, english: appSettings.listEnglish };
-    content.innerHTML = `<section class="midterm-intro"><div class="subtle">LESSONS 1–7 + MIDTERM QUESTIONS · MASTER VOCABULARY</div><p>Showing ${filteredWords.length} of ${words.length} unique words and expressions. Multi-character expressions stay together; a component is listed separately only when it also appears as an independent vocabulary item.</p></section><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-filter-actions"><button type="button" class="filter-action" data-vocabulary-select="all">Select all</button><button type="button" class="filter-action" data-vocabulary-select="none">Clear all</button><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls"><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(personalList.name)} (${personalList.items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(personalList.name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${filteredWords.length ? renderWords(filteredWords, key, { showStats: true }) : `<div class="empty">${personalListOnly ? 'Your list is empty. Save words or sentences from lessons or Listening.' : 'Select at least one lesson or mid-term.'}</div>`}</section>`;
+    content.innerHTML = `<section class="midterm-intro"><div class="subtle">LESSONS 1–8 + MIDTERM QUESTIONS · MASTER VOCABULARY</div><p>Showing ${filteredWords.length} of ${words.length} unique words and expressions. Multi-character expressions stay together; a component is listed separately only when it also appears as an independent vocabulary item.</p></section><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-filter-actions"><button type="button" class="filter-action" data-vocabulary-select="all">Select all</button><button type="button" class="filter-action" data-vocabulary-select="none">Clear all</button><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls"><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(personalList.name)} (${personalList.items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(personalList.name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${filteredWords.length ? renderWords(filteredWords, key, { showStats: true }) : `<div class="empty">${personalListOnly ? 'Your list is empty. Save words or sentences from lessons or Listening.' : 'Select at least one lesson or mid-term.'}</div>`}</section>`;
   }
 
   function renderSetting(key, title, description) {
@@ -471,8 +518,8 @@
             sourceKey,
             sourceLabel,
             sourceIndex: index + 1,
-            voice: 'George',
-            audio: `audio/listening/${sourceKey}-example-${String(index + 1).padStart(2, '0')}.${audioExtension}`
+            voice: item.voice || 'George',
+            audio: item.audio || `audio/listening/${sourceKey}-example-${String(index + 1).padStart(2, '0')}.${audioExtension}`
           });
         });
       }
@@ -511,14 +558,14 @@
           sources: word.sources.filter((source) => source.startsWith('lesson')),
           sourceLabel: word.sources.filter((source) => source.startsWith('lesson')).map((source) => `Lesson ${source.slice(6)}`).join(' · '),
           sourceIndex: index + 1,
-          voice: 'George'
+          voice: word.voice || 'George'
         }));
     }
     return collectListeningItems().map((item) => ({ ...item, sources: [item.sourceKey] }));
   }
 
   function getListeningItems() {
-    const items = getListeningPool();
+    const items = getListeningPool().filter((item) => !listeningState.unlearnedOnly || getListeningStatus(item.chinese) !== 'learned');
     return listeningState.sourceKey === 'all'
       ? items
       : items.filter((item) => item.sources.includes(listeningState.sourceKey));
@@ -577,18 +624,18 @@
     ].join('');
     document.getElementById('lessonTitle').textContent = 'Listening practice';
     if (!item) {
-      content.innerHTML = '<section class="listening-panel"><div class="empty">No listening material is available for this source.</div></section>';
+      content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="empty">No recordings left to learn in this source. Turn off the filter to see learned recordings.</div></section><aside class="listening-controls"><section class="listening-control-card"><div class="listening-kind">${kindButtons}</div><label class="listening-source">Choose material<select data-listening-source>${sourceOptions}</select></label></section></aside></div>`;
       drawModeSettings();
       return;
     }
-    const rateButtons = [0.75, 1, 1.25].map((rate) => `<button type="button" class="listening-rate ${listeningState.rate === rate ? 'active' : ''}" data-listening-rate="${rate}" aria-pressed="${listeningState.rate === rate}">${rate}×</button>`).join('');
+
     const revealLabel = listeningState.revealStage === 0 ? 'Show Chinese' : listeningState.revealStage === 1 ? 'Show Pinyin and English translation' : 'Hide answer';
     const revealedAnswer = listeningState.revealStage === 0
       ? '<span class="listening-hidden">Listen first, then click to reveal the Chinese text</span>'
       : `<span class="listening-hanzi" lang="zh-Hant">${renderListeningWords(item)}</span>${listeningState.revealStage === 2 ? `<span class="listening-pinyin" lang="zh-Latn-pinyin">${escapeHtml(item.pinyin)}</span><span class="listening-english" lang="en">${escapeHtml(item.english)}</span>` : ''}`;
     const transitionClass = listeningState.transitionDirection > 0 ? 'listening-slide-next' : listeningState.transitionDirection < 0 ? 'listening-slide-previous' : '';
     listeningState.transitionDirection = 0;
-    content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="listening-card-frame ${transitionClass}"><div class="listening-card-meta"><span class="quiz-scope">${escapeHtml(item.sourceLabel)} · ${item.sourceIndex}</span><span class="listening-voice-badge">Voice · ${escapeHtml(item.voice)}</span></div><div class="quiz-progress"><strong>${listeningState.index + 1}</strong> / ${items.length}<span>Press the speaker or Space to play</span></div><div class="listening-flash-stage"><button type="button" class="quiz-arrow" data-listening-nav="-1" aria-label="Previous recording" ${listeningState.index === 0 ? 'disabled' : ''}>←</button><div class="listening-stage-center"><button type="button" class="listening-play-button" data-listening-play aria-label="Play recording">${renderSpeakerIcon()}<span>Play recording</span></button><audio preload="metadata" data-listening-audio src="${encodeURI(item.audio)}">Your browser does not support audio playback.</audio></div><button type="button" class="quiz-arrow" data-listening-nav="1" aria-label="Next recording" ${listeningState.index === items.length - 1 ? 'disabled' : ''}>→</button></div><div role="button" tabindex="0" class="listening-answer-card stage-${listeningState.revealStage}" data-listening-reveal aria-label="${revealLabel}"><span class="listening-answer-action">${revealLabel}</span><span class="listening-answer-content">${revealedAnswer}</span></div><section class="listening-word-menu" data-listening-word-menu hidden aria-label="Selected word" aria-live="polite"></section><div class="listening-save">${renderSaveButton(item)}</div></div></section><aside class="listening-controls" aria-label="Listening settings"><section class="listening-control-card"><span class="listening-control-title">Material</span><div class="listening-kind" role="group" aria-label="Listening material type">${kindButtons}</div><label class="listening-source"><span>Choose material</span><select data-listening-source>${sourceOptions}</select></label><button type="button" class="toggle listening-random" data-listening-random ${items.length < 2 ? 'disabled' : ''}>Shuffle · Random ${listeningState.kind === 'words' ? 'word / expression' : 'sentence'}</button></section><section class="listening-control-card"><span class="listening-control-title">Recording voice</span><div class="listening-voice-detail"><strong>${escapeHtml(item.voice)}</strong><span>ElevenLabs · Mandarin</span></div></section><section class="listening-control-card"><span class="listening-control-title">Playback speed</span><div class="listening-speed" role="group" aria-label="Playback speed">${rateButtons}</div></section><section class="listening-control-card listening-shortcuts"><span class="listening-control-title">Keyboard</span><div><kbd>Space</kbd><span>Play / pause</span></div><div><kbd>←</kbd><kbd>→</kbd><span>Previous / next</span></div><div><kbd>↑</kbd><span>Reveal answer</span></div></section></aside></div>`;
+    content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="listening-card-frame ${transitionClass}"><div class="listening-card-meta"><span class="quiz-scope">${escapeHtml(item.sourceLabel)} · ${item.sourceIndex}</span><span class="listening-voice-badge">Voice · ${escapeHtml(item.voice)}</span></div><div class="quiz-progress"><strong>${listeningState.index + 1}</strong> / ${items.length}<span>Press the speaker or Space to play</span></div><div class="listening-flash-stage"><button type="button" class="quiz-arrow" data-listening-nav="-1" aria-label="Previous recording" ${listeningState.index === 0 ? 'disabled' : ''}>←</button><div class="listening-stage-center"><button type="button" class="listening-play-button" data-listening-play aria-label="Play recording">${renderSpeakerIcon()}<span>Play recording</span></button><button type="button" class="listening-slow" data-listening-slow aria-label="Play slowly at 0.75 speed" title="Play slowly · 0.75×"><span aria-hidden="true">🐢</span><span>0.75×</span></button><audio preload="metadata" data-listening-audio src="${encodeURI(item.audio)}">Your browser does not support audio playback.</audio></div><button type="button" class="quiz-arrow" data-listening-nav="1" aria-label="Next recording" ${listeningState.index === items.length - 1 ? 'disabled' : ''}>→</button></div><div role="button" tabindex="0" class="listening-answer-card stage-${listeningState.revealStage}" data-listening-reveal aria-label="${revealLabel}"><span class="listening-answer-action">${revealLabel}</span><span class="listening-answer-content">${revealedAnswer}</span></div><section class="listening-word-menu" data-listening-word-menu hidden aria-label="Selected word" aria-live="polite"></section><div class="listening-save">${renderSaveButton(item)}</div><div class="listening-grades" role="group" aria-label="Learning status"><button type="button" class="toggle" data-listening-grade="learned" aria-pressed="false">✓ Learned</button><button type="button" class="toggle" data-listening-grade="unlearned" aria-pressed="false">Not learned yet</button></div></div></section><aside class="listening-controls" aria-label="Listening settings"><section class="listening-control-card"><span class="listening-control-title">Material</span><div class="listening-kind" role="group" aria-label="Listening material type">${kindButtons}</div><label class="listening-source"><span>Choose material</span><select data-listening-source>${sourceOptions}</select></label><button type="button" class="toggle listening-random" data-listening-random ${items.length < 2 ? 'disabled' : ''}>Shuffle · Random ${listeningState.kind === 'words' ? 'word / expression' : 'sentence'}</button></section><section class="listening-control-card listening-shortcuts"><span class="listening-control-title">Keyboard</span><div><kbd>Space</kbd><span>Play / pause</span></div><div><kbd>←</kbd><kbd>→</kbd><span>Previous / next</span></div><div><kbd>↑</kbd><span>Reveal answer</span></div></section></aside></div>`;
     drawModeSettings();
     const audio = content.querySelector('[data-listening-audio]');
     if (audio) {
@@ -805,6 +852,13 @@
       draw();
       return;
     }
+    if (event.target.matches('[data-listening-unlearned]')) {
+      listeningState.unlearnedOnly = event.target.checked;
+      listeningState.index = 0;
+      resetListeningHints();
+      drawListening();
+      return;
+    }
     const listeningSource = event.target.closest('[data-listening-source]');
     if (listeningSource) {
       listeningState.sourceKey = listeningSource.value;
@@ -842,6 +896,11 @@
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
+    const grade = event.target.closest('[data-listening-grade]');
+    if (grade) {
+      gradeListeningItem(grade.dataset.listeningGrade);
+      return;
+    }
     const wordChoice = event.target.closest('[data-listening-word]');
     if (wordChoice) {
       const word = saveableItems.get(wordChoice.dataset.listeningWord);
@@ -916,26 +975,21 @@
       changeListeningItem(Number(listeningNavigation.dataset.listeningNav));
       return;
     }
-    const listeningRate = event.target.closest('[data-listening-rate]');
-    if (listeningRate) {
-      listeningState.rate = Number(listeningRate.dataset.listeningRate);
-      document.querySelectorAll('[data-listening-rate]').forEach((button) => {
-        const isActive = Number(button.dataset.listeningRate) === listeningState.rate;
-        button.classList.toggle('active', isActive);
-        button.setAttribute('aria-pressed', String(isActive));
-      });
+    if (event.target.closest('[data-listening-slow]')) {
       const audio = content.querySelector('[data-listening-audio]');
-      if (audio) {
-        audio.defaultPlaybackRate = listeningState.rate;
-        audio.playbackRate = listeningState.rate;
-      }
+      if (!audio) return;
+      audio.pause();
+      audio.playbackRate = 0.75;
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
       return;
     }
     const listeningPlay = event.target.closest('[data-listening-play]');
     if (listeningPlay) {
       const audio = content.querySelector('[data-listening-audio]');
       if (!audio) return;
-      if (audio.paused) {
+      if (audio.paused || audio.playbackRate !== 1) {
+        audio.playbackRate = 1;
         if (audio.ended) audio.currentTime = 0;
         audio.play().catch(() => {});
       } else {
@@ -1052,7 +1106,7 @@
   });
 
   content.addEventListener('keydown', (event) => {
-    if (event.target.closest('[data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu]')) return;
+    if (event.target.closest('[data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
     if (event.key !== 'Enter' && event.key !== ' ') return;
     const row = event.target.closest('[data-hint-row]');
     if (!row) return;
@@ -1070,7 +1124,9 @@
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.target.closest('input, textarea, select, [contenteditable="true"], [data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu]')) return;
+    if (event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    const isArrow = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key);
+    if (!isArrow && event.target.closest('[data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
     if (currentLesson === 'listening') {
       const isSpace = event.code === 'Space';
       const isNavigation = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
