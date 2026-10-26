@@ -1,0 +1,267 @@
+SOURCE: lesson8/dialog1/screenshots/lesson8-dialog1-screen.png
+如玉：這個週末，我想跟朋友去臺南玩。
+明
+華：怎麼去？
+玉：我想坐火車去。
+明
+明
+如
+明
+華：火車太慢了，要四個多鐘頭，坐高鐵比較快。
+如玉：可是聽說高鐵車票非常貴。
+華：高鐵車票有一點貴，但是坐高鐵又快又舒服。
+玉：我不知道在哪裡買票。
+華：在高鐵站、網路上或是便利商店都可以。
+如玉：這麼方便！那我坐高鐵去，謝謝你。
+SOURCE: lesson8/dialog1/screenshots/lesson8-dialog1-words-screen.png
+生詞一 Vocabulary I
+Vocabulary
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+坐
+火車
+跟
+玩
+怎麼
+慢
+鐘頭
+比較
+快
+車票
+非常
+但是
+又
+舒服
+站
+或是
+Names
+17
+臺南
+18
+高鐵
+zu6
+hubche
+gen
+wan
+zenme
+man
+zhongt6u
+bijiao
+kuai
+chepiao
+feichang
+danshi
+you
+shifh
+zhan
+huoshi
+Tainan
+gaotie
+Phrases
+19
+網路上
+20
+便利商店
+wingli shang
+bianli shangdian
+08-2
+圣
+xF
+岧支
+冬
+丝
+只和
+步
+荟八
+V
+（N）
+（Prep）
+（Adv）
+（Vs）
+（N）
+（Adv）
+（Vs）
+（N）
+（Adv）
+（Conj）
+（Adv）
+（Vs）
+（N）
+（Conj）
+to take by, to travel by
+train
+with
+to have fun
+how
+slow
+hour
+（comparatively） more
+fast
+（train, bus） ticket
+very
+but, however
+both..and..
+comfortable
+station
+Or
+a city in southwestemn
+Taiwan
+High Speed Rail
+（HSR）
+on the Internet
+convenience store
+SOURCE: lesson8/dialog1/screenshots/lesson8-dialog1.png
+第八課
+坐火車去臺南
+Taking a Train to Tainan
+對話
+Dialogue
+1
+4308-01
+AR, 08-A
+臺南
+如玉：這個週末，我想跟朋友去臺南玩。
+華：
+怎麼去？
+玉：我想坐火車去。
+明華：火車太慢了，要四個多鐘頭，坐高鐵比較快。
+如玉：可是聽說高鐵車票非常貴。
+明華：高鐵車票有一點貴，但是坐高鐵又快又舒服。
+如玉：我不知道在哪裡買票。
+明華：在高鐵站、網路上或是便利商店都可以。
+如玉：這麼方便！那我坐高鐵去，謝謝你。
+62
+SOURCE: lesson8/dialog1/screenshots/lesson8-dialog1-words-1.png
+生詞 Vocabulary
+08-02
+Vocabulary
+01 坐
+02
+ZUO
+我每天坐火車去學校上課。
+火車
+V.
+to take by, to travel by
+03
+huoche
+他們想坐火車去花蓮找朋友。
+跟
+§ N
+train
+gen
+我等一下要跟朋友見面。
+Js
+Prep
+with
+04
+玩
+05
+wan
+你週末想去哪裡玩？
+怎麼
+Vi
+to have fun
+06慢
+zenme
+請問，這個東西中文怎麼說？
+man
+Bg
+Adv
+how
+Vs
+07
+他吃飯吃得很慢。
+鐘頭
+slow
+08
+Zhongtou
+從我家到學校附近的咖啡店要半個鐘頭。
+比較
+bijiao
+我最近比較忙，沒有空去找你。
+kuai
+hour
+Adv （comparatively） more
+09 快
+Vs
+fast
+他寫字寫得很快。
+10
+車票
+chepiao
+我常在網路上買高鐵車票。
+11
+非常
+teichang
+Adv very
+那家店的牛肉麵非常好吃，你一定要去吃。
+12
+但是
+danshi
+（train, bus） ticket
+13
+Conj but,however
+我想跟你們去看籃球比賽，但是等一下我得去上課。
+又
+you
+這家店的小籠包又便宜又好吃。
+Adv
+both...and...
+64
+SOURCE: lesson8/dialog1/screenshots/lesson8-dialog1-words-2.png
+坐火車去臺南
+Taking a Train to Tainan
+第八課|
+14 舒服
+Shufu
+x1xn
+Vs
+comfortable
+我們學校的圖書館又大又舒服，很多學生喜歡去那裡看書。
+15 站
+Zhan
+N
+Station
+這個火車站附近有很多商店。
+16 或是
+huoshi
+A：你想什麼時候去游泳？
+B：早上或是下午都可以。
+Conj
+Or
+Names
+17臺南
+18
+Tainan
+聽說臺南有不少有名的小吃。
+高鐵
+aalotie
+我不常坐火車，比較常坐高鐵。
+Phrases
+19
+網路上
+wanglu shang
+你常在網路上買東西嗎？
+20
+便利商店
+bianli shangdian
+买
+學校裡面有兩家便利商店，真方便。
+w Tainan, a city in southwestern Taiwan
+High Speed Rail （HSR）
+杀交朵 on the Internet
+convenience store

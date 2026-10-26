@@ -17,7 +17,7 @@ for (const filename of ['.env.local', '.env']) {
 
 const argumentValue = (name) => process.argv.find((argument) => argument.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
 const apiKey = process.env.ELEVENLABS_API_KEY;
-const voiceId = argumentValue('voice-id') || process.env.ELEVENLABS_VOICE_ID;
+const voiceId = argumentValue('voice-id') || (['lesson8', 'materials'].includes(argumentValue('scope')) ? 'JBFqnCBsd6RMkjVDRZzb' : process.env.ELEVENLABS_VOICE_ID);
 const modelId = argumentValue('model') || process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
 const scope = argumentValue('scope') || 'all';
 const force = process.argv.includes('--force');
@@ -25,8 +25,8 @@ const dryRun = process.argv.includes('--dry-run');
 const outputFormat = 'mp3_44100_128';
 const scopes = scope === 'all' ? ['listening', 'vocabulary'] : [scope];
 
-if (!['all', 'listening', 'vocabulary', 'lesson8'].includes(scope)) {
-  throw new Error('Use --scope=all, --scope=listening, --scope=vocabulary, or --scope=lesson8.');
+if (!['all', 'listening', 'vocabulary', 'lesson8', 'materials'].includes(scope)) {
+  throw new Error('Use --scope=all, --scope=listening, --scope=vocabulary, or --scope=lesson8, or --scope=materials.');
 }
 if (!dryRun && !apiKey) throw new Error('Missing ELEVENLABS_API_KEY. Add it to .env.local or your shell environment.');
 if (!dryRun && !voiceId) throw new Error('Missing ELEVENLABS_VOICE_ID. Add it to .env.local or pass --voice-id=...');

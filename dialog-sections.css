@@ -436,3 +436,5 @@ header .study-tools .lesson-link { padding: 9px 10px; gap: 8px; margin: 0; }
   header .study-navbar .study-tools { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; }
   header .theme-toggle { padding: 8px; }
 }
+.material-audio { margin: 4px 8px; }
+.word-aliases { color: var(--muted); font-size: .65em; letter-spacing: normal; }

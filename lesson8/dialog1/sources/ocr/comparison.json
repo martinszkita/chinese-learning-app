@@ -1,0 +1,61 @@
+{
+  "priority": "Screenshots override photographed textbook pages; textbook examples retained because screenshots contain no examples.",
+  "dialogueLines": 9,
+  "vocabularyItems": 20,
+  "changes": [
+    {
+      "item": "Dialogue 3",
+      "field": "chinese",
+      "previous": "我想坐火車去。",
+      "screenshot": "我想坐火車去"
+    },
+    {
+      "item": "Dialogue 3 (punctuation follows Chinese)",
+      "field": "pinyin",
+      "previous": "Wǒ xiǎng zuò huǒchē qù.",
+      "screenshot": "Wǒ xiǎng zuò huǒchē qù"
+    },
+    {
+      "item": "坐",
+      "field": "english",
+      "previous": "to take, to travel by",
+      "screenshot": "to take by, to travel by"
+    },
+    {
+      "item": "玩",
+      "field": "partOfSpeech",
+      "previous": "Vi",
+      "screenshot": "V"
+    },
+    {
+      "item": "比較",
+      "field": "english",
+      "previous": "comparatively more",
+      "screenshot": "(comparatively) more"
+    },
+    {
+      "item": "車票",
+      "field": "english",
+      "previous": "train or bus ticket",
+      "screenshot": "(train, bus) ticket"
+    },
+    {
+      "item": "又",
+      "field": "english",
+      "previous": "both…and…",
+      "screenshot": "both...and..."
+    },
+    {
+      "item": "臺南",
+      "field": "english",
+      "previous": "Tainan, a city in southwestern Taiwan",
+      "screenshot": "a city in southwestern Taiwan"
+    }
+  ],
+  "ocrEngine": "Apple Vision, accurate recognition, zh-Hant and en-US; visually proofread against screenshots",
+  "notes": [
+    "Vision adds a full stop to dialogue line 3; visual proofreading follows the screenshot without this punctuation.",
+    "Chinese dialogue and vocabulary characters otherwise match the photographed source.",
+    "Examples remain from the photographed textbook because the screenshots do not contain examples."
+  ]
+}
