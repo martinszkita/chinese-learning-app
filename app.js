@@ -11,7 +11,28 @@
   const rowHintState = {};
   const openState = {};
   const quizState = { index: 0, flipped: false, unansweredOnly: false, needsViewRecord: false, answered: null, currentChinese: null, advanceTimer: null, order: [], sourceKeys: null };
-  const listeningState = { unlearnedOnly: false, kind: 'sentences', sourceKey: 'all', index: 0, rate: 1, revealStage: 0, transitionDirection: 0 };
+  const listeningState = { unlearnedOnly: false, kind: 'sentences', index: 0, rate: 1, revealStage: 0, transitionDirection: 0 };
+  const listeningScope = Object.fromEntries([
+    ...Array.from({ length: lessonCount }, (_, index) => `lesson${index + 1}`),
+    'midterm1', 'midterm2'
+  ].map((key) => [key, true]));
+
+  function listeningScopeKey(source) {
+    const lesson = /^(\d+)-dialog[12]$/.exec(source);
+    return lesson ? `lesson${lesson[1]}` : source;
+  }
+
+  function renderListeningScope(items) {
+    const sources = [
+      ...Array.from({ length: lessonCount }, (_, index) => [`lesson${index + 1}`, `Lesson ${index + 1}`]),
+      ['midterm1', 'Mid Term 1'], ['midterm2', 'Mid Term 2']
+    ];
+    return `<fieldset class="listening-scope"><legend>Show content from</legend><div class="vocabulary-filter-actions"><button type="button" class="filter-action" data-listening-select="all">Select all</button><button type="button" class="filter-action" data-listening-select="none">Clear all</button></div>${sources.map(([key, label]) => {
+      const count = items.filter((item) => item.sources.some((source) => listeningScopeKey(source) === key)).length;
+      return `<label class="vocabulary-filter"><input type="checkbox" data-listening-scope="${key}" ${listeningScope[key] ? 'checked' : ''}><span>${label} (${count})</span></label>`;
+    }).join('')}</fieldset>`;
+  }
+
   const listeningProgressKey = 'chinese-listening-progress-v1';
   const listeningProgress = (() => {
     try {
@@ -572,9 +593,7 @@
 
   function getListeningItems() {
     const items = getListeningPool().filter((item) => !listeningState.unlearnedOnly || getListeningStatus(item.chinese) !== 'learned');
-    return listeningState.sourceKey === 'all'
-      ? items
-      : items.filter((item) => item.sources.includes(listeningState.sourceKey));
+    return items.filter((item) => item.sources.some((source) => listeningScope[listeningScopeKey(source)]));
   }
 
   function renderSpeakerIcon() {
@@ -615,22 +634,12 @@
     const items = getListeningItems();
     listeningState.index = Math.min(listeningState.index, Math.max(items.length - 1, 0));
     const item = items[listeningState.index];
-    const sources = listeningState.kind === 'words'
-      ? Array.from({ length: lessonCount }, (_, index) => [`lesson${index + 1}`, `Lesson ${index + 1}`])
-        .filter(([key]) => allItems.some((item) => item.sources.includes(key)))
-      : [...new Map(allItems.map((entry) => [entry.sourceKey, entry.sourceLabel])).entries()];
     const kindButtons = [['sentences', 'Sentences'], ['words', 'Words & expressions']]
       .map(([kind, label]) => `<button type="button" class="toggle ${listeningState.kind === kind ? 'active' : ''}" data-listening-kind="${kind}" aria-pressed="${listeningState.kind === kind}">${label}</button>`).join('');
-    const sourceOptions = [
-      `<option value="all" ${listeningState.sourceKey === 'all' ? 'selected' : ''}>All recordings (${allItems.length})</option>`,
-      ...sources.map(([sourceKey, sourceLabel]) => {
-        const count = allItems.filter((entry) => entry.sources.includes(sourceKey)).length;
-        return `<option value="${escapeHtml(sourceKey)}" ${listeningState.sourceKey === sourceKey ? 'selected' : ''}>${escapeHtml(sourceLabel)} (${count})</option>`;
-      })
-    ].join('');
+    const scopeControls = renderListeningScope(allItems);
     document.getElementById('lessonTitle').textContent = 'Listening practice';
     if (!item) {
-      content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="empty">No recordings left to learn in this source. Turn off the filter to see learned recordings.</div></section><aside class="listening-controls"><section class="listening-control-card"><div class="listening-kind">${kindButtons}</div><label class="listening-source">Choose material<select data-listening-source>${sourceOptions}</select></label></section></aside></div>`;
+      content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="empty">${Object.values(listeningScope).some(Boolean) ? 'No recordings match your selection. Choose other lessons or turn off Only not learned yet.' : 'Select at least one lesson or mid-term.'}</div></section><aside class="listening-controls"><section class="listening-control-card"><div class="listening-kind">${kindButtons}</div>${scopeControls}</section></aside></div>`;
       drawModeSettings();
       return;
     }
@@ -641,7 +650,7 @@
       : `<span class="listening-hanzi" lang="zh-Hant">${renderListeningWords(item)}</span>${listeningState.revealStage === 2 ? `<span class="listening-pinyin" lang="zh-Latn-pinyin">${escapeHtml(item.pinyin)}</span><span class="listening-english" lang="en">${escapeHtml(item.english)}</span>` : ''}`;
     const transitionClass = listeningState.transitionDirection > 0 ? 'listening-slide-next' : listeningState.transitionDirection < 0 ? 'listening-slide-previous' : '';
     listeningState.transitionDirection = 0;
-    content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="listening-card-frame ${transitionClass}"><div class="listening-card-meta"><span class="quiz-scope">${escapeHtml(item.sourceLabel)} · ${item.sourceIndex}</span><span class="listening-voice-badge">Voice · ${escapeHtml(item.voice)}</span></div><div class="quiz-progress"><strong>${listeningState.index + 1}</strong> / ${items.length}<span>Press the speaker or Space to play</span></div><div class="listening-flash-stage"><button type="button" class="quiz-arrow" data-listening-nav="-1" aria-label="Previous recording" ${listeningState.index === 0 ? 'disabled' : ''}>←</button><div class="listening-stage-center"><button type="button" class="listening-play-button" data-listening-play aria-label="Play recording">${renderSpeakerIcon()}<span>Play recording</span></button><button type="button" class="listening-slow" data-listening-slow aria-label="Play slowly at 0.75 speed" title="Play slowly · 0.75×"><span aria-hidden="true">🐢</span><span>0.75×</span></button><audio preload="metadata" data-listening-audio src="${encodeURI(item.audio)}">Your browser does not support audio playback.</audio></div><button type="button" class="quiz-arrow" data-listening-nav="1" aria-label="Next recording" ${listeningState.index === items.length - 1 ? 'disabled' : ''}>→</button></div><div role="button" tabindex="0" class="listening-answer-card stage-${listeningState.revealStage}" data-listening-reveal aria-label="${revealLabel}"><span class="listening-answer-action">${revealLabel}</span><span class="listening-answer-content">${revealedAnswer}</span></div><section class="listening-word-menu" data-listening-word-menu hidden aria-label="Selected word" aria-live="polite"></section><div class="listening-save">${renderSaveButton(item)}</div><div class="listening-grades" role="group" aria-label="Learning status"><button type="button" class="toggle" data-listening-grade="learned" aria-pressed="false">✓ Learned</button><button type="button" class="toggle" data-listening-grade="unlearned" aria-pressed="false">Not learned yet</button></div></div></section><aside class="listening-controls" aria-label="Listening settings"><section class="listening-control-card"><span class="listening-control-title">Material</span><div class="listening-kind" role="group" aria-label="Listening material type">${kindButtons}</div><label class="listening-source"><span>Choose material</span><select data-listening-source>${sourceOptions}</select></label><button type="button" class="toggle listening-random" data-listening-random ${items.length < 2 ? 'disabled' : ''}>Shuffle · Random ${listeningState.kind === 'words' ? 'word / expression' : 'sentence'}</button></section><section class="listening-control-card listening-shortcuts"><span class="listening-control-title">Keyboard</span><div><kbd>Space</kbd><span>Play / pause</span></div><div><kbd>←</kbd><kbd>→</kbd><span>Previous / next</span></div><div><kbd>↑</kbd><span>Reveal answer</span></div></section></aside></div>`;
+    content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="listening-card-frame ${transitionClass}"><div class="listening-card-meta"><span class="quiz-scope">${escapeHtml(item.sourceLabel)} · ${item.sourceIndex}</span><span class="listening-voice-badge">Voice · ${escapeHtml(item.voice)}</span></div><div class="quiz-progress"><strong>${listeningState.index + 1}</strong> / ${items.length}<span>Press the speaker or Space to play</span></div><div class="listening-flash-stage"><button type="button" class="quiz-arrow" data-listening-nav="-1" aria-label="Previous recording" ${listeningState.index === 0 ? 'disabled' : ''}>←</button><div class="listening-stage-center"><button type="button" class="listening-play-button" data-listening-play aria-label="Play recording">${renderSpeakerIcon()}<span>Play recording</span></button><button type="button" class="listening-slow" data-listening-slow aria-label="Play slowly at 0.75 speed" title="Play slowly · 0.75×"><span aria-hidden="true">🐢</span><span>0.75×</span></button><audio preload="metadata" data-listening-audio src="${encodeURI(item.audio)}">Your browser does not support audio playback.</audio></div><button type="button" class="quiz-arrow" data-listening-nav="1" aria-label="Next recording" ${listeningState.index === items.length - 1 ? 'disabled' : ''}>→</button></div><div role="button" tabindex="0" class="listening-answer-card stage-${listeningState.revealStage}" data-listening-reveal aria-label="${revealLabel}"><span class="listening-answer-action">${revealLabel}</span><span class="listening-answer-content">${revealedAnswer}</span></div><section class="listening-word-menu" data-listening-word-menu hidden aria-label="Selected word" aria-live="polite"></section><div class="listening-save">${renderSaveButton(item)}</div><div class="listening-grades" role="group" aria-label="Learning status"><button type="button" class="toggle" data-listening-grade="learned" aria-pressed="false">✓ Learned</button><button type="button" class="toggle" data-listening-grade="unlearned" aria-pressed="false">Not learned yet</button></div></div></section><aside class="listening-controls" aria-label="Listening settings"><section class="listening-control-card"><span class="listening-control-title">Material</span><div class="listening-kind" role="group" aria-label="Listening material type">${kindButtons}</div>${scopeControls}<button type="button" class="toggle listening-random" data-listening-random ${items.length < 2 ? 'disabled' : ''}>Shuffle · Random ${listeningState.kind === 'words' ? 'word / expression' : 'sentence'}</button></section><section class="listening-control-card listening-shortcuts"><span class="listening-control-title">Keyboard</span><div><kbd>Space</kbd><span>Play / pause</span></div><div><kbd>←</kbd><kbd>→</kbd><span>Previous / next</span></div><div><kbd>↑</kbd><span>Reveal answer</span></div></section></aside></div>`;
     drawModeSettings();
     const audio = content.querySelector('[data-listening-audio]');
     if (audio) {
@@ -865,10 +874,11 @@
       drawListening();
       return;
     }
-    const listeningSource = event.target.closest('[data-listening-source]');
+    const listeningSource = event.target.closest('[data-listening-scope]');
     if (listeningSource) {
-      listeningState.sourceKey = listeningSource.value;
+      listeningScope[listeningSource.dataset.listeningScope] = listeningSource.checked;
       listeningState.index = 0;
+      listeningState.transitionDirection = 0;
       resetListeningHints();
       drawListening();
       return;
@@ -902,6 +912,16 @@
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
+    const scopeSelection = event.target.closest('[data-listening-select]');
+    if (scopeSelection) {
+      const selected = scopeSelection.dataset.listeningSelect === 'all';
+      Object.keys(listeningScope).forEach((key) => { listeningScope[key] = selected; });
+      listeningState.index = 0;
+      listeningState.transitionDirection = 0;
+      resetListeningHints();
+      drawListening();
+      return;
+    }
     const grade = event.target.closest('[data-listening-grade]');
     if (grade) {
       gradeListeningItem(grade.dataset.listeningGrade);
@@ -945,7 +965,6 @@
       const kind = listeningKind.dataset.listeningKind;
       if (!['sentences', 'words'].includes(kind) || kind === listeningState.kind) return;
       listeningState.kind = kind;
-      listeningState.sourceKey = 'all';
       listeningState.index = 0;
       listeningState.transitionDirection = 0;
       resetListeningHints();

@@ -438,3 +438,7 @@ header .study-tools .lesson-link { padding: 9px 10px; gap: 8px; margin: 0; }
 }
 .material-audio { margin: 4px 8px; }
 .word-aliases { color: var(--muted); font-size: .65em; letter-spacing: normal; }
+.listening-scope { display: grid; gap: 9px; min-width: 0; margin: 0; padding: 12px 0 0; border: 0; border-top: 1px solid var(--line); }
+.listening-scope legend { padding: 0 5px 0 0; color: var(--muted); font-size: 11px; font-weight: 750; }
+.listening-scope .vocabulary-filter-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.listening-scope .vocabulary-filter { display: flex; align-items: center; gap: 8px; }
