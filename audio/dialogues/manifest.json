@@ -1,0 +1,1096 @@
+{
+  "provider": "ElevenLabs",
+  "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+  "modelId": "eleven_multilingual_v2",
+  "outputFormat": "mp3_44100_128",
+  "items": [
+    {
+      "chinese": "請問你是陳月美小姐嗎？",
+      "pinyin": "Qǐngwèn nǐ shì Chén Yuèměi xiǎojiě ma?",
+      "english": "Excuse me, are you Miss Chen Yuemei?",
+      "audio": "audio/dialogues/1-dialog1-dialogue-01.mp3",
+      "sourceKey": "1-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "是的。謝謝你來接我們。",
+      "pinyin": "Shì de. Xièxie nǐ lái jiē wǒmen.",
+      "english": "Yes. Thank you for coming to pick us up.",
+      "audio": "audio/dialogues/1-dialog1-dialogue-02.mp3",
+      "sourceKey": "1-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "不客氣。我是李明華。",
+      "pinyin": "Bú kèqi. Wǒ shì Lǐ Mínghuá.",
+      "english": "You're welcome. I'm Li Minghua.",
+      "audio": "audio/dialogues/1-dialog1-dialogue-03.mp3",
+      "sourceKey": "1-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這是王先生。",
+      "pinyin": "Zhè shì Wáng xiānsheng.",
+      "english": "This is Mr. Wang.",
+      "audio": "audio/dialogues/1-dialog1-dialogue-04.mp3",
+      "sourceKey": "1-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你好。我姓王，叫開文。",
+      "pinyin": "Nǐ hǎo. Wǒ xìng Wáng, jiào Kāiwén.",
+      "english": "Hello. My surname is Wang, and my given name is Kaiwen.",
+      "audio": "audio/dialogues/1-dialog1-dialogue-05.mp3",
+      "sourceKey": "1-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你們好。歡迎你們來臺灣。",
+      "pinyin": "Nǐmen hǎo. Huānyíng nǐmen lái Táiwān.",
+      "english": "Hello, both of you. Welcome to Taiwan.",
+      "audio": "audio/dialogues/1-dialog1-dialogue-06.mp3",
+      "sourceKey": "1-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "請喝茶。",
+      "pinyin": "Qǐng hē chá.",
+      "english": "Please have some tea.",
+      "audio": "audio/dialogues/1-dialog2-dialogue-01.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "謝謝。很好喝。請問這是什麼茶？",
+      "pinyin": "Xièxie. Hěn hǎohē. Qǐngwèn zhè shì shénme chá?",
+      "english": "Thank you. It is delicious. May I ask what kind of tea this is?",
+      "audio": "audio/dialogues/1-dialog2-dialogue-02.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這是烏龍茶。臺灣人喜歡喝茶。開文，你們日本人呢？",
+      "pinyin": "Zhè shì Wūlóng chá. Táiwān rén xǐhuan hē chá. Kāiwén, nǐmen Rìběn rén ne?",
+      "english": "This is oolong tea. Taiwanese people like drinking tea. Kaiwen, what about you Japanese people?",
+      "audio": "audio/dialogues/1-dialog2-dialogue-03.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "他不是日本人。",
+      "pinyin": "Tā bú shì Rìběn rén.",
+      "english": "He is not Japanese.",
+      "audio": "audio/dialogues/1-dialog2-dialogue-04.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "對不起，你是哪國人？",
+      "pinyin": "Duìbuqǐ, nǐ shì nǎ guó rén?",
+      "english": "Sorry, what country are you from?",
+      "audio": "audio/dialogues/1-dialog2-dialogue-05.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我是美國人。",
+      "pinyin": "Wǒ shì Měiguó rén.",
+      "english": "I am American.",
+      "audio": "audio/dialogues/1-dialog2-dialogue-06.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "開文，你要不要喝咖啡？",
+      "pinyin": "Kāiwén, nǐ yào bú yào hē kāfēi?",
+      "english": "Kaiwen, would you like some coffee?",
+      "audio": "audio/dialogues/1-dialog2-dialogue-07.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "謝謝！我不喝咖啡，我喜歡喝茶。",
+      "pinyin": "Xièxie! Wǒ bù hē kāfēi, wǒ xǐhuan hē chá.",
+      "english": "Thank you! I do not drink coffee; I like drinking tea.",
+      "audio": "audio/dialogues/1-dialog2-dialogue-08.mp3",
+      "sourceKey": "1-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這是我家。請進！",
+      "pinyin": "Zhè shì wǒ jiā. Qǐng jìn!",
+      "english": "This is my home. Please come in!",
+      "audio": "audio/dialogues/2-dialog1-dialogue-01.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "很漂亮的房子！",
+      "pinyin": "Hěn piàoliang de fángzi!",
+      "english": "What a beautiful house!",
+      "audio": "audio/dialogues/2-dialog1-dialogue-02.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "請坐！要不要喝茶？",
+      "pinyin": "Qǐng zuò! Yào bú yào hē chá?",
+      "english": "Please sit down! Would you like some tea?",
+      "audio": "audio/dialogues/2-dialog1-dialogue-03.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好，謝謝你。你家有很多照片。",
+      "pinyin": "Hǎo, xièxie nǐ. Nǐ jiā yǒu hěn duō zhàopiàn.",
+      "english": "Yes, thank you. Your home has many photographs.",
+      "audio": "audio/dialogues/2-dialog1-dialogue-04.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我家人都很喜歡照相。",
+      "pinyin": "Wǒ jiārén dōu hěn xǐhuan zhàoxiàng.",
+      "english": "Everyone in my family likes taking photographs.",
+      "audio": "audio/dialogues/2-dialog1-dialogue-05.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這張照片很好看。這是誰？你姐姐嗎？",
+      "pinyin": "Zhè zhāng zhàopiàn hěn hǎokàn. Zhè shì shéi? Nǐ jiějie ma?",
+      "english": "This photograph looks very nice. Who is this? Is she your older sister?",
+      "audio": "audio/dialogues/2-dialog1-dialogue-06.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "不是，是我妹妹。這是我爸爸、媽媽。",
+      "pinyin": "Bú shì, shì wǒ mèimei. Zhè shì wǒ bàba, māma.",
+      "english": "No, she is my younger sister. These are my father and mother.",
+      "audio": "audio/dialogues/2-dialog1-dialogue-07.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你家人都很好看。",
+      "pinyin": "Nǐ jiārén dōu hěn hǎokàn.",
+      "english": "Everyone in your family is good-looking.",
+      "audio": "audio/dialogues/2-dialog1-dialogue-08.mp3",
+      "sourceKey": "2-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "田中，歡迎！歡迎！請進。",
+      "pinyin": "Tiánzhōng, huānyíng! Huānyíng! Qǐng jìn.",
+      "english": "Tianzhong, welcome! Welcome! Please come in.",
+      "audio": "audio/dialogues/2-dialog2-dialogue-01.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "謝謝。",
+      "pinyin": "Xièxie.",
+      "english": "Thank you.",
+      "audio": "audio/dialogues/2-dialog2-dialogue-02.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "田中，這是我媽媽。",
+      "pinyin": "Tiánzhōng, zhè shì wǒ māma.",
+      "english": "Tianzhong, this is my mother.",
+      "audio": "audio/dialogues/2-dialog2-dialogue-03.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "伯母，您好。",
+      "pinyin": "Bómǔ, nín hǎo.",
+      "english": "Hello, ma’am.",
+      "audio": "audio/dialogues/2-dialog2-dialogue-04.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你好，你好。來！來！來！請坐。你叫什麼名字？",
+      "pinyin": "Nǐ hǎo, nǐ hǎo. Lái! Lái! Lái! Qǐng zuò. Nǐ jiào shénme míngzi?",
+      "english": "Hello, hello. Come in! Come in! Please sit down. What is your name?",
+      "audio": "audio/dialogues/2-dialog2-dialogue-05.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我叫誠一。你們家有很多書。",
+      "pinyin": "Wǒ jiào Chéngyī. Nǐmen jiā yǒu hěn duō shū.",
+      "english": "My name is Chengyi. Your family has many books.",
+      "audio": "audio/dialogues/2-dialog2-dialogue-06.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "都是我哥哥的書。他是老師，他很喜歡看書。",
+      "pinyin": "Dōu shì wǒ gēge de shū. Tā shì lǎoshī, tā hěn xǐhuan kànshū.",
+      "english": "They are all my older brother’s books. He is a teacher, and he really likes reading.",
+      "audio": "audio/dialogues/2-dialog2-dialogue-07.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "誠一，你家有幾個人？你有沒有兄弟姐妹？",
+      "pinyin": "Chéngyī, nǐ jiā yǒu jǐ ge rén? Nǐ yǒu méi yǒu xiōngdì jiěmèi?",
+      "english": "Chengyi, how many people are in your family? Do you have any brothers or sisters?",
+      "audio": "audio/dialogues/2-dialog2-dialogue-08.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我家有五個人，我有兩個妹妹。",
+      "pinyin": "Wǒ jiā yǒu wǔ ge rén, wǒ yǒu liǎng ge mèimei.",
+      "english": "There are five people in my family. I have two younger sisters.",
+      "audio": "audio/dialogues/2-dialog2-dialogue-09.mp3",
+      "sourceKey": "2-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "田中，你喜歡聽音樂嗎？",
+      "pinyin": "Tiánzhōng, nǐ xǐhuan tīng yīnyuè ma?",
+      "english": "Tianzhong, do you like listening to music?",
+      "audio": "audio/dialogues/3-dialog1-dialogue-01.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我不喜歡聽音樂。我喜歡運動。",
+      "pinyin": "Wǒ bù xǐhuan tīng yīnyuè. Wǒ xǐhuan yùndòng.",
+      "english": "I do not like listening to music. I like sports.",
+      "audio": "audio/dialogues/3-dialog1-dialogue-02.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你喜歡打網球嗎？",
+      "pinyin": "Nǐ xǐhuan dǎ wǎngqiú ma?",
+      "english": "Do you like playing tennis?",
+      "audio": "audio/dialogues/3-dialog1-dialogue-03.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我不喜歡打網球。",
+      "pinyin": "Wǒ bù xǐhuan dǎ wǎngqiú.",
+      "english": "I do not like playing tennis.",
+      "audio": "audio/dialogues/3-dialog1-dialogue-04.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你喜歡做什麼？",
+      "pinyin": "Nǐ xǐhuan zuò shénme?",
+      "english": "What do you like doing?",
+      "audio": "audio/dialogues/3-dialog1-dialogue-05.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "打棒球和游泳，你呢？",
+      "pinyin": "Dǎ bàngqiú hàn yóuyǒng, nǐ ne?",
+      "english": "Playing baseball and swimming. What about you?",
+      "audio": "audio/dialogues/3-dialog1-dialogue-06.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我常打籃球，也常踢足球。",
+      "pinyin": "Wǒ cháng dǎ lánqiú, yě cháng tī zúqiú.",
+      "english": "I often play basketball, and I also often play soccer.",
+      "audio": "audio/dialogues/3-dialog1-dialogue-07.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我覺得踢足球很好玩。",
+      "pinyin": "Wǒ juéde tī zúqiú hěn hǎowán.",
+      "english": "I think playing soccer is a lot of fun.",
+      "audio": "audio/dialogues/3-dialog1-dialogue-08.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "明天是週末，我們早上去踢足球，怎麼樣？",
+      "pinyin": "Míngtiān shì zhōumò. Wǒmen zǎoshang qù tī zúqiú, zěnmeyàng?",
+      "english": "Tomorrow is the weekend. How about we go play soccer in the morning?",
+      "audio": "audio/dialogues/3-dialog1-dialogue-09.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好啊！",
+      "pinyin": "Hǎo a!",
+      "english": "Sounds good!",
+      "audio": "audio/dialogues/3-dialog1-dialogue-10.mp3",
+      "sourceKey": "3-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "今天晚上我們去看電影，好不好？",
+      "pinyin": "Jīntiān wǎnshang wǒmen qù kàn diànyǐng, hǎo bù hǎo?",
+      "english": "Shall we go see a movie tonight?",
+      "audio": "audio/dialogues/3-dialog2-dialogue-01.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好啊！",
+      "pinyin": "Hǎo a!",
+      "english": "Sounds good!",
+      "audio": "audio/dialogues/3-dialog1-dialogue-10.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "妳想看美國電影還是臺灣電影？",
+      "pinyin": "Nǐ xiǎng kàn Měiguó diànyǐng háishi Táiwān diànyǐng?",
+      "english": "Do you want to see an American movie or a Taiwanese movie?",
+      "audio": "audio/dialogues/3-dialog2-dialogue-03.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "美國電影、臺灣電影，我都想看。",
+      "pinyin": "Měiguó diànyǐng, Táiwān diànyǐng, wǒ dōu xiǎng kàn.",
+      "english": "I want to see both American and Taiwanese movies.",
+      "audio": "audio/dialogues/3-dialog2-dialogue-04.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我們看臺灣電影吧！",
+      "pinyin": "Wǒmen kàn Táiwān diànyǐng ba!",
+      "english": "Let’s watch a Taiwanese movie!",
+      "audio": "audio/dialogues/3-dialog2-dialogue-05.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好啊！看電影可以學中文。",
+      "pinyin": "Hǎo a! Kàn diànyǐng kěyǐ xué Zhōngwén.",
+      "english": "Sounds good! Watching movies can help us learn Chinese.",
+      "audio": "audio/dialogues/3-dialog2-dialogue-06.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "晚上要不要一起吃晚飯？",
+      "pinyin": "Wǎnshang yào bú yào yìqǐ chī wǎnfàn?",
+      "english": "Would you like to eat dinner together tonight?",
+      "audio": "audio/dialogues/3-dialog2-dialogue-07.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好，我們去吃越南菜。",
+      "pinyin": "Hǎo, wǒmen qù chī Yuènán cài.",
+      "english": "Okay, let’s go eat Vietnamese food.",
+      "audio": "audio/dialogues/3-dialog2-dialogue-08.mp3",
+      "sourceKey": "3-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "請問你要買什麼？",
+      "pinyin": "Qǐngwèn nǐ yào mǎi shénme?",
+      "english": "May I ask what you would like to buy?",
+      "audio": "audio/dialogues/4-dialog1-dialogue-01.mp3",
+      "sourceKey": "4-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "一杯熱咖啡。兩個包子。",
+      "pinyin": "Yì bēi rè kāfēi. Liǎng ge bāozi.",
+      "english": "One cup of hot coffee and two steamed buns.",
+      "audio": "audio/dialogues/4-dialog1-dialogue-02.mp3",
+      "sourceKey": "4-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你要大杯、中杯還是小杯？",
+      "pinyin": "Nǐ yào dà bēi, zhōng bēi háishi xiǎo bēi?",
+      "english": "Would you like a large, medium, or small cup?",
+      "audio": "audio/dialogues/4-dialog1-dialogue-03.mp3",
+      "sourceKey": "4-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "大杯。包子請幫我微波。",
+      "pinyin": "Dà bēi. Bāozi qǐng bāng wǒ wéibō.",
+      "english": "A large. Please microwave the steamed buns for me.",
+      "audio": "audio/dialogues/4-dialog1-dialogue-04.mp3",
+      "sourceKey": "4-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好的。請問外帶還是內用？",
+      "pinyin": "Hǎode. Qǐngwèn wàidài háishi nèiyòng?",
+      "english": "Okay. Is that to go or for here?",
+      "audio": "audio/dialogues/4-dialog1-dialogue-05.mp3",
+      "sourceKey": "4-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "外帶，一共多少錢？",
+      "pinyin": "Wàidài, yígòng duōshǎo qián?",
+      "english": "To go. How much is it altogether?",
+      "audio": "audio/dialogues/4-dialog1-dialogue-06.mp3",
+      "sourceKey": "4-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "咖啡八十，包子四十，一共一百二十塊。",
+      "pinyin": "Kāfēi bāshí, bāozi sìshí, yígòng yìbǎi èrshí kuài.",
+      "english": "The coffee is eighty, the steamed buns are forty—one hundred and twenty dollars altogether.",
+      "audio": "audio/dialogues/4-dialog1-dialogue-07.mp3",
+      "sourceKey": "4-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我想買一支新手機。",
+      "pinyin": "Wǒ xiǎng mǎi yì zhī xīn shǒujī.",
+      "english": "I want to buy a new mobile phone.",
+      "audio": "audio/dialogues/4-dialog2-dialogue-01.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "妳的手機很好。為什麼要買新的？",
+      "pinyin": "Nǐ de shǒujī hěn hǎo. Wèishénme yào mǎi xīn de?",
+      "english": "Your mobile phone is very good. Why do you want to buy a new one?",
+      "audio": "audio/dialogues/4-dialog2-dialogue-02.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我這支手機太舊了，不好看。",
+      "pinyin": "Wǒ zhè zhī shǒujī tài jiù le, bù hǎokàn.",
+      "english": "This mobile phone of mine is too old and does not look good.",
+      "audio": "audio/dialogues/4-dialog2-dialogue-03.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "妳想買哪種手機？",
+      "pinyin": "Nǐ xiǎng mǎi nǎ zhǒng shǒujī?",
+      "english": "What kind of mobile phone do you want to buy?",
+      "audio": "audio/dialogues/4-dialog2-dialogue-04.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "能照相也能上網。",
+      "pinyin": "Néng zhàoxiàng yě néng shàngwǎng.",
+      "english": "One that can take photos and access the internet.",
+      "audio": "audio/dialogues/4-dialog2-dialogue-05.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "那種手機很好，我哥哥有一支。",
+      "pinyin": "Nà zhǒng shǒujī hěn hǎo, wǒ gēge yǒu yì zhī.",
+      "english": "That kind of mobile phone is very good. My older brother has one.",
+      "audio": "audio/dialogues/4-dialog2-dialogue-06.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "貴不貴？一支賣多少錢？",
+      "pinyin": "Guì bú guì? Yì zhī mài duōshǎo qián?",
+      "english": "Is it expensive? How much does one cost?",
+      "audio": "audio/dialogues/4-dialog2-dialogue-07.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "那種手機不便宜。一支要一萬五千多。",
+      "pinyin": "Nà zhǒng shǒujī bù piányí. Yì zhī yào yíwàn wǔqiān duō.",
+      "english": "That kind of phone is not cheap. One costs more than fifteen thousand.",
+      "audio": "audio/dialogues/4-dialog2-dialogue-08.mp3",
+      "sourceKey": "4-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "很多人都說臺灣有不少有名的小吃。",
+      "pinyin": "Hěn duō rén dōu shuō Táiwān yǒu bù shǎo yǒumíng de xiǎochī.",
+      "english": "Many people say Taiwan has quite a few famous snacks.",
+      "audio": "audio/dialogues/5-dialog1-dialogue-01.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "是啊！牛肉麵、小籠包、臭豆腐……都很好吃。",
+      "pinyin": "Shì a. Niúròu miàn, xiǎolóngbāo, chòu dòufu... dōu hěn hǎochī.",
+      "english": "Yes! Beef noodles, soup dumplings, stinky tofu… they are all delicious.",
+      "audio": "audio/dialogues/5-dialog1-dialogue-02.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你最喜歡吃什麼？",
+      "pinyin": "Nǐ zuì xǐhuan chī shénme?",
+      "english": "What do you like eating most?",
+      "audio": "audio/dialogues/5-dialog1-dialogue-03.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "牛肉麵。牛肉好吃，湯也好喝。",
+      "pinyin": "Niúròu miàn. Niúròu hǎochī, tāng yě hǎohē.",
+      "english": "Beef noodles. The beef is delicious, and the soup tastes good too.",
+      "audio": "audio/dialogues/5-dialog1-dialogue-04.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這麼好吃，我很想吃。",
+      "pinyin": "Zhème hǎochī, wǒ hěn xiǎng chī.",
+      "english": "It sounds so delicious. I really want to try it.",
+      "audio": "audio/dialogues/5-dialog1-dialogue-05.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我知道一家有名的牛肉麵店，我們一起去吃，怎麼樣？",
+      "pinyin": "Wǒ zhīdào yì jiā yǒumíng de niúròu miàn diàn. Wǒmen yìqǐ qù chī, zěnmeyàng?",
+      "english": "I know a famous beef noodle shop. How about we go eat there together?",
+      "audio": "audio/dialogues/5-dialog1-dialogue-06.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "太好了！",
+      "pinyin": "Tài hǎo le!",
+      "english": "Great!",
+      "audio": "audio/dialogues/5-dialog1-dialogue-07.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我們明天去。一定要點大碗的。",
+      "pinyin": "Wǒmen míngtiān qù. Yídìng yào diǎn dà wǎn de.",
+      "english": "We’ll go tomorrow. You definitely have to order a large bowl.",
+      "audio": "audio/dialogues/5-dialog1-dialogue-08.mp3",
+      "sourceKey": "5-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "昨天晚上那家餐廳的菜很好吃，可是有一點辣。",
+      "pinyin": "Zuótiān wǎnshang nà jiā cāntīng de cài hěn hǎochī, kěshì yǒu yìdiǎn là.",
+      "english": "The food at that restaurant last night was delicious, but it was a little spicy.",
+      "audio": "audio/dialogues/5-dialog2-dialogue-01.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我也怕辣，所以我喜歡自己做飯。",
+      "pinyin": "Wǒ yě pà là, suǒyǐ wǒ xǐhuan zìjǐ zuòfàn.",
+      "english": "I am also afraid of spicy food, so I like cooking for myself.",
+      "audio": "audio/dialogues/5-dialog2-dialogue-02.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你做飯做得怎麼樣？",
+      "pinyin": "Nǐ zuòfàn zuò de zěnmeyàng?",
+      "english": "How well do you cook?",
+      "audio": "audio/dialogues/5-dialog2-dialogue-03.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我做得不好。妳會做飯嗎？",
+      "pinyin": "Wǒ zuò de bù hǎo. Nǐ huì zuòfàn ma?",
+      "english": "I do not cook well. Can you cook?",
+      "audio": "audio/dialogues/5-dialog2-dialogue-04.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "會。我的甜點也做得不錯。",
+      "pinyin": "Huì. Wǒ de tiándiǎn yě zuò de búcuò.",
+      "english": "Yes. I also make desserts quite well.",
+      "audio": "audio/dialogues/5-dialog2-dialogue-05.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我最喜歡吃甜點。妳可以教我嗎？",
+      "pinyin": "Wǒ zuì xǐhuan chī tiándiǎn. Nǐ kěyǐ jiāo wǒ ma?",
+      "english": "I like eating desserts most. Can you teach me?",
+      "audio": "audio/dialogues/5-dialog2-dialogue-06.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好的，這個週末，你到我家來。",
+      "pinyin": "Hǎode, zhè ge zhōumò, nǐ dào wǒ jiā lái.",
+      "english": "Okay. Come to my home this weekend.",
+      "audio": "audio/dialogues/5-dialog2-dialogue-07.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好啊！謝謝妳。",
+      "pinyin": "Hǎo a! Xièxie nǐ.",
+      "english": "Great! Thank you.",
+      "audio": "audio/dialogues/5-dialog2-dialogue-08.mp3",
+      "sourceKey": "5-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "聽說怡君的學校很漂亮。",
+      "pinyin": "Tīngshuō Yíjūn de xuéxiào hěn piàoliang.",
+      "english": "I heard that Yijun’s school is very beautiful.",
+      "audio": "audio/dialogues/6-dialog1-dialogue-01.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "他們學校在哪裡？遠不遠？",
+      "pinyin": "Tāmen xuéxiào zài nǎlǐ? Yuǎn bù yuǎn?",
+      "english": "Where is their school? Is it far?",
+      "audio": "audio/dialogues/6-dialog1-dialogue-02.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "有一點遠。他們學校在花蓮的山上。",
+      "pinyin": "Yǒu yìdiǎn yuǎn. Tāmen xuéxiào zài Huālián de shān shàng.",
+      "english": "It is a little far. Their school is in the mountains of Hualien.",
+      "audio": "audio/dialogues/6-dialog1-dialogue-03.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "山上？那裡的風景一定很美。",
+      "pinyin": "Shān shàng? Nàlǐ de fēngjǐng yídìng hěn měi.",
+      "english": "In the mountains? The scenery there must be beautiful.",
+      "audio": "audio/dialogues/6-dialog1-dialogue-04.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "是的，他們學校前面有海，後面有山，那裡真的是一個很漂亮的地方。",
+      "pinyin": "Shì de, tāmen xuéxiào qiánmiàn yǒu hǎi, hòumiàn yǒu shān, nàlǐ zhēnde shì yí ge hěn piàoliang de dìfang.",
+      "english": "Yes. There is the sea in front of their school and mountains behind it. It truly is a beautiful place.",
+      "audio": "audio/dialogues/6-dialog1-dialogue-05.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我想去看看。我們這個週末一起去吧！",
+      "pinyin": "Wǒ xiǎng qù kànkan. Wǒmen zhè ge zhōumò yìqǐ qù ba!",
+      "english": "I would like to go and have a look. Let’s go together this weekend!",
+      "audio": "audio/dialogues/6-dialog1-dialogue-06.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好啊！我現在要去學校附近的咖啡店買咖啡。妳呢？",
+      "pinyin": "Hǎo a! Wǒ xiànzài yào qù xuéxiào fùjìn de kāfēidiàn mǎi kāfēi. Nǐ ne?",
+      "english": "Sure! I’m going to the coffee shop near the school to buy coffee now. What about you?",
+      "audio": "audio/dialogues/6-dialog1-dialogue-07.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我去樓下找朋友，我們要一起去上課。",
+      "pinyin": "Wǒ qù lóuxià zhǎo péngyǒu, wǒmen yào yìqǐ qù shàngkè.",
+      "english": "I’m going downstairs to meet a friend. We are going to class together.",
+      "audio": "audio/dialogues/6-dialog1-dialogue-08.mp3",
+      "sourceKey": "6-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "歡迎你們來。",
+      "pinyin": "Huānyíng nǐmen lái.",
+      "english": "Welcome.",
+      "audio": "audio/dialogues/6-dialog2-dialogue-01.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你們學校真遠！",
+      "pinyin": "Nǐmen xuéxiào zhēn yuǎn!",
+      "english": "Your school is really far away!",
+      "audio": "audio/dialogues/6-dialog2-dialogue-02.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "是啊，不是很近，有一點不方便。",
+      "pinyin": "Shì a, bú shì hěn jìn, yǒu yìdiǎn bù fāngbiàn.",
+      "english": "Yes, it is not very close. It is a little inconvenient.",
+      "audio": "audio/dialogues/6-dialog2-dialogue-03.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這裡的學生在哪裡買東西？",
+      "pinyin": "Zhèlǐ de xuésheng zài nǎlǐ mǎi dōngxi?",
+      "english": "Where do the students here buy things?",
+      "audio": "audio/dialogues/6-dialog2-dialogue-04.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "在學校外面。學校裡面沒有商店。",
+      "pinyin": "Zài xuéxiào wàimiàn. Xuéxiào lǐmiàn méiyǒu shāngdiàn.",
+      "english": "Outside the school. There are no stores inside the school.",
+      "audio": "audio/dialogues/6-dialog2-dialogue-05.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "吃飯呢？學校裡面有沒有餐廳？",
+      "pinyin": "Chīfàn ne? Xuéxiào lǐmiàn yǒu méiyǒu cāntīng?",
+      "english": "What about meals? Is there a restaurant inside the school?",
+      "audio": "audio/dialogues/6-dialog2-dialogue-06.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "有，餐廳在學生宿舍的一樓。",
+      "pinyin": "Yǒu, cāntīng zài xuésheng sùshè de yì lóu.",
+      "english": "Yes. The restaurant is on the first floor of the student dormitory.",
+      "audio": "audio/dialogues/6-dialog2-dialogue-07.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "前面這棟大樓很漂亮。",
+      "pinyin": "Qiánmiàn zhè dòng dàlóu hěn piàoliang.",
+      "english": "This building in front of us is very beautiful.",
+      "audio": "audio/dialogues/6-dialog2-dialogue-08.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這是圖書館，旁邊的那棟大樓是教室，圖書館後面有游泳池。",
+      "pinyin": "Zhè shì túshūguǎn, pángbiān de nà dòng dàlóu shì jiàoshì, túshūguǎn hòumiàn yǒu yóuyǒngchí.",
+      "english": "This is the library. The building beside it contains classrooms, and there is a swimming pool behind the library.",
+      "audio": "audio/dialogues/6-dialog2-dialogue-09.mp3",
+      "sourceKey": "6-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "月美，妳要去哪裡？",
+      "pinyin": "Yuèměi, nǐ yào qù nǎlǐ?",
+      "english": "Yuemei, where are you going?",
+      "audio": "audio/dialogues/7-dialog1-dialogue-01.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "去KTV唱歌。我和朋友九點二十分在大安KTV見面。",
+      "pinyin": "Qù KTV chànggē. Wǒ hé péngyǒu jiǔ diǎn èrshí fēn zài Dà’ān KTV jiànmiàn.",
+      "english": "I’m going to sing at KTV. I’m meeting my friend at the Daan KTV at 9:20.",
+      "audio": "audio/dialogues/7-dialog1-dialogue-02.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "早上九點去KTV？為什麼？",
+      "pinyin": "Zǎoshang jiǔ diǎn qù KTV? Wèishénme?",
+      "english": "Going to KTV at nine in the morning? Why?",
+      "audio": "audio/dialogues/7-dialog1-dialogue-03.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "從早上七點到中午十二點，最便宜。要不要一起去？",
+      "pinyin": "Cóng zǎoshang qī diǎn dào zhōngwǔ shí’èr diǎn, zuì piányí. Yào bú yào yìqǐ qù?",
+      "english": "It is cheapest from seven in the morning until noon. Would you like to come along?",
+      "audio": "audio/dialogues/7-dialog1-dialogue-04.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我想去，可是我得去銀行。下次吧！",
+      "pinyin": "Wǒ xiǎng qù, kěshì wǒ děi qù yínháng. Xià cì ba!",
+      "english": "I want to go, but I have to go to the bank. Next time!",
+      "audio": "audio/dialogues/7-dialog1-dialogue-05.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好啊，下次你一定要來，我想聽你唱歌。",
+      "pinyin": "Hǎo a, xià cì nǐ yídìng yào lái, wǒ xiǎng tīng nǐ chànggē.",
+      "english": "Okay. You must come next time. I want to hear you sing.",
+      "audio": "audio/dialogues/7-dialog1-dialogue-06.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "沒問題。對了，什麼時候有空一起吃飯？",
+      "pinyin": "Méi wèntí. Duì le, shénme shíhou yǒu kòng yìqǐ chīfàn?",
+      "english": "No problem. By the way, when are you free to have a meal together?",
+      "audio": "audio/dialogues/7-dialog1-dialogue-07.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "後天我有空，你呢？",
+      "pinyin": "Hòutiān wǒ yǒu kòng, nǐ ne?",
+      "english": "I am free the day after tomorrow. What about you?",
+      "audio": "audio/dialogues/7-dialog1-dialogue-08.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我也有空，後天晚上七點怎麼樣？",
+      "pinyin": "Wǒ yě yǒu kòng, hòutiān wǎnshang qī diǎn zěnmeyàng?",
+      "english": "I am free too. How about seven in the evening the day after tomorrow?",
+      "audio": "audio/dialogues/7-dialog1-dialogue-09.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好啊！再見。",
+      "pinyin": "Hǎo a! Zàijiàn.",
+      "english": "Sounds good! Goodbye.",
+      "audio": "audio/dialogues/7-dialog1-dialogue-10.mp3",
+      "sourceKey": "7-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "如玉，妳在吃飯啊？",
+      "pinyin": "Rúyù, nǐ zài chīfàn a?",
+      "english": "Ruyu, are you eating?",
+      "audio": "audio/dialogues/7-dialog2-dialogue-01.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "是，吃午餐，等一下要上課。你呢？",
+      "pinyin": "Shì, chī wǔcān, děng yíxià yào shàngkè. Nǐ ne?",
+      "english": "Yes, I’m eating lunch. I have class shortly. What about you?",
+      "audio": "audio/dialogues/7-dialog2-dialogue-02.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我剛下課。對了，下午四點半學校有籃球比賽。妳想去看嗎？",
+      "pinyin": "Wǒ gāng xiàkè. Duì le, xiàwǔ sì diǎn bàn xuéxiào yǒu lánqiú bǐsài. Nǐ xiǎng qù kàn ma?",
+      "english": "I just finished class. By the way, the school has a basketball game at 4:30 this afternoon. Would you like to watch it?",
+      "audio": "audio/dialogues/7-dialog2-dialogue-03.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "想啊。比賽幾點結束？",
+      "pinyin": "Xiǎng a. Bǐsài jǐ diǎn jiéshù?",
+      "english": "Yes. What time does the game end?",
+      "audio": "audio/dialogues/7-dialog2-dialogue-04.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "六點半。妳晚上有事嗎？",
+      "pinyin": "Liù diǎn bàn. Nǐ wǎnshang yǒu shì ma?",
+      "english": "At 6:30. Are you busy this evening?",
+      "audio": "audio/dialogues/7-dialog2-dialogue-05.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我最近很忙，每天晚上都上書法課。",
+      "pinyin": "Wǒ zuìjìn hěn máng, měitiān wǎnshang dōu shàng shūfǎ kè.",
+      "english": "I have been very busy recently. I attend calligraphy class every evening.",
+      "audio": "audio/dialogues/7-dialog2-dialogue-06.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "學得怎麼樣？",
+      "pinyin": "Xué de zěnmeyàng?",
+      "english": "How is your learning going?",
+      "audio": "audio/dialogues/7-dialog2-dialogue-07.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "剛開始學，字寫得不好，可是我覺得很有意思。",
+      "pinyin": "Gāng kāishǐ xué, zì xiě de bù hǎo, kěshì wǒ juéde hěn yǒuyìsi.",
+      "english": "I have only just started. I do not write the characters well, but I find it very interesting.",
+      "audio": "audio/dialogues/7-dialog2-dialogue-08.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我有空可以去看看嗎？",
+      "pinyin": "Wǒ yǒu kòng kěyǐ qù kànkan ma?",
+      "english": "Can I come and have a look when I am free?",
+      "audio": "audio/dialogues/7-dialog2-dialogue-09.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我得問問老師。",
+      "pinyin": "Wǒ děi wènwen lǎoshī.",
+      "english": "I have to ask the teacher.",
+      "audio": "audio/dialogues/7-dialog2-dialogue-10.mp3",
+      "sourceKey": "7-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這個週末，我想跟朋友去臺南玩。",
+      "pinyin": "Zhè ge zhōumò, wǒ xiǎng gēn péngyǒu qù Táinán wán.",
+      "english": "This weekend, I want to go to Tainan with friends for fun.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-01.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "怎麼去？",
+      "pinyin": "Zěnme qù?",
+      "english": "How are you going to get there?",
+      "audio": "audio/dialogues/8-dialog1-dialogue-02.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我想坐火車去",
+      "pinyin": "Wǒ xiǎng zuò huǒchē qù",
+      "english": "I want to take the train.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-03.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "火車太慢了，要四個多鐘頭，坐高鐵比較快。",
+      "pinyin": "Huǒchē tài màn le, yào sì ge duō zhōngtóu, zuò gāotiě bǐjiào kuài.",
+      "english": "The train is too slow. It takes more than four hours. Taking high-speed rail is faster.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-04.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "可是聽說高鐵車票非常貴。",
+      "pinyin": "Kěshì tīngshuō gāotiě chēpiào fēicháng guì.",
+      "english": "But I heard that high-speed rail tickets are very expensive.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-05.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "高鐵車票有一點貴，但是坐高鐵又快又舒服。",
+      "pinyin": "Gāotiě chēpiào yǒu yìdiǎn guì, dànshì zuò gāotiě yòu kuài yòu shūfú.",
+      "english": "High-speed rail tickets are a little expensive, but taking high-speed rail is both fast and comfortable.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-06.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我不知道在哪裡買票。",
+      "pinyin": "Wǒ bù zhīdào zài nǎlǐ mǎi piào.",
+      "english": "I do not know where to buy tickets.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-07.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "在高鐵站、網路上或是便利商店都可以。",
+      "pinyin": "Zài gāotiě zhàn, wǎnglù shàng huòshì biànlì shāngdiàn dōu kěyǐ.",
+      "english": "You can buy them at a high-speed rail station, online, or at a convenience store.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-08.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這麼方便！那我坐高鐵去，謝謝你。",
+      "pinyin": "Zhème fāngbiàn! Nà wǒ zuò gāotiě qù, xièxie nǐ.",
+      "english": "So convenient! Then I will take high-speed rail. Thank you.",
+      "audio": "audio/dialogues/8-dialog1-dialogue-09.mp3",
+      "sourceKey": "8-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "安同，明天我們沒課，你想去哪裡？",
+      "pinyin": "Āntóng, míngtiān wǒmen méi kè, nǐ xiǎng qù nǎlǐ?",
+      "english": "Antong, we have no classes tomorrow. Where would you like to go?",
+      "audio": "audio/materials/8-dialog2-dialogue-01.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我要跟同學去參觀故宮博物院。",
+      "pinyin": "Wǒ yào gēn tóngxué qù cānguān Gùgōng Bówùyuàn.",
+      "english": "I am going to visit the National Palace Museum with my classmates.",
+      "audio": "audio/materials/8-dialog2-dialogue-02.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "聽說那裡有很多中國古代的東西。",
+      "pinyin": "Tīngshuō nàlǐ yǒu hěn duō Zhōngguó gǔdài de dōngxi.",
+      "english": "I heard there are many things from ancient China there.",
+      "audio": "audio/materials/8-dialog2-dialogue-03.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "是啊。妳要跟我們去看看嗎？",
+      "pinyin": "Shì a. Nǐ yào gēn wǒmen qù kànkan ma?",
+      "english": "Yes. Would you like to come and have a look with us?",
+      "audio": "audio/materials/8-dialog2-dialogue-04.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "好。怎麼去？",
+      "pinyin": "Hǎo. Zěnme qù?",
+      "english": "Sure. How are we getting there?",
+      "audio": "audio/materials/8-dialog2-dialogue-05.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我同學騎機車載我。妳可以坐公共汽車去。",
+      "pinyin": "Wǒ tóngxué qí jīchē zài wǒ. Nǐ kěyǐ zuò gōnggòng qìchē qù.",
+      "english": "My classmate is giving me a ride on a scooter. You can take the bus.",
+      "audio": "audio/materials/8-dialog2-dialogue-06.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我想坐捷運去。比較快。",
+      "pinyin": "Wǒ xiǎng zuò jiéyùn qù. Bǐjiào kuài.",
+      "english": "I want to take the MRT. It is faster.",
+      "audio": "audio/materials/8-dialog2-dialogue-07.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "不行，到故宮沒有捷運。妳要不要坐計程車去？",
+      "pinyin": "Bù xíng, dào Gùgōng méi yǒu jiéyùn. Nǐ yào bú yào zuò jìchéngchē qù?",
+      "english": "That will not work. There is no MRT to the Palace Museum. Would you like to take a taxi?",
+      "audio": "audio/materials/8-dialog2-dialogue-08.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "太貴了！我坐公車。騎機車比坐公車快嗎？",
+      "pinyin": "Tài guì le! Wǒ zuò gōngchē. Qí jīchē bǐ zuò gōngchē kuài ma?",
+      "english": "Too expensive! I will take the bus. Is riding a scooter faster than taking the bus?",
+      "audio": "audio/materials/8-dialog2-dialogue-09.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "差不多。",
+      "pinyin": "Chàbuduō.",
+      "english": "It takes about the same time.",
+      "audio": "audio/materials/8-dialog2-dialogue-10.mp3",
+      "sourceKey": "8-dialog2",
+      "kind": "dialogue"
+    }
+  ]
+}
