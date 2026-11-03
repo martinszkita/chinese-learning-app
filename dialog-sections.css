@@ -470,3 +470,7 @@ header .study-tools .lesson-link { padding: 9px 10px; gap: 8px; margin: 0; }
   .word-row-with-stats .word-stat { display: block; padding: 0; border: 0; }
   .word-row-with-stats .word-stat::before { display: none; }
 }
+
+.vocabulary-type-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; margin-bottom: 8px; }
+.vocabulary-type-switch .toggle { flex: 1; }
+.material-audio:disabled { opacity: .35; cursor: default; }

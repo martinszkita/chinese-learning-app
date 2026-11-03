@@ -17,7 +17,7 @@ for (const filename of ['.env.local', '.env']) {
 
 const argumentValue = (name) => process.argv.find((argument) => argument.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
 const apiKey = process.env.ELEVENLABS_API_KEY;
-const voiceId = argumentValue('voice-id') || (['lesson8', 'materials'].includes(argumentValue('scope')) ? 'JBFqnCBsd6RMkjVDRZzb' : process.env.ELEVENLABS_VOICE_ID);
+const voiceId = argumentValue('voice-id') || (['lesson8', 'materials', 'dialogues'].includes(argumentValue('scope')) ? 'JBFqnCBsd6RMkjVDRZzb' : process.env.ELEVENLABS_VOICE_ID);
 const modelId = argumentValue('model') || process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
 const scope = argumentValue('scope') || 'all';
 const force = process.argv.includes('--force');
@@ -25,8 +25,8 @@ const dryRun = process.argv.includes('--dry-run');
 const outputFormat = 'mp3_44100_128';
 const scopes = scope === 'all' ? ['listening', 'vocabulary'] : [scope];
 
-if (!['all', 'listening', 'vocabulary', 'lesson8', 'materials'].includes(scope)) {
-  throw new Error('Use --scope=all, --scope=listening, --scope=vocabulary, or --scope=lesson8, or --scope=materials.');
+if (!['all', 'listening', 'vocabulary', 'lesson8', 'materials', 'dialogues'].includes(scope)) {
+  throw new Error('Use --scope=all, --scope=listening, --scope=vocabulary, or --scope=lesson8, or --scope=materials, or --scope=dialogues.');
 }
 if (!dryRun && !apiKey) throw new Error('Missing ELEVENLABS_API_KEY. Add it to .env.local or your shell environment.');
 if (!dryRun && !voiceId) throw new Error('Missing ELEVENLABS_VOICE_ID. Add it to .env.local or pass --voice-id=...');
@@ -69,6 +69,25 @@ async function createSpeech(text) {
 
 function loadManifest(name) {
   const manifestPath = path.join(repoRoot, 'audio', name, 'manifest.json');
+  if (name === 'dialogues') {
+    const context = vm.createContext({ window: {} });
+    vm.runInContext(fs.readFileSync(path.join(repoRoot, 'audio/materials.js'), 'utf8'), context);
+    const recordings = context.window.CHINESE_MATERIAL_AUDIO || {};
+    const items = [];
+    for (let lesson = 1; lesson <= 8; lesson++) {
+      for (let dialog = 1; dialog <= 2; dialog++) {
+        const sourceKey = `${lesson}-dialog${dialog}`;
+        vm.runInContext(fs.readFileSync(path.join(repoRoot, `lesson${lesson}/dialog${dialog}/data.js`), 'utf8'), context);
+        const data = context.window.CHINESE_LESSONS[sourceKey];
+        (data.dialogue || data.lines || []).forEach((item, index) => {
+          const audio = item.audio || recordings[item.chinese] || `audio/dialogues/${sourceKey}-dialogue-${String(index + 1).padStart(2, '0')}.mp3`;
+          recordings[item.chinese] = audio;
+          items.push({ chinese: item.chinese, pinyin: item.pinyin, english: item.english, audio, sourceKey, kind: 'dialogue' });
+        });
+      }
+    }
+    return { manifestPath, data: { items } };
+  }
   if (name === 'lesson8') {
     const context = vm.createContext({ window: {} });
     vm.runInContext(fs.readFileSync(path.join(repoRoot, 'lesson8/dialog1/data.js'), 'utf8'), context);
@@ -113,7 +132,16 @@ for (const name of scopes) {
     await sleep(120);
   }
   process.stdout.write('\n');
+  if (!dryRun && name === 'dialogues') {
+    const context = vm.createContext({ window: {} });
+    const mappingPath = path.join(repoRoot, 'audio/materials.js');
+    vm.runInContext(fs.readFileSync(mappingPath, 'utf8'), context);
+    const mapping = { ...context.window.CHINESE_MATERIAL_AUDIO };
+    items.forEach((item) => { mapping[item.chinese] = item.audio; });
+    fs.writeFileSync(mappingPath, `window.CHINESE_MATERIAL_AUDIO = ${JSON.stringify(mapping, null, 2)};\n`);
+  }
   if (!dryRun) {
+    fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
     fs.writeFileSync(manifestPath, `${JSON.stringify({
       provider: 'ElevenLabs',
       voiceId,

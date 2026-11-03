@@ -25,7 +25,7 @@ function load() {
     if (file !== 'app.js') vm.runInContext(fs.readFileSync(file,'utf8'),context);
   }
   let source = fs.readFileSync('app.js','utf8').replace('function draw() {', 'function actualDraw() {');
-  source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { drawVocabulary, content, personalLists, getPersonalList, renderPersonalListPicker, renderSaveButton, collectVocabulary, getFilteredVocabulary, sortVocabulary, vocabularySort, getWordStats, getQuizVocabulary, resetQuizSession, quizState, renderWords, persistPersonalList, filter: value => { personalListOnly = value; }, enterQuiz: () => { currentLesson = 'quiz'; } };\n})();`);
+  source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { renderLines, getMaterialAudio, drawVocabulary, content, personalLists, getPersonalList, renderPersonalListPicker, renderSaveButton, collectVocabulary, getFilteredVocabulary, sortVocabulary, vocabularySort, getWordStats, getQuizVocabulary, resetQuizSession, quizState, renderWords, persistPersonalList, filter: value => { personalListOnly = value; }, enterQuiz: () => { currentLesson = 'quiz'; } };\n})();`);
   vm.runInContext(source,context);
   const fire = (type, target) => {
     target.matches ||= () => false;
@@ -116,3 +116,44 @@ assert(app.content.innerHTML.includes('data-personal-rename'));
 assert(app.content.innerHTML.includes('data-personal-list-select'));
 assert(app.content.innerHTML.includes('data-vocabulary-sort="lesson"'));
 console.log('PASS: full vocabulary view renders list management and sortable column headers');
+
+const vocabulary = app.collectVocabulary();
+assert.equal(vocabulary.find(word => word.chinese === '火車').materialType, 'word');
+assert.equal(vocabulary.find(word => word.chinese === '請進').materialType, 'expression');
+assert.equal(vocabulary.find(word => word.chinese === '對不起').materialType, 'expression');
+for (const type of ['word', 'expression', 'all']) {
+  fire('click', { closest: selector => selector === '[data-vocabulary-type]' ? { dataset: { vocabularyType: type } } : null });
+  const filtered = app.getFilteredVocabulary(vocabulary);
+  assert(filtered.length > 0);
+  assert(filtered.every(word => type === 'all' || word.materialType === type));
+  app.drawVocabulary();
+  assert(app.content.innerHTML.includes(`data-vocabulary-type="${type}" aria-pressed="true"`));
+}
+app.resetQuizSession(['lesson8'], 'expression');
+assert(app.getQuizVocabulary().length > 0);
+assert(app.getQuizVocabulary().every(word => word.materialType === 'expression'));
+app.resetQuizSession();
+assert(app.getQuizVocabulary().some(word => word.materialType === 'word'));
+console.log('PASS: textbook phrase categories, independent type filters, quiz scope, and default reset');
+
+const line = { chinese: 'Test sentence', pinyin: 'test', english: 'test', audio: 'single-line.mp3' };
+const markup = app.renderLines([line], 'lesson-test');
+assert(markup.includes('data-word-audio="single-line.mp3"'));
+assert(!markup.includes('data-material-play-all'));
+assert(!markup.includes('data-lesson-audio-player'));
+assert(app.renderLines([{ chinese: 'Missing audio' }], 'missing').includes('Recording not available yet'));
+assert.equal(app.getMaterialAudio({ chinese: '他們都會做甜點。' }), 'audio/listening/6-dialog1-example-01.mp3');
+let pauses = 0;
+const played = [];
+const player = { pause() { pauses++; }, play() { played.push(this.src); return Promise.resolve(); } };
+const section = { querySelector() { return player; } };
+const button = { dataset: { wordAudio: 'single-line.mp3' }, closest() { return section; } };
+fire('click', { closest: selector => selector === '[data-word-audio]' ? button : null });
+assert.deepEqual(played, ['single-line.mp3']);
+assert.equal(player.playbackRate, 1);
+button.dataset.wordAudio = 'other-line.mp3';
+fire('click', { closest: selector => selector === '[data-word-audio]' ? button : null });
+assert.equal(played.at(-1), 'other-line.mp3');
+assert(pauses >= 3);
+assert.equal(player.onended, null);
+console.log('PASS: individual lesson recordings, shared Listening lookup, no queue, and replacement playback at 1×');
