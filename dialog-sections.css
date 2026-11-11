@@ -524,3 +524,10 @@ header .study-tools .lesson-link { padding: 9px 10px; gap: 8px; margin: 0; }
 .line.dialogue-line-playing { background: var(--tint); box-shadow: inset 4px 0 0 var(--accent); padding-left: 12px; padding-right: 12px; }
 .line.dialogue-line-playing:hover { background: var(--tint); }
 [data-dialogue-line] { scroll-margin-block: 100px; }
+
+.vocabulary-search { display: grid; gap: 8px; margin: 0 0 20px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.vocabulary-search > label { color: var(--ink); font-size: 13px; font-weight: 750; }
+.vocabulary-search-input { display: flex; gap: 8px; }
+.vocabulary-search input { flex: 1; min-width: 0; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; font-size: 15px; }
+.vocabulary-search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vocabulary-search small { color: var(--muted); font-size: 11px; line-height: 1.5; }

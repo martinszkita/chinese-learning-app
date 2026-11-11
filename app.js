@@ -105,6 +105,7 @@
     return `<label class="personal-list-picker">Save to list <select data-personal-list-select aria-label="Choose personal list">${personalLists.map((list) => `<option value="${escapeHtml(list.id)}" ${list.id === activePersonalListId ? 'selected' : ''}>${escapeHtml(list.name)} (${list.items.length})</option>`).join('')}</select></label>`;
   }
   let vocabularyType = 'all';
+  let vocabularySearch = '';
   const vocabularySort = { key: 'lesson', direction: 'asc' };
 
   const saveableItems = new Map();
@@ -704,8 +705,24 @@
     }).join('')}${checkbox('midterm1', 'Mid Term 1')}${checkbox('midterm2', 'Mid Term 2')}${mode === 'quiz' ? `<div class="material-scope-custom"><strong>Custom lists</strong>${personalLists.map((list) => checkbox(`personal:${list.id}`, `${list.name} (${list.items.length})`)).join('')}</div>` : ''}</div>`;
   }
 
+  function normalizeVocabularySearch(value) {
+    return String(value ?? '').toLowerCase().normalize('NFD')
+      .replace(/u\u0308|u:/g, 'v')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/([a-z])[0-5]/g, '$1')
+      .replace(/[\p{P}\p{Z}\s]/gu, '');
+  }
+
+  function matchesVocabularySearch(word, query) {
+    const needle = normalizeVocabularySearch(chineseText(query, 'simplified'));
+    if (!needle) return true;
+    return [word, ...(word.aliases || [])].some((item) =>
+      normalizeVocabularySearch(chineseText(item.chinese, 'simplified')).includes(needle)
+      || normalizeVocabularySearch(item.pinyin).includes(needle));
+  }
+
   function getFilteredVocabulary(words) {
-    words = words.filter((word) => matchesVocabularyType(word, vocabularyType));
+    words = words.filter((word) => matchesVocabularyType(word, vocabularyType) && matchesVocabularySearch(word, vocabularySearch));
     if (personalListOnly) return words.filter((word) => word.sources.includes(`personal:${activePersonalListId}`)).map((word, index) => ({ ...word, category: index === 0 ? getPersonalList().name : '' }));
     const sources = materialSources();
     const emitted = new Set();
@@ -740,6 +757,28 @@
     return `<button type="button" class="word-sort ${direction ? 'active' : ''}" data-vocabulary-sort="${key}" aria-label="Sort by ${label}${direction ? `, ${direction === 'asc' ? 'ascending' : 'descending'}` : ''}">${label} <span aria-hidden="true">${direction === 'asc' ? '↑' : direction === 'desc' ? '↓' : '↕'}</span></button>`;
   }
 
+  function renderVocabularyResults(words) {
+    return words.length ? renderWords(words, 'vocabulary-all', { showStats: true })
+      : `<div class="empty">${vocabularySearch.trim() ? 'No words or expressions match your search and selected filters.' : personalListOnly ? 'No items match this list and material type.' : 'No items match the selected lessons and material type.'}</div>`;
+  }
+
+  function updateVocabularySearch(value) {
+    vocabularySearch = value;
+    Object.keys(rowHintState).filter((key) => key.startsWith('vocabulary-all-')).forEach((key) => { delete rowHintState[key]; });
+    stopMaterialAudio();
+    const words = collectVocabulary();
+    const filtered = sortVocabulary(getFilteredVocabulary(words));
+    content.querySelector('.vocabulary-list-panel').innerHTML = renderVocabularyResults(filtered);
+    content.querySelector('[data-vocabulary-result-count]').textContent = `Showing ${filtered.length} of ${words.length} unique words and expressions.`;
+    const quizButton = document.querySelector('.shell').querySelector('[data-start-filtered-quiz]');
+    if (quizButton) {
+      quizButton.textContent = `Quiz selected · ${filtered.length}`;
+      quizButton.disabled = !filtered.length;
+    }
+    const clearButton = content.querySelector('[data-vocabulary-search-clear]');
+    if (clearButton) clearButton.disabled = !value;
+  }
+
   function drawVocabulary() {
     const words = collectVocabulary();
     const filteredWords = sortVocabulary(getFilteredVocabulary(words));
@@ -747,7 +786,7 @@
     const filters = renderMaterialScope('vocabulary');
     document.getElementById('lessonTitle').textContent = 'All words & expressions';
     hintState[key] ||= { pinyin: appSettings.listPinyin, english: appSettings.listEnglish };
-    content.innerHTML = `<section class="midterm-intro"><div class="subtle">LESSONS 1–${lessonCount} + MIDTERM QUESTIONS · MASTER VOCABULARY</div><p>Showing ${filteredWords.length} of ${words.length} unique words and expressions. Multi-character expressions stay together; a component is listed separately only when it also appears as an independent vocabulary item.</p><p class="stats-history-note">Answers counts new quiz responses. For older sessions, only saved correct answers are available.</p></section><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-type-switch" role="group" aria-label="Material type">${[['all', 'All'], ['word', 'Words'], ['expression', 'Expressions']].map(([value, label]) => `<button type="button" class="toggle ${vocabularyType === value ? 'active' : ''}" data-vocabulary-type="${value}" aria-pressed="${vocabularyType === value}">${label}</button>`).join('')}</div><div class="vocabulary-filter-actions"><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls">${renderPersonalListPicker()}<form data-personal-create><label>New list <input name="listName" required maxlength="80" placeholder="List name"></label><button type="submit" class="filter-action">Create list</button></form><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(getPersonalList().name)} (${getPersonalList().items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(getPersonalList().name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${filteredWords.length ? renderWords(filteredWords, key, { showStats: true }) : `<div class="empty">${personalListOnly ? 'No items match this list and material type.' : 'No items match the selected lessons and material type.'}</div>`}</section>`;
+    content.innerHTML = `<section class="midterm-intro"><div class="subtle">LESSONS 1–${lessonCount} + MIDTERM QUESTIONS · MASTER VOCABULARY</div><p><span data-vocabulary-result-count role="status">Showing ${filteredWords.length} of ${words.length} unique words and expressions.</span> Multi-character expressions stay together; a component is listed separately only when it also appears as an independent vocabulary item.</p><p class="stats-history-note">Answers counts new quiz responses. For older sessions, only saved correct answers are available.</p></section><div class="vocabulary-search"><label for="vocabularySearch">Search characters or Pinyin</label><div class="vocabulary-search-input"><input type="search" id="vocabularySearch" data-vocabulary-search value="${escapeHtml(vocabularySearch)}" placeholder="e.g. 學校, 学校, xuéxiào, xuexiao" autocomplete="off" spellcheck="false" aria-describedby="vocabularySearchHelp"><button type="button" class="filter-action" data-vocabulary-search-clear ${vocabularySearch ? '' : 'disabled'}>Clear</button></div><small id="vocabularySearchHelp">Traditional or Simplified Chinese · Pinyin with or without tones, spaces or tone numbers.</small></div><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-type-switch" role="group" aria-label="Material type">${[['all', 'All'], ['word', 'Words'], ['expression', 'Expressions']].map(([value, label]) => `<button type="button" class="toggle ${vocabularyType === value ? 'active' : ''}" data-vocabulary-type="${value}" aria-pressed="${vocabularyType === value}">${label}</button>`).join('')}</div><div class="vocabulary-filter-actions"><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls">${renderPersonalListPicker()}<form data-personal-create><label>New list <input name="listName" required maxlength="80" placeholder="List name"></label><button type="submit" class="filter-action">Create list</button></form><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(getPersonalList().name)} (${getPersonalList().items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(getPersonalList().name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${renderVocabularyResults(filteredWords)}</section>`;
   }
 
   function renderSetting(key, title, description) {
@@ -925,7 +964,7 @@
     return shuffled;
   }
 
-  function resetQuizSession(sourceKeys = null, materialType = 'all') {
+  function resetQuizSession(sourceKeys = null, materialType = 'all', searchQuery = '') {
     if (quizState.advanceTimer) clearTimeout(quizState.advanceTimer);
     quizState.index = 0;
     quizState.flipped = false;
@@ -934,12 +973,13 @@
     quizState.needsViewRecord = true;
     quizState.advanceTimer = null;
     quizState.materialType = materialType;
+    quizState.searchQuery = searchQuery;
     quizState.sourceKeys = sourceKeys === null ? null : [...sourceKeys];
     quizState.order = [];
   }
 
   function getQuizVocabulary() {
-    let words = collectVocabulary().filter((word) => matchesVocabularyType(word, quizState.materialType || 'all'));
+    let words = collectVocabulary().filter((word) => matchesVocabularyType(word, quizState.materialType || 'all') && matchesVocabularySearch(word, quizState.searchQuery));
     if (quizState.sourceKeys) words = words.filter((word) => quizState.sourceKeys.some((source) => matchesMaterialSource(word, source)));
     if (quizState.unansweredOnly) words = words.filter((word) => getWordStats(word.chinese).correct === 0);
     if (!quizState.order.length) quizState.order = shuffleWords(words).map((word) => word.chinese);
@@ -952,7 +992,7 @@
   function drawQuiz() {
     const words = getQuizVocabulary();
     const scope = quizState.sourceKeys ? `Selected filters: ${quizState.sourceKeys.map((source) => source.startsWith('lesson') ? `Lesson ${source.replace('lesson', '')}` : /^(\d+)-dialog([12])$/.test(source) ? source.replace(/^(\d+)-dialog([12])$/, 'Lesson $1 · Dialog $2') : source.startsWith('personal:') ? (personalLists.find((list) => `personal:${list.id}` === source)?.name || 'My list') : source === 'midterm1' ? 'Mid Term 1' : 'Mid Term 2').join(', ')}` : 'All lessons and mid-terms';
-    const filter = `<fieldset class="quiz-material-scope"><legend>Material scope</legend>${renderMaterialScope('quiz')}</fieldset><span class="quiz-scope">${escapeHtml(scope)}</span><label class="quiz-filter"><input type="checkbox" data-quiz-unanswered ${quizState.unansweredOnly ? 'checked' : ''}><span>Only words never answered correctly</span></label>`;
+    const filter = `<fieldset class="quiz-material-scope"><legend>Material scope</legend>${renderMaterialScope('quiz')}</fieldset><span class="quiz-scope">${escapeHtml(scope)}${quizState.searchQuery ? ` · Search: ${escapeHtml(quizState.searchQuery)}` : ''}</span><label class="quiz-filter"><input type="checkbox" data-quiz-unanswered ${quizState.unansweredOnly ? 'checked' : ''}><span>Only words never answered correctly</span></label>`;
     document.getElementById('lessonTitle').textContent = 'Flashcard quiz';
     if (!words.length) {
       content.innerHTML = `<section class="quiz-panel"><div class="quiz-options">${filter}</div><div class="quiz-complete"><strong>No matching cards</strong><span>Select material in the panel or adjust the unanswered filter.</span></div></section>`;
@@ -1111,6 +1151,13 @@
     draw();
   });
 
+  document.querySelector('.shell').addEventListener('input', (event) => {
+    if (event.target.matches('[data-vocabulary-search]') && !event.isComposing) updateVocabularySearch(event.target.value);
+  });
+  document.querySelector('.shell').addEventListener('compositionend', (event) => {
+    if (event.target.matches('[data-vocabulary-search]')) updateVocabularySearch(event.target.value);
+  });
+
   document.querySelector('.shell').addEventListener('change', (event) => {
     for (const mode of ['vocabulary', 'quiz']) {
       const source = event.target.closest(`[data-${mode}-scope]`);
@@ -1176,7 +1223,7 @@
     const unansweredOnly = event.target.closest('[data-quiz-unanswered]');
     if (unansweredOnly) {
       quizState.unansweredOnly = unansweredOnly.checked;
-      resetQuizSession(quizState.sourceKeys, quizState.materialType);
+      resetQuizSession(quizState.sourceKeys, quizState.materialType, quizState.searchQuery);
       draw();
       return;
     }
@@ -1188,6 +1235,13 @@
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
+    if (event.target.closest('[data-vocabulary-search-clear]')) {
+      const input = content.querySelector('[data-vocabulary-search]');
+      input.value = '';
+      updateVocabularySearch('');
+      input.focus();
+      return;
+    }
     const dialogueAction = event.target.closest('[data-dialogue-action]');
     if (dialogueAction) {
       handleDialogueAction(dialogueAction);
@@ -1359,7 +1413,7 @@
       activePersonalListId = personalLists[personalLists.length - 1].id;
       currentLesson = 'quiz';
       expandedLesson = null;
-      resetQuizSession(selectedSources, vocabularyType);
+      resetQuizSession(selectedSources, vocabularyType, vocabularySearch);
       draw();
       return;
     }
