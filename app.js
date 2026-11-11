@@ -252,7 +252,7 @@
     return splitFrom(0) || [word];
   }
 
-  function renderRuby(chinese, pinyin) {
+  function renderRuby(chinese, pinyin, renderCharacter = escapeHtml) {
     const characters = Array.from(String(chinese ?? ''));
     const hanCount = characters.filter((character) => /\p{Script=Han}/u.test(character)).length;
     const pinyinText = String(pinyin ?? '');
@@ -267,9 +267,29 @@
     return characters.map((character) => {
       if (!/\p{Script=Han}/u.test(character)) return escapeHtml(character);
       const syllable = syllables[syllableIndex++];
-      return `<ruby>${escapeHtml(character)}<rt>${escapeHtml(syllable)}</rt></ruby>`;
+      return `<ruby>${renderCharacter(character)}<rt>${escapeHtml(syllable)}</rt></ruby>`;
     }).join('');
   }
+
+  function renderZoomableCharacters(text, pinyin, showPinyin, lang) {
+    const renderCharacter = (character) => `<button type="button" class="character-zoom-trigger" data-character-zoom="${escapeHtml(character)}" data-character-lang="${lang}" aria-label="Enlarge character ${escapeHtml(character)}" aria-haspopup="dialog" title="Enlarge character">${escapeHtml(character)}</button>`;
+    return (showPinyin && renderRuby(text, pinyin, renderCharacter))
+      || Array.from(text, (character) => /\p{Script=Han}/u.test(character) ? renderCharacter(character) : escapeHtml(character)).join('');
+  }
+
+  const characterZoomDialog = document.getElementById('characterZoomDialog');
+  function openCharacterZoom(character, lang) {
+    if (!/^\p{Script=Han}$/u.test(character)) return;
+    const glyph = document.getElementById('characterZoomGlyph');
+    glyph.textContent = character;
+    glyph.setAttribute('lang', lang === 'zh-Hans' ? 'zh-Hans' : 'zh-Hant');
+    document.getElementById('characterZoomScript').textContent = lang === 'zh-Hans' ? 'Simplified Chinese' : 'Traditional Chinese';
+    characterZoomDialog.showModal();
+  }
+  characterZoomDialog.addEventListener('click', (event) => {
+    if (event.target === characterZoomDialog) characterZoomDialog.close();
+  });
+  document.getElementById('characterZoomClose').addEventListener('click', () => characterZoomDialog.close());
 
   function drawNav() {
     const lessons = Array.from({ length: lessonCount }, (_, index) => {
@@ -354,7 +374,7 @@
     const showStats = options.showStats ?? false;
     const hints = hintState[key] || { pinyin: false, english: false };
     const statsHeader = showStats ? `<div class="word-stats-head"><span>#</span><span lang="zh-Hant">Traditional · 繁體</span><span lang="zh-Hans">Simplified · 简体</span><span>Hints</span>${renderVocabularySort('Lesson', 'lesson')}${renderVocabularySort('Shown', 'shown')}${renderVocabularySort('Answers', 'answered')}${renderVocabularySort('Correct', 'correct')}${renderVocabularySort('Accuracy', 'accuracy')}</div>` : '';
-    return `<div class="toolbar"><button class="toggle ${hints.pinyin ? 'active' : ''}" type="button" data-toggle="pinyin" data-key="${key}" aria-pressed="${hints.pinyin}">Pinyin ${hints.pinyin ? '✓' : '+'}</button><button class="toggle ${hints.english ? 'active' : ''}" type="button" data-toggle="english" data-key="${key}" aria-pressed="${hints.english}">English ${hints.english ? '✓' : '+'}</button><span class="hint">Click a row: Pinyin → both → hide</span></div>${statsHeader}<div class="word-list">${words.map((word, index) => {
+    return `<div class="toolbar"><button class="toggle ${hints.pinyin ? 'active' : ''}" type="button" data-toggle="pinyin" data-key="${key}" aria-pressed="${hints.pinyin}">Pinyin ${hints.pinyin ? '✓' : '+'}</button><button class="toggle ${hints.english ? 'active' : ''}" type="button" data-toggle="english" data-key="${key}" aria-pressed="${hints.english}">English ${hints.english ? '✓' : '+'}</button><span class="hint">${showStats ? 'Click a character to enlarge · Click the rest of a row for hints' : 'Click a row: Pinyin → both → hide'}</span></div>${statsHeader}<div class="word-list">${words.map((word, index) => {
       const rowKey = `${key}-${index}`;
       const rowHints = rowHintState[rowKey] || hints;
       const showPinyin = rowHints.pinyin;
@@ -366,7 +386,7 @@
         const simplifiedRuby = showPinyin ? renderRuby(simplified, word.pinyin) : null;
         const stats = getWordStats(word.chinese);
         const hintsContent = `${showPinyin && !traditionalRuby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}`;
-        return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row word-row-with-stats clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${traditionalRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hant">${traditionalRuby || escapeHtml(word.chinese)}${word.audio ? `<button type="button" class="word-audio" data-word-audio="${escapeHtml(word.audio)}" aria-label="Listen: ${chineseHtml(word.chinese)}" title="Play pronunciation">${renderSpeakerIcon()}</button>` : ''}${renderSaveButton(word)}</span><span class="word-hanzi word-simplified ${simplifiedRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hans">${simplifiedRuby || escapeHtml(simplified)}</span><span class="word-details">${hintsContent}</span><span class="word-lesson" data-stat-label="Lesson">${word.sources.filter((source) => !source.startsWith('personal:')).map((source) => source.startsWith('lesson') ? `L${source.slice(6)}` : source === 'midterm1' ? 'Mid 1' : 'Mid 2').join(', ') || 'My list'}</span><span class="word-stat" data-stat-label="Shown">${stats.shown}</span><span class="word-stat" data-stat-label="Answers">${stats.answered}</span><span class="word-stat" data-stat-label="Correct">${stats.correct}</span><span class="word-stat word-accuracy" data-stat-label="Accuracy">${getAccuracy(stats)}%</span></div>`;
+        return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row word-row-with-stats clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${traditionalRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hant">${renderZoomableCharacters(word.chinese, word.pinyin, showPinyin, 'zh-Hant')}${word.audio ? `<button type="button" class="word-audio" data-word-audio="${escapeHtml(word.audio)}" aria-label="Listen: ${chineseHtml(word.chinese)}" title="Play pronunciation">${renderSpeakerIcon()}</button>` : ''}${renderSaveButton(word)}</span><span class="word-hanzi word-simplified ${simplifiedRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hans">${renderZoomableCharacters(simplified, word.pinyin, showPinyin, 'zh-Hans')}</span><span class="word-details">${hintsContent}</span><span class="word-lesson" data-stat-label="Lesson">${word.sources.filter((source) => !source.startsWith('personal:')).map((source) => source.startsWith('lesson') ? `L${source.slice(6)}` : source === 'midterm1' ? 'Mid 1' : 'Mid 2').join(', ') || 'My list'}</span><span class="word-stat" data-stat-label="Shown">${stats.shown}</span><span class="word-stat" data-stat-label="Answers">${stats.answered}</span><span class="word-stat" data-stat-label="Correct">${stats.correct}</span><span class="word-stat word-accuracy" data-stat-label="Accuracy">${getAccuracy(stats)}%</span></div>`;
       }
       return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${ruby ? 'word-hanzi-ruby' : ''}" lang="${chineseLang()}">${ruby || chineseHtml(word.chinese)}${word.aliases?.length ? `<small class="word-aliases"> (${word.aliases.map((alias) => chineseHtml(alias.chinese)).join(', ')})</small>` : ''}${renderMaterialAudio(word)}${renderSaveButton(word)}</span>${showPinyin && !ruby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}</div>`;
     }).join('')}</div><audio data-word-audio-player preload="none"></audio>`;
@@ -1054,6 +1074,11 @@
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
+    const characterZoom = event.target.closest('[data-character-zoom]');
+    if (characterZoom) {
+      openCharacterZoom(characterZoom.dataset.characterZoom, characterZoom.dataset.characterLang);
+      return;
+    }
     for (const mode of ['vocabulary', 'quiz']) {
       const selection = event.target.closest(`[data-${mode}-scope-select]`);
       if (!selection) continue;
@@ -1307,7 +1332,7 @@
   });
 
   content.addEventListener('keydown', (event) => {
-    if (event.target.closest('[data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
+    if (event.target.closest('[data-character-zoom], [data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
     if (event.key !== 'Enter' && event.key !== ' ') return;
     const row = event.target.closest('[data-hint-row]');
     if (!row) return;
@@ -1327,7 +1352,7 @@
   document.addEventListener('keydown', (event) => {
     if (event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
     const isArrow = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key);
-    if (!isArrow && event.target.closest('[data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
+    if (!isArrow && event.target.closest('[data-character-zoom], [data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
     if (currentLesson === 'listening') {
       const isSpace = event.code === 'Space';
       const isNavigation = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
