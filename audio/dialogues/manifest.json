@@ -1091,6 +1091,182 @@
       "audio": "audio/materials/8-dialog2-dialogue-10.mp3",
       "sourceKey": "8-dialog2",
       "kind": "dialogue"
+    },
+    {
+      "chinese": "田中，下個星期我們放五天的假，你要回國嗎？",
+      "pinyin": "Tiánzhōng, xià ge xīngqí wǒmen fàng wǔ tiān de jià, nǐ yào huíguó ma?",
+      "english": "Tianzhong, we have five days off next week. Are you going back to your home country?",
+      "audio": "audio/dialogues/9-dialog1-dialogue-01.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "不，我打算在家看電視、影片學中文，你呢？",
+      "pinyin": "Bù, wǒ dǎsuàn zài jiā kàn diànshì, yǐngpiàn xué Zhōngwén, nǐ ne?",
+      "english": "No, I plan to stay home and learn Chinese by watching TV and videos. What about you?",
+      "audio": "audio/dialogues/9-dialog1-dialogue-02.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我想跟朋友去玩。",
+      "pinyin": "Wǒ xiǎng gēn péngyǒu qù wán.",
+      "english": "I would like to go on a trip with friends.",
+      "audio": "audio/dialogues/9-dialog1-dialogue-03.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "不錯啊。去什麼地方？",
+      "pinyin": "Búcuò a. Qù shénme dìfang?",
+      "english": "Sounds good. Where are you going?",
+      "audio": "audio/dialogues/9-dialog1-dialogue-04.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "臺東。聽說那裡的風景非常漂亮。",
+      "pinyin": "Táidōng. Tīngshuō nàlǐ de fēngjǐng fēicháng piàoliang.",
+      "english": "Taitung. I hear the scenery there is very beautiful.",
+      "audio": "audio/dialogues/9-dialog1-dialogue-05.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我也聽說。放假的時候，你常去旅行嗎？",
+      "pinyin": "Wǒ yě tīngshuō. Fàngjià de shíhou, nǐ cháng qù lǚxíng ma?",
+      "english": "I have heard that too. Do you often travel when you have time off?",
+      "audio": "audio/dialogues/9-dialog1-dialogue-06.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "不一定。有時候在家寫功課，有時候出去玩。",
+      "pinyin": "Bù yídìng. Yǒu shíhou zài jiā xiě gōngkè, yǒu shíhou chūqù wán.",
+      "english": "Not always. Sometimes I do homework at home, and sometimes I go out for fun.",
+      "audio": "audio/dialogues/9-dialog1-dialogue-07.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你們什麼時候去臺東？",
+      "pinyin": "Nǐmen shénme shíhou qù Táidōng?",
+      "english": "When are you going to Taitung?",
+      "audio": "audio/dialogues/9-dialog1-dialogue-08.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "這個星期六下午去。",
+      "pinyin": "Zhè ge xīngqíliù xiàwǔ qù.",
+      "english": "We are going this Saturday afternoon.",
+      "audio": "audio/dialogues/9-dialog1-dialogue-09.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "去玩多久？",
+      "pinyin": "Qù wán duō jiǔ?",
+      "english": "How long will you stay?",
+      "audio": "audio/dialogues/9-dialog1-dialogue-10.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "大概玩四、五天。",
+      "pinyin": "Dàgài wán sì, wǔ tiān.",
+      "english": "About four or five days.",
+      "audio": "audio/dialogues/9-dialog1-dialogue-11.mp3",
+      "sourceKey": "9-dialog1",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "我女朋友九月三十號要來臺灣看我。",
+      "pinyin": "Wǒ nǚ péngyǒu jiǔ yuè sānshí hào yào lái Táiwān kàn wǒ.",
+      "english": "My girlfriend is coming to Taiwan to visit me on September 30.",
+      "audio": "audio/dialogues/9-dialog2-dialogue-01.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你想帶她去哪裡玩？",
+      "pinyin": "Nǐ xiǎng dài tā qù nǎlǐ wán?",
+      "english": "Where would you like to take her for fun?",
+      "audio": "audio/dialogues/9-dialog2-dialogue-02.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "還不知道。你有什麼建議？",
+      "pinyin": "Hái bù zhīdào. Nǐ yǒu shénme jiànyì?",
+      "english": "I do not know yet. Do you have any suggestions?",
+      "audio": "audio/dialogues/9-dialog2-dialogue-03.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "臺灣的夜市很有名，你們應該去逛逛。",
+      "pinyin": "Táiwān de yèshì hěn yǒumíng, nǐmen yīnggāi qù guàngguang.",
+      "english": "Taiwan's night markets are very famous. You should go and look around.",
+      "audio": "audio/dialogues/9-dialog2-dialogue-04.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "謝謝，還有什麼好玩的地方？",
+      "pinyin": "Xièxie, hái yǒu shénme hǎowán de dìfang?",
+      "english": "Thank you. What other fun places are there?",
+      "audio": "audio/dialogues/9-dialog2-dialogue-05.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "臺灣的茶也很特別。臺北有很多茶館。",
+      "pinyin": "Táiwān de chá yě hěn tèbié. Táiběi yǒu hěn duō cháguǎn.",
+      "english": "Taiwanese tea is also special. There are many teahouses in Taipei.",
+      "audio": "audio/dialogues/9-dialog2-dialogue-06.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "到哪裡喝茶比較好？",
+      "pinyin": "Dào nǎlǐ hē chá bǐjiào hǎo?",
+      "english": "Where would be a good place to have tea?",
+      "audio": "audio/dialogues/9-dialog2-dialogue-07.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "你們可以去貓空。那裡的風景很美。",
+      "pinyin": "Nǐmen kěyǐ qù Māokōng. Nàlǐ de fēngjǐng hěn měi.",
+      "english": "You can go to Maokong. The scenery there is beautiful.",
+      "audio": "audio/dialogues/9-dialog2-dialogue-08.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "謝謝你。我決定帶她去貓空。你也一起去，好不好？",
+      "pinyin": "Xièxie nǐ. Wǒ juédìng dài tā qù Māokōng. Nǐ yě yìqǐ qù, hǎo bù hǎo?",
+      "english": "Thank you. I have decided to take her to Maokong. Would you like to come along too?",
+      "audio": "audio/dialogues/9-dialog2-dialogue-09.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "要是那時候我有空，就跟你們一起去。",
+      "pinyin": "Yàoshì nà shíhou wǒ yǒu kòng, jiù gēn nǐmen yìqǐ qù.",
+      "english": "If I am free then, I will go with you.",
+      "audio": "audio/dialogues/9-dialog2-dialogue-10.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
+    },
+    {
+      "chinese": "太好了！謝謝！",
+      "pinyin": "Tài hǎo le! Xièxie!",
+      "english": "Great! Thank you!",
+      "audio": "audio/dialogues/9-dialog2-dialogue-11.mp3",
+      "sourceKey": "9-dialog2",
+      "kind": "dialogue"
     }
   ]
 }

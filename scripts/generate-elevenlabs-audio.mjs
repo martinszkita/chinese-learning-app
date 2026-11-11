@@ -17,7 +17,7 @@ for (const filename of ['.env.local', '.env']) {
 
 const argumentValue = (name) => process.argv.find((argument) => argument.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
 const apiKey = process.env.ELEVENLABS_API_KEY;
-const voiceId = argumentValue('voice-id') || (['lesson8', 'materials', 'dialogues'].includes(argumentValue('scope')) ? 'JBFqnCBsd6RMkjVDRZzb' : process.env.ELEVENLABS_VOICE_ID);
+const voiceId = argumentValue('voice-id') || (['lesson8', 'lesson9', 'materials', 'dialogues'].includes(argumentValue('scope')) ? 'JBFqnCBsd6RMkjVDRZzb' : process.env.ELEVENLABS_VOICE_ID);
 const modelId = argumentValue('model') || process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
 const scope = argumentValue('scope') || 'all';
 const force = process.argv.includes('--force');
@@ -25,8 +25,8 @@ const dryRun = process.argv.includes('--dry-run');
 const outputFormat = 'mp3_44100_128';
 const scopes = scope === 'all' ? ['listening', 'vocabulary'] : [scope];
 
-if (!['all', 'listening', 'vocabulary', 'lesson8', 'materials', 'dialogues'].includes(scope)) {
-  throw new Error('Use --scope=all, --scope=listening, --scope=vocabulary, or --scope=lesson8, or --scope=materials, or --scope=dialogues.');
+if (!['all', 'listening', 'vocabulary', 'lesson8', 'lesson9', 'materials', 'dialogues'].includes(scope)) {
+  throw new Error('Use --scope=all, --scope=listening, --scope=vocabulary, or --scope=lesson8, or --scope=lesson9, or --scope=materials, or --scope=dialogues.');
 }
 if (!dryRun && !apiKey) throw new Error('Missing ELEVENLABS_API_KEY. Add it to .env.local or your shell environment.');
 if (!dryRun && !voiceId) throw new Error('Missing ELEVENLABS_VOICE_ID. Add it to .env.local or pass --voice-id=...');
@@ -74,28 +74,32 @@ function loadManifest(name) {
     vm.runInContext(fs.readFileSync(path.join(repoRoot, 'audio/materials.js'), 'utf8'), context);
     const recordings = context.window.CHINESE_MATERIAL_AUDIO || {};
     const items = [];
-    for (let lesson = 1; lesson <= 8; lesson++) {
-      for (let dialog = 1; dialog <= 2; dialog++) {
-        const sourceKey = `${lesson}-dialog${dialog}`;
-        vm.runInContext(fs.readFileSync(path.join(repoRoot, `lesson${lesson}/dialog${dialog}/data.js`), 'utf8'), context);
-        const data = context.window.CHINESE_LESSONS[sourceKey];
-        (data.dialogue || data.lines || []).forEach((item, index) => {
-          const audio = item.audio || recordings[item.chinese] || `audio/dialogues/${sourceKey}-dialogue-${String(index + 1).padStart(2, '0')}.mp3`;
-          recordings[item.chinese] = audio;
-          items.push({ chinese: item.chinese, pinyin: item.pinyin, english: item.english, audio, sourceKey, kind: 'dialogue' });
-        });
-      }
+    const lessonFiles = [...fs.readFileSync(path.join(repoRoot, 'index.html'), 'utf8').matchAll(/<script src="(lesson\d+\/dialog[12]\/data\.js)"/g)].map((match) => match[1]);
+    for (const file of lessonFiles) {
+      const [, lesson, dialog] = /^lesson(\d+)\/dialog([12])\/data\.js$/.exec(file);
+      const sourceKey = `${lesson}-dialog${dialog}`;
+      vm.runInContext(fs.readFileSync(path.join(repoRoot, file), 'utf8'), context);
+      const data = context.window.CHINESE_LESSONS[sourceKey];
+      (data.dialogue || data.lines || []).forEach((item, index) => {
+        const audio = item.audio || recordings[item.chinese] || `audio/dialogues/${sourceKey}-dialogue-${String(index + 1).padStart(2, '0')}.mp3`;
+        recordings[item.chinese] = audio;
+        items.push({ chinese: item.chinese, pinyin: item.pinyin, english: item.english, audio, sourceKey, kind: 'dialogue' });
+      });
     }
     return { manifestPath, data: { items } };
   }
-  if (name === 'lesson8') {
+  if (name === 'lesson8' || name === 'lesson9') {
     const context = vm.createContext({ window: {} });
-    vm.runInContext(fs.readFileSync(path.join(repoRoot, 'lesson8/dialog1/data.js'), 'utf8'), context);
-    const lesson = context.window.CHINESE_LESSONS['8-dialog1'];
-    const items = ['words', 'examples'].flatMap((kind) => lesson[kind].map((item) => ({
-      chinese: item.chinese, pinyin: item.pinyin, english: item.english,
-      audio: item.audio, sourceKey: '8-dialog1', kind
-    })));
+    const dialogs = name === 'lesson9' ? [1, 2] : [1];
+    const items = dialogs.flatMap((dialog) => {
+      const sourceKey = `${name.slice(6)}-dialog${dialog}`;
+      vm.runInContext(fs.readFileSync(path.join(repoRoot, `${name}/dialog${dialog}/data.js`), 'utf8'), context);
+      const lesson = context.window.CHINESE_LESSONS[sourceKey];
+      return ['words', 'examples'].flatMap((kind) => (lesson[kind] || []).map((item) => ({
+        chinese: item.chinese, pinyin: item.pinyin, english: item.english,
+        audio: item.audio, sourceKey, kind
+      })));
+    });
     return { manifestPath, data: { items } };
   }
   return { manifestPath, data: JSON.parse(fs.readFileSync(manifestPath, 'utf8')) };
@@ -132,7 +136,7 @@ for (const name of scopes) {
     await sleep(120);
   }
   process.stdout.write('\n');
-  if (!dryRun && name === 'dialogues') {
+  if (!dryRun && ['dialogues', 'lesson9'].includes(name)) {
     const context = vm.createContext({ window: {} });
     const mappingPath = path.join(repoRoot, 'audio/materials.js');
     vm.runInContext(fs.readFileSync(mappingPath, 'utf8'), context);

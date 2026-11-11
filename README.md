@@ -1,4 +1,4 @@
-# Chinese Exam Prep — Lessons 1–8
+# Chinese Exam Prep — Lessons 1–9
 
 Open `index.html` in a browser. No installation or internet access needed.
 
@@ -96,3 +96,7 @@ In All words & expressions, click any Chinese character in either script column 
 Each lesson dialogue has a compact **Full dialogue** player. Play reads all turns in order at 1× and highlights the current turn. Stop pauses at the current position; Play resumes. Reset stops playback and returns to the first turn. Changing lessons or study modes stops the dialogue; pronunciation buttons play a single line independently.
 
 Run `node tests/dialogue-playback.cjs` to check sequential playback, highlighting, Stop/Reset, navigation, pronunciation interruption and recording errors.
+
+Lesson 9 · Dialog 1 contains all 11 turns from the supplied screenshot, with speaker names, Pinyin and English translations. The source image is stored in `lesson9/dialog1/screenshots/`. Its supplement includes all 14 vocabulary entries (9 words, 4 phrases and the place name 臺東) from the screenshot and all 14 numbered example sentences from the two-page PDF. Both sources are retained in the lesson folder. Examples are available in Listening, and vocabulary is available in the master list and quizzes. Regenerate supplement recordings with `node scripts/generate-elevenlabs-audio.mjs --scope=lesson9`. Dialogue MP3 files use George and support the individual and full-dialogue players. The navigation and source filters derive the lesson count from loaded materials; audio generation discovers lesson scripts from `index.html`, including lessons with only one supplied dialogue.
+
+Lesson 9 · Dialog 2 includes all 11 dialogue turns, 16 vocabulary entries and all 16 numbered PDF examples (18 spoken turns; A/B exchanges remain separate). Every entry has Pinyin, an English translation and a George MP3. Dialogue recordings use `--scope=dialogues`; `--scope=lesson9` regenerates missing vocabulary/example recordings for both parts of Lesson 9. Source screenshots and the original two-page PDF are retained in `lesson9/dialog2/`.
