@@ -31,12 +31,10 @@ process.chdir(path.join(__dirname, '..'));
     document: { getElementById: element, querySelector: element, documentElement: element('root'), addEventListener() {} },
     localStorage: { getItem() { return null; }, setItem() {} }
   });
-  for (const [, file] of fs.readFileSync('index.html', 'utf8').matchAll(/<script src="([^"]+)"/g)) {
-    if (file !== 'app.js') vm.runInContext(fs.readFileSync(file, 'utf8'), context);
-  }
+  require('./helpers/runtime.cjs').loadRuntime(context);
   const lines = [0, 1, 2].map(index => ({ chinese: '你好', pinyin: 'Nǐ hǎo', english: 'Hello', audio: `turn-${index}.mp3` }));
   context.window.CHINESE_LESSONS['1-dialog1'] = { dialogue: lines };
-  const source = fs.readFileSync('app.js', 'utf8').replace(/  draw\(\);\n\}\)\(\);\s*$/, `window.test = { renderLines, content, drawContent, updateDialoguePlayer, setMode: value => { currentLesson = value; } };\n})();`);
+  const source = require('./helpers/runtime.cjs').appSource(context).replace(/  draw\(\);\n\}\)\(\);\s*$/, `window.test = { renderLines, content, drawContent, updateDialoguePlayer, setMode: value => { currentLesson = value; } };\n})();`);
   vm.runInContext(source, context);
   const app = context.window.test;
   const key = '1-dialog1-dialogue';

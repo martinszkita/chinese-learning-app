@@ -1,8 +1,6 @@
-(() => {
-  const database = window.CHINESE_LESSONS || {};
-  const midterms = window.CHINESE_MIDTERMS || {};
-  const audioExtension = window.CHINESE_AUDIO_EXTENSION === 'mp3' ? 'mp3' : 'm4a';
-  const lessonCount = Math.max(1, ...Object.keys(database).map((key) => Number(/^(\d+)-dialog[12]$/.exec(key)?.[1]) || 0));
+window.ChineseApp.start = function start(snapshot) {
+  const materialCatalog = window.ChineseApp.model.createCatalog(snapshot);
+  const { lessons: database, midterms, lessonCount } = materialCatalog;
   let currentLesson = 'vocabulary';
   let currentPart = 'dialog1';
   let expandedLesson = null;
@@ -34,14 +32,13 @@
   }
 
   const listeningProgressKey = 'chinese-listening-progress-v1';
-  const listeningProgress = (() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(listeningProgressKey) || '{}');
-      return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
-    } catch { return {}; }
-  })();
+  const listeningProgress = window.ChineseApp.storage.readRecord(localStorage, listeningProgressKey);
+  for (const [key, value] of Object.entries(listeningProgress)) {
+    const id = materialCatalog.idForLegacyChinese(key);
+    if (id && !listeningProgress[id]) listeningProgress[id] = value;
+  }
   function getListeningStatus(chinese) {
-    const entry = listeningProgress[chinese];
+    const entry = listeningProgress[materialCatalog.idForChinese(chinese) || chinese] ?? listeningProgress[chinese];
     return typeof entry === 'string' ? entry : entry?.status;
   }
 
@@ -49,18 +46,20 @@
     const before = getListeningItems();
     const item = before[listeningState.index];
     if (!item || !['learned', 'unlearned'].includes(status)) return;
-    const previous = listeningProgress[item.chinese];
-    const stats = previous && typeof previous === 'object' ? previous : {};
+    const progressId = materialCatalog.idForChinese(item.chinese) || item.id || item.chinese;
+    const previous = listeningProgress[progressId];
+    const legacy = listeningProgress[item.chinese];
+    const stats = (previous || legacy) && typeof (previous || legacy) === 'object' ? (previous || legacy) : {};
     const attempts = Number(stats.attempts) || 0;
-    listeningProgress[item.chinese] = {
+    listeningProgress[progressId] = {
       status, attempts: attempts + 1,
       learned: (Number(stats.learned) || 0) + (status === 'learned' ? 1 : 0),
       unlearned: (Number(stats.unlearned) || 0) + (status === 'unlearned' ? 1 : 0)
     };
     try { localStorage.setItem(listeningProgressKey, JSON.stringify(listeningProgress)); }
     catch {
-      if (previous === undefined) delete listeningProgress[item.chinese];
-      else listeningProgress[item.chinese] = previous;
+      if (previous === undefined) delete listeningProgress[progressId];
+      else listeningProgress[progressId] = previous;
       window.alert('Learning status could not be saved. Please check browser storage.');
       return;
     }
@@ -83,20 +82,7 @@
     'midterm1', 'midterm2'
   ].map((source) => [source, true]));
   const personalListStorageKey = 'chinese-exam-personal-lists-v2';
-  const personalLists = (() => {
-    const cleanItems = (items) => Array.isArray(items) ? items.filter((item) => item && typeof item.chinese === 'string' && typeof item.pinyin === 'string' && typeof item.english === 'string') : [];
-    try {
-      const saved = JSON.parse(localStorage.getItem(personalListStorageKey) || 'null');
-      if (Array.isArray(saved?.lists)) {
-        const ids = new Set();
-        const lists = saved.lists.filter((list) => list && typeof list.id === 'string' && !ids.has(list.id) && ids.add(list.id) && typeof list.name === 'string').map((list) => ({ ...list, name: list.name.trim() || 'My list', items: cleanItems(list.items) }));
-        if (lists.length) return lists;
-      }
-      const legacy = JSON.parse(localStorage.getItem('chinese-exam-personal-list-v1') || 'null');
-      if (legacy && typeof legacy.name === 'string') return [{ id: 'legacy', name: legacy.name.trim() || 'My list', items: cleanItems(legacy.items) }];
-    } catch {}
-    return [{ id: 'default', name: 'My list', items: [] }];
-  })();
+  const personalLists = window.ChineseApp.storage.loadPersonalLists(localStorage, personalListStorageKey, (item) => materialCatalog.itemById(item.id || materialCatalog.idForLegacyChinese(item.chinese)) || { ...item, id: materialCatalog.idForChinese(item.chinese) });
   let activePersonalListId = personalLists[personalLists.length - 1].id;
   function getPersonalList() {
     return personalLists.find((list) => list.id === activePersonalListId) || personalLists[personalLists.length - 1];
@@ -110,66 +96,22 @@
 
   const saveableItems = new Map();
   let personalListOnly = false;
-  const readingPassages = [{
-    title: '我的週末',
-    paragraphs: [
-      '我現在在臺灣學中文。我的學校在山上，前面有海，後面有山，風景真的很漂亮。學校附近有圖書館、咖啡店和幾家餐廳，所以生活很方便。',
-      '週末早上，我常和朋友一起去學校打籃球。有時候我們也踢足球或游泳。中午，我們去一家有名的牛肉麵店吃飯。那裡的牛肉麵和小籠包都很好吃，而且不太貴。我最喜歡喝熱茶，朋友比較喜歡喝咖啡。',
-      '下午，我常到圖書館看書、寫字和學書法。晚上如果有空，我會和朋友去看電影或唱歌。這個週末，朋友想去大安的KTV，但是我得先去銀行。我們約晚上七點在咖啡店見面，吃完晚飯再一起去唱歌。',
-      '我覺得在臺灣學中文很有意思。雖然每天都很忙，可是我認識了很多朋友，也學會了說中文、看中文和寫中文字。'
-    ]
-  },
-    {
-      title: '我在臺灣的大學生活',
-      label: '350 words',
-      wordCount: 350,
-      paragraphs: [
-        '我 是 從 波蘭 來 的 學生 現在 在 臺灣 的 大學 學 中文 我 的 學校 在 山上 前面 有 海 後面 有 山 每天 早上 我 從 宿舍 走 到 教室 一路 可以 看見 很 漂亮 的 風景 雖然 上課 的 地方 有點 遠 但是 風景 很 美',
-        '我 每天 七點 起床 先 洗臉 再 去 宿舍 一樓 的 餐廳 吃 早餐 我 常 吃 包子 喝 熱茶 有時候 也 買 咖啡 八點 半 我 和 同學 一起 去 上課 老師 先 教 生詞 再 讓 我們 練習 對話 如果 我 不 懂 一個 字 就 問 老師',
-        '中午 下課 以後 我 常 跟 朋友 到 學校 外面 吃飯 附近 有 很多 小吃店 有 牛肉麵 水餃 小籠包 和 越南菜 我 最 喜歡 牛肉麵 因為 湯 很 好喝 牛肉 也 很 好吃 一碗 大約 一百 二十 塊 不 太 貴 吃飯 的 時候 我們 只 用 中文 互相 幫忙',
-        '下午 沒有 課 的 時候 我 喜歡 去 圖書館 複習 圖書館 在 教室 大樓 的 旁邊 裡面 很 安靜 也 有 很多 中文 書 我 先 看 課本 再 寫 作業 然後 用 新 生詞 寫 幾個 句子 有時候 我 會 聽 中文 音樂 或 看 臺灣 電影 非常 有意思',
-        '星期三 晚上 我 有 書法課 剛 開始 學 的 時候 我 覺得 寫 漢字 很 難 老師 告訴 我 不要 太 快 要 慢慢 看 每一個 筆畫 現在 我 可以 寫 自己 的 中文 名字 也 能 寫 一些 簡單 的 句子 我的 字 現在 比 以前 漂亮 很多 了',
-        '週末 我 通常 不 上課 星期六 早上 我 和 朋友 去 操場 打 籃球 或 踢 足球 如果 天氣 太 熱 我們 就 去 游泳池 游泳 下午 我們 常 到 咖啡店 聊天 做 作業 那家 店 的 咖啡 不 貴 甜點 也不錯 晚上 我們 去 KTV 一起 唱 中文歌 開心',
-        '來 臺灣 以前 我 只 會 說 很少 中文 現在 我 可以 自己 買 東西 點菜 問路 也 可以 跟 新 朋友 聊天 有時候 我 還是 聽 不懂 別人 說 什麼 也 會 用錯 聲調 但是 我 不再 害怕 開口 我 相信 每天 練習 一點 一定 會 慢慢 進步 很多'
-      ]
-    },
-    {
-      title: '難忘的花蓮旅行',
-      label: '500 words',
-      wordCount: 500,
-      paragraphs: [
-        '上個月 老師 告訴 我們 班 要 去 花蓮 旅行 兩天 大家 聽了 都 很 高興 因為 很多 同學 沒有 去過 花蓮 老師 說 那裡 前面 有 海 後面 有 山 風景 非常 漂亮 我們 可以 看 海 走路 吃 小吃 還 能 跟 當地 學生 練習 中文 每個人 很 期待',
-        '旅行 前 一個 星期 我們 在 教室 一起 討論 行程 有人 想 去 海邊 有人 想 爬山 也 有人 只 想 吃 好吃 的 東西 老師 讓 我們 自己 安排 時間 我 和 三個 朋友 負責 找 餐廳 我們 上網 看了 很多 照片 最後 選了 一家 有名 的 麵店 吃飯',
-        '星期六 早上 六點 半 我 就 起床 先 檢查 手機 錢包 衣服 和 車票 然後 到 樓下 找 同學 七點 我們 在 學校 門口 見面 一起 坐車 去 車站 有一個 同學 遲到 十分鐘 大家 有點 擔心 幸好 他 最後 跑來 了 我們 買了 早餐 和 咖啡 就 上 火車 出發',
-        '火車 開了 以後 我 坐 在 窗戶 旁邊 一邊 吃 包子 一邊 看 外面 的 風景 城市 的 大樓 慢慢 變少 海 和 山 越來越 近 朋友 問 我 喜歡 海 還是 山 我 說 兩個 都 喜歡 因為 海 很 美 山上 的 空氣 也 很 好 大家 開心',
-        '當地 學校 的 老師 和 學生 在 車站 歡迎 我們 他們 帶 我們 坐 公車 到 宿舍 宿舍 是 一棟 五層 的 大樓 我們 的 房間 在 三樓 裡面 有 四張 床 一張 桌子 和 一個 很 大 的 窗戶 外面 可以 看見 遠山 我們 都 很 喜歡 這個 房間',
-        '放好 東西 以後 我們 去 學校 參觀 圖書館 在 教室 大樓 旁邊 游泳池 在 宿舍 後面 校園 裡 沒有 很多 商店 但是 有 一家 小 咖啡店 店裡 的 學生 用 中文 問 我 想 喝 什麼 我 點了 熱 咖啡 也 買了 一個甜點 我 能 聽懂 中文 覺得 很 開心',
-        '中午 當地 學生 帶 我們 去 吃 牛肉麵 那家 店 不 大 可是 客人 很多 老闆 問 我們 要 大碗 還是 小碗 我 點了 小碗 因為 早上 已經 吃了 兩個 包子 麵 很 好吃 湯 也 好喝 一碗 一百 三十 塊 吃完 以後 老闆 還 請 我們 喝茶 非常 開心',
-        '下午 我們 一起 去 海邊 天氣 很 熱 可是 海風 很 舒服 有些 同學 在 沙灘 打球 有些 人 坐著 聊天 我 和 新 朋友 沿著 海邊 走 他 問 我 為什麼 來 臺灣 學 中文 我 說 我 喜歡 認識 不同 國家 的 人 也 讓 學習 更 有意思',
-        '晚上 我們 在 宿舍 前面 吃 晚飯 然後 舉行 小 活動 每個人 都 要 介紹 自己 還 要 唱 一首 歌 我 本來 很 害怕 因為 我 唱歌 唱得 不好 可是 同學 一直 鼓勵 我 最後 我 選了 一首 簡單 的 中文歌 大家 跟著 一起 唱 我 忘了 幾個 字',
-        '第二天 早上 我們 去 山上 看 風景 路 有點 遠 也 不 太 好走 可是 到了 上面 以後 我 覺得 非常 值得 前面 是 藍色 的 海 後面 是 綠色 的 山 我們 在 那裡 拍照 吃 午餐 也 約好 以後 再 見 這次 旅行 讓 我 更 勇敢 說中文'
-      ]
-    }
-  ];
+  const readingPassages = materialCatalog.readings;
   const nav = document.getElementById('lessonNav');
   const toolsNav = document.getElementById('studyToolsNav');
   const content = document.getElementById('content');
-  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
-  const appSettings = (() => {
-    const defaults = { characterScript: 'traditional', darkMode: false, autoAdvance: true, listPinyin: false, listEnglish: false, listeningChinese: false, quizEnglishFirst: false, quizPinyin: true };
-    try {
-      const saved = JSON.parse(localStorage.getItem(settingsStorageKey) || '{}');
-      return { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
-    } catch {
-      return defaults;
-    }
-  })();
+  const { escapeHtml } = window.ChineseApp.text;
+  const appSettings = window.ChineseApp.storage.readRecord(localStorage, settingsStorageKey, {
+    characterScript: 'traditional', darkMode: false, autoAdvance: true, listPinyin: false, listEnglish: false,
+    listeningChinese: false, quizEnglishFirst: false, quizPinyin: true
+  });
   // Convert only presentation text. Original Chinese remains the identity for
   // progress, saved lists, audio lookup, and Listening word selection.
   const toSimplified = OpenCC.Converter({ from: 'tw', to: 'cn' });
   function chineseText(value, script = appSettings.characterScript) {
     const text = String(value ?? '');
-    return script === 'simplified' ? toSimplified(text) : text;
+    const explicit = materialCatalog.itemById(materialCatalog.idForChinese(text))?.simplified;
+    return script === 'simplified' ? (explicit ?? toSimplified(text)) : text;
   }
   function chineseHtml(value, script) {
     return escapeHtml(chineseText(value, script));
@@ -189,14 +131,11 @@
     draw();
   });
 
-  const quizStats = (() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(quizStatsStorageKey) || '{}');
-      return saved && typeof saved === 'object' ? saved : {};
-    } catch {
-      return {};
-    }
-  })();
+  const quizStats = window.ChineseApp.storage.readRecord(localStorage, quizStatsStorageKey);
+  for (const [key, value] of Object.entries(quizStats)) {
+    const id = materialCatalog.idForLegacyChinese(key);
+    if (id && !quizStats[id]) quizStats[id] = value;
+  }
 
   function saveQuizStats() {
     try {
@@ -220,8 +159,9 @@
   applyTheme();
 
   function getWordStats(chinese) {
-    quizStats[chinese] ||= { shown: 0, correct: 0 };
-    const stats = quizStats[chinese];
+    const id = materialCatalog.idForChinese(chinese) || chinese;
+    quizStats[id] ||= quizStats[chinese] || { shown: 0, correct: 0 };
+    const stats = quizStats[id];
     stats.answered ??= stats.correct;
     return stats;
   }
@@ -229,48 +169,7 @@
   function getAccuracy(stats) {
     return stats.shown ? Math.round((stats.correct / stats.shown) * 100) : 0;
   }
-  const pinyinSyllables = new Set(`a ai an ang ao ba bai ban bang bao bei ben beng bi bian biao bie bin bing bo bu ca cai can cang cao ce cen ceng ci cong cou cu cuan cui cun cuo cha chai chan chang chao che chen cheng chi chong chou chu chua chuai chuan chuang chui chun chuo da dai dan dang dao de dei den deng di dia dian diang diao die ding diu dong dou du duan dui dun duo e ei en eng er fa fan fang fei fen feng fo fou fu ga gai gan gang gao ge gei gen geng gong gou gu gua guai guan guang gui gun guo ha hai han hang hao he hei hen heng hong hou hu hua huai huan huang hui hun huo ji jia jian jiang jiao jie jin jing jiong jiu ju juan jue jun ka kai kan kang kao ke ken keng kong kou ku kua kuai kuan kuang kui kun kuo la lai lan lang lao le lei leng li lia lian liang liao lie lin ling liu long lou lu luan lue lun luo lv ma mai man mang mao me mei men meng mi mian miao mie min ming miu mo mou mu na nai nan nang nao ne nei nen neng ni nian niang niao nie nin ning niu nong nou nu nuan nue nuo nv o ou pa pai pan pang pao pei pen peng pi pian piao pie pin ping po pou pu qi qia qian qiang qiao qie qin qing qiong qiu qu quan que qun ran rang rao re ren reng ri rong rou ru rua ruan rui run ruo sa sai san sang sao se sen seng si song sou su suan sui sun suo sha shai shan shang shao she shei shen sheng shi shou shu shua shuai shuan shuang shui shun shuo ta tai tan tang tao te teng ti tian tiao tie ting tong tou tu tuan tui tun tuo wa wai wan wang wei wen weng wo wu xi xia xian xiang xiao xie xin xing xiong xiu xu xuan xue xun ya yan yang yao ye yi yin ying yo yong you yu yuan yue yun za zai zan zang zao ze zei zen zeng zi zong zou zu zuan zui zun zuo zha zhai zhan zhang zhao zhe zhei zhen zheng zhi zhong zhou zhu zhua zhuai zhuan zhuang zhui zhun zhuo`.split(' '));
-
-  function splitPinyinWord(word) {
-    const letters = Array.from(word);
-    const plain = letters.map((letter) => letter.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()).join('').replaceAll('ü', 'v');
-    const memo = new Map();
-    function splitFrom(position) {
-      if (position === plain.length) return [];
-      if (memo.has(position)) return memo.get(position);
-      for (let end = plain.length; end > position; end--) {
-        if (!pinyinSyllables.has(plain.slice(position, end))) continue;
-        const rest = splitFrom(end);
-        if (rest) {
-          const result = [letters.slice(position, end).join(''), ...rest];
-          memo.set(position, result);
-          return result;
-        }
-      }
-      memo.set(position, null);
-      return null;
-    }
-    return splitFrom(0) || [word];
-  }
-
-  function renderRuby(chinese, pinyin, renderCharacter = escapeHtml) {
-    const characters = Array.from(String(chinese ?? ''));
-    const hanCount = characters.filter((character) => /\p{Script=Han}/u.test(character)).length;
-    const pinyinText = String(pinyin ?? '');
-    const alignmentText = pinyinText.includes('/') ? pinyinText.split('/')[0].trim() : pinyinText;
-    const syllables = (alignmentText
-      .replace(/[’']/g, ' ')
-      .match(/\p{L}+/gu)?.filter((token) => token !== token.toUpperCase()) || [])
-      .flatMap(splitPinyinWord);
-    if (!hanCount || syllables.length !== hanCount) return null;
-    if (hanCount === 1 && pinyinText.includes('/')) syllables[0] = pinyinText;
-    let syllableIndex = 0;
-    return characters.map((character) => {
-      if (!/\p{Script=Han}/u.test(character)) return escapeHtml(character);
-      const syllable = syllables[syllableIndex++];
-      return `<ruby>${renderCharacter(character)}<rt>${escapeHtml(syllable)}</rt></ruby>`;
-    }).join('');
-  }
+  const { renderRuby } = window.ChineseApp.text;
 
   function renderZoomableCharacters(text, pinyin, showPinyin, lang) {
     const renderCharacter = (character) => `<button type="button" class="character-zoom-trigger" data-character-zoom="${escapeHtml(character)}" data-character-lang="${lang}" aria-label="Enlarge character ${escapeHtml(character)}" aria-haspopup="dialog" title="Enlarge character">${escapeHtml(character)}</button>`;
@@ -345,7 +244,7 @@
   }
 
   function getMaterialAudio(item) {
-    return item.audio || window.CHINESE_MATERIAL_AUDIO?.[item.chinese]
+    return item.audio || materialCatalog.audio[item.chinese]
       || collectListeningItems().find((recording) => recording.chinese === item.chinese)?.audio || '';
   }
 
@@ -355,111 +254,9 @@
     return `<button type="button" class="word-audio material-audio" data-word-audio="${escapeHtml(audio)}" aria-label="Play at normal speed: ${chineseHtml(item.chinese)}" title="Play · 1×">${renderSpeakerIcon()}</button>`;
   }
 
-  const dialogueQueues = new Map();
-  const dialoguePlayback = { key: null, lines: [], index: 0, loadedIndex: -1, playing: false, token: 0, error: '' };
-  const dialogueAudio = document.getElementById('dialogueAudio');
-
-  function renderDialoguePlayer(lines, key) {
-    dialogueQueues.set(key, lines);
-    const complete = lines.every((line) => getMaterialAudio(line));
-    return `<div class="dialogue-player" data-dialogue-player="${escapeHtml(key)}" role="group" aria-label="Full dialogue playback"><span class="dialogue-player-title">${renderSpeakerIcon()} Full dialogue · 1×</span><div class="dialogue-player-actions"><button type="button" class="toggle" data-dialogue-action="play" aria-pressed="false" ${complete ? '' : 'disabled'}>▶ Play</button><button type="button" class="toggle" data-dialogue-action="reset" aria-label="Reset dialogue to the beginning">↺ Reset</button></div><span class="dialogue-player-status" data-dialogue-status role="status">${complete ? `${lines.length} lines · Ready` : 'Some recordings are not available yet.'}</span></div>`;
-  }
-
-  function updateDialoguePlayer(scrollToLine = false) {
-    const state = dialoguePlayback;
-    const panel = content.querySelector('[data-dialogue-player]');
-    if (state.playing && (!panel || panel.dataset.dialoguePlayer !== state.key)) {
-      stopDialogueAudio();
-      return;
-    }
-    content.querySelectorAll('[data-dialogue-line]').forEach((row) => {
-      const active = state.playing && row.dataset.dialogueKey === state.key && Number(row.dataset.dialogueLine) === state.index;
-      row.classList.toggle('dialogue-line-playing', active);
-      if (active) {
-        row.setAttribute('aria-current', 'true');
-        if (scrollToLine) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      } else row.removeAttribute('aria-current');
-    });
-    if (!panel || panel.dataset.dialoguePlayer !== state.key) return;
-    const play = panel.querySelector('[data-dialogue-action="play"]');
-    play.textContent = state.playing ? '■ Stop' : '▶ Play';
-    play.setAttribute('aria-pressed', String(state.playing));
-    const finished = state.index >= state.lines.length;
-    panel.querySelector('[data-dialogue-status]').textContent = state.error || (finished
-      ? `Finished · ${state.lines.length} / ${state.lines.length}`
-      : `${state.playing ? 'Playing' : state.loadedIndex >= 0 ? 'Stopped' : 'Ready'} · ${state.index + 1} / ${state.lines.length}`);
-  }
-
-  function stopDialogueAudio(reset = false) {
-    const state = dialoguePlayback;
-    state.token++;
-    state.playing = false;
-    dialogueAudio.onended = null;
-    dialogueAudio.onerror = null;
-    dialogueAudio.pause();
-    if (reset) {
-      dialogueAudio.currentTime = 0;
-      state.index = 0;
-      state.loadedIndex = -1;
-      state.error = '';
-    }
-    updateDialoguePlayer();
-  }
-
-  function playDialogueLine() {
-    const state = dialoguePlayback;
-    const token = ++state.token;
-    state.playing = true;
-    state.error = '';
-    if (state.loadedIndex !== state.index) {
-      dialogueAudio.src = getMaterialAudio(state.lines[state.index]);
-      dialogueAudio.currentTime = 0;
-      state.loadedIndex = state.index;
-    }
-    dialogueAudio.defaultPlaybackRate = 1;
-    dialogueAudio.playbackRate = 1;
-    const fail = () => {
-      if (state.token !== token) return;
-      stopDialogueAudio();
-      state.loadedIndex = -1;
-      state.error = 'Recording could not be played. Press Play to retry.';
-      updateDialoguePlayer();
-    };
-    dialogueAudio.onerror = fail;
-    dialogueAudio.onended = () => {
-      if (state.token !== token || !state.playing) return;
-      state.index++;
-      if (state.index < state.lines.length) playDialogueLine();
-      else stopDialogueAudio();
-    };
-    updateDialoguePlayer(true);
-    dialogueAudio.play().catch(fail);
-  }
-
-  function handleDialogueAction(button) {
-    const key = button.closest('[data-dialogue-player]')?.dataset.dialoguePlayer;
-    const lines = dialogueQueues.get(key);
-    if (!lines?.length) return;
-    const state = dialoguePlayback;
-    if (state.key !== key) {
-      stopDialogueAudio(true);
-      state.key = key;
-      state.lines = lines;
-    }
-    if (button.dataset.dialogueAction === 'reset') {
-      stopDialogueAudio(true);
-      return;
-    }
-    if (state.playing) {
-      stopDialogueAudio();
-      return;
-    }
-    if (!lines.every((line) => getMaterialAudio(line))) return;
-    stopMaterialAudio();
-    content.querySelectorAll('[data-word-audio-player]').forEach((audio) => audio.pause());
-    if (state.index >= lines.length) stopDialogueAudio(true);
-    playDialogueLine();
-  }
+  const { dialoguePlayback, renderDialoguePlayer, updateDialoguePlayer, stopDialogueAudio, handleDialogueAction } = window.ChineseApp.dialoguePlayer.create({
+    content, audio: document.getElementById('dialogueAudio'), getMaterialAudio, stopMaterialAudio, escapeHtml, renderSpeakerIcon
+  });
 
   function renderLines(lines, key) {
     const hints = hintState[key] || { pinyin: false, english: false };
@@ -476,7 +273,7 @@
 
   function renderSubsection(label, lines, key, defaultOpen = false) {
     const opened = openState[key] ?? defaultOpen;
-    return `<div class="subsection ${opened ? 'open' : ''}"><button class="subsection-head" type="button" data-expand="${key}" aria-expanded="${opened}"><span>${label}<small>${lines.length ? `${lines.length} ${lines.length === 1 ? 'line' : 'lines'}` : 'Not added yet'}</small></span><span class="chevron" aria-hidden="true">⌄</span></button>${opened ? `<div class="subsection-body">${lines.length ? renderLines(lines, key) : '<div class="empty">Material will appear here when its screenshot is added.</div>'}</div>` : ''}</div>`;
+    return `<div class="subsection ${opened ? 'open' : ''}"><button class="subsection-head" type="button" data-expand="${key}" aria-expanded="${opened}"><span>${escapeHtml(label)}<small>${lines.length ? `${lines.length} ${lines.length === 1 ? 'line' : 'lines'}` : 'Not added yet'}</small></span><span class="chevron" aria-hidden="true">⌄</span></button>${opened ? `<div class="subsection-body">${lines.length ? renderLines(lines, key) : '<div class="empty">Material will appear here when its screenshot is added.</div>'}</div>` : ''}</div>`;
   }
 
   function renderWords(words, key, options = {}) {
@@ -608,69 +405,7 @@
     content.innerHTML = `<section class="midterm-intro"><div class="subtle">${escapeHtml(data.subtitle)}</div><p>${escapeHtml(data.instructions)}</p></section>${data.sections.map((section, index) => renderSubsection(section.title, section.questions, `${currentLesson}-section-${index + 1}`)).join('')}<div class="midterm-followup"><strong>Follow-up:</strong> ${escapeHtml(data.followUps)}</div><a class="source-link" href="${encodeURI(data.source)}" target="_blank" rel="noopener">↗ View original PDF</a>`;
   }
 
-  function collectVocabulary() {
-    const seen = new Map();
-    const vocabulary = [];
-    for (let lesson = 1; lesson <= lessonCount; lesson++) {
-      for (let dialog = 1; dialog <= 2; dialog++) {
-        const words = database[`${lesson}-dialog${dialog}`]?.words || [];
-        let category = '';
-        words.forEach((word) => {
-          if (word.category) category = word.category;
-          const source = `lesson${lesson}`;
-          const existing = seen.get(word.chinese);
-          if (existing) {
-            if (!existing.sources.includes(source)) existing.sources.push(source);
-            if (!existing.dialogSources.includes(`${lesson}-dialog${dialog}`)) existing.dialogSources.push(`${lesson}-dialog${dialog}`);
-            return;
-          }
-          const item = {
-            ...word,
-            materialType: category === 'Phrases' ? 'expression' : 'word',
-            category: '',
-            sources: [source],
-            dialogSources: [`${lesson}-dialog${dialog}`]
-          };
-          vocabulary.push(item);
-          seen.set(word.chinese, item);
-        });
-      }
-    }
-    Object.keys(midterms).sort().forEach((midtermKey) => {
-      const midterm = midterms[midtermKey];
-      midterm.sections.forEach((section) => {
-        section.questions.forEach((question) => {
-          const existing = seen.get(question.chinese);
-          if (existing) {
-            if (!existing.sources.includes(midtermKey)) existing.sources.push(midtermKey);
-            return;
-          }
-          const item = {
-            chinese: question.chinese,
-            pinyin: question.pinyin,
-            english: question.english,
-            partOfSpeech: 'Question',
-            materialType: 'expression',
-            category: '',
-            sources: [midtermKey]
-          };
-          vocabulary.push(item);
-          seen.set(question.chinese, item);
-        });
-      });
-    });
-    const listeningAudio = new Map(collectListeningItems().map((item) => [item.chinese, item.audio]));
-    const result = vocabulary.map((item, index) => ({
-      ...item,
-      audio: item.audio || window.CHINESE_MATERIAL_AUDIO?.[item.chinese] || listeningAudio.get(item.chinese) || `audio/vocabulary/word-${String(index + 1).padStart(3, '0')}.${audioExtension}`
-    }));
-    personalLists.forEach((list) => list.items.forEach((item) => {
-      const existing = result.find((word) => word.chinese === item.chinese);
-      if (existing) existing.sources.push(`personal:${list.id}`);
-      else result.push({ ...item, materialType: item.materialType || 'expression', category: '', sources: [`personal:${list.id}`], audio: item.audio || window.CHINESE_MATERIAL_AUDIO?.[item.chinese] || listeningAudio.get(item.chinese) || '' });
-    }));
-    return result;
-  }
+  const { collectVocabulary, collectListeningItems } = window.ChineseApp.studyMaterials.create({ catalog: materialCatalog, getPersonalLists: () => personalLists });
 
   function matchesVocabularyType(word, type) {
     return type === 'all' || word.materialType === type;
@@ -696,13 +431,7 @@
     }).join('')}${checkbox('midterm1', 'Mid Term 1')}${checkbox('midterm2', 'Mid Term 2')}${mode === 'quiz' ? `<div class="material-scope-custom"><strong>Custom lists</strong>${personalLists.map((list) => checkbox(`personal:${list.id}`, `${list.name} (${list.items.length})`)).join('')}</div>` : ''}</div>`;
   }
 
-  function normalizeVocabularySearch(value) {
-    return String(value ?? '').toLowerCase().normalize('NFD')
-      .replace(/u\u0308|u:/g, 'v')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/([a-z])[0-5]/g, '$1')
-      .replace(/[\p{P}\p{Z}\s]/gu, '');
-  }
+  const normalizeVocabularySearch = window.ChineseApp.text.normalizeSearch;
 
   function matchesVocabularySearch(word, query) {
     const needle = normalizeVocabularySearch(chineseText(query, 'simplified'));
@@ -804,45 +533,6 @@
     content.innerHTML = `<div class="reading-selector" role="group" aria-label="Choose reading text">${passageButtons}</div><article class="reading-card"><div class="reading-card-head"><div><div class="subtle">READING PRACTICE · LESSONS 1–7</div><h3 lang="${chineseLang()}">${chineseHtml(passage.title)}</h3><p class="reading-ai-note">This practice text was generated by AI from the course vocabulary.</p></div><span class="reading-count">${countLabel}</span></div><div class="reading-text" lang="${chineseLang()}">${passage.paragraphs.map((paragraph) => `<p>${chineseHtml(paragraph.replaceAll(' ', ''))}</p>`).join('')}</div></article>`;
   }
 
-  function collectListeningItems() {
-    const items = [];
-    for (let lesson = 1; lesson <= lessonCount; lesson++) {
-      for (let dialog = 1; dialog <= 2; dialog++) {
-        const sourceKey = `${lesson}-dialog${dialog}`;
-        const sourceLabel = `Lesson ${lesson} · Dialog ${dialog}`;
-        (database[sourceKey]?.examples || []).forEach((item, index) => {
-          items.push({
-            ...item,
-            sourceKey,
-            sourceLabel,
-            sourceIndex: index + 1,
-            voice: item.voice || 'George',
-            audio: item.audio || `audio/listening/${sourceKey}-example-${String(index + 1).padStart(2, '0')}.${audioExtension}`
-          });
-        });
-      }
-    }
-    for (let midtermNumber = 1; midtermNumber <= 2; midtermNumber++) {
-      const sourceKey = `midterm${midtermNumber}`;
-      const sourceLabel = `Mid Term ${midtermNumber}`;
-      let questionIndex = 0;
-      for (const section of midterms[sourceKey]?.sections || []) {
-        for (const item of section.questions || []) {
-          questionIndex += 1;
-          items.push({
-            ...item,
-            sourceKey,
-            sourceLabel,
-            sourceIndex: questionIndex,
-            voice: 'George',
-            audio: `audio/listening/${sourceKey}-question-${String(questionIndex).padStart(2, '0')}.${audioExtension}`
-          });
-        }
-      }
-    }
-    return items;
-  }
-
   function resetListeningHints() {
     listeningState.revealStage = appSettings.listeningChinese ? 1 : 0;
   }
@@ -850,7 +540,7 @@
   function getListeningPool() {
     if (listeningState.kind === 'words') {
       return collectVocabulary()
-        .filter((word) => word.sources.some((source) => source.startsWith('lesson')))
+        .filter((word) => word.audio && word.sources.some((source) => source.startsWith('lesson')))
         .map((word, index) => ({
           ...word,
           sources: word.sources.filter((source) => source.startsWith('lesson')),
@@ -1314,7 +1004,7 @@
       else {
         const item = saveableItems.get(chinese);
         if (!item) return;
-        getPersonalList().items.push({ chinese: item.chinese, pinyin: item.pinyin || '', english: item.english || '', audio: item.audio || '', materialType: item.materialType || (collectVocabulary().find((word) => word.chinese === item.chinese)?.materialType) || 'expression' });
+        getPersonalList().items.push({ id: item.id || materialCatalog.idForChinese(item.chinese), chinese: item.chinese, pinyin: item.pinyin || '', english: item.english || '', audio: item.audio || '', materialType: item.materialType || (collectVocabulary().find((word) => word.chinese === item.chinese)?.materialType) || 'expression' });
       }
       if (!persistPersonalList()) getPersonalList().items = previous;
       if (currentLesson === 'vocabulary') {
@@ -1568,4 +1258,4 @@
   });
 
   draw();
-})();
+};

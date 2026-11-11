@@ -39,21 +39,18 @@ store.set('chinese-study-materials-v1','{"bad":"data"}');assert.equal(api.getMat
 store.set('chinese-study-materials-v1','not json');assert.equal(api.getMaterials().length,0);
 store.delete('chinese-study-materials-v1');
 const approved=api.approve({...input,reviewed:true,title:'User lesson <unsafe>'});
-// Import integration: a fresh app session discovers the verified material, filters it,
-// and builds a quiz without inventing audio paths or changing legacy audio indexes.
-const elements = new Map();
-function element(key) { if(!elements.has(key)) elements.set(key,{listeners:{},addEventListener(k,f){(this.listeners[k]||=[]).push(f);},classList:{toggle(){}},setAttribute(){},querySelector(){return null;},querySelectorAll(){return [];}});return elements.get(key); }
-const context={window:{localStorage:local},localStorage:local,document:{getElementById:element,querySelector:element,documentElement:element('root'),addEventListener(){}},console,crypto:global.crypto};
-vm.createContext(context);
-for(const [,file] of fs.readFileSync('index.html','utf8').matchAll(/<script src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync(file,'utf8'),context);
-let source=fs.readFileSync('app.js','utf8').replace(/  draw\(\);\n\}\)\(\);\s*$/, 'window.test={importedMaterials,collectVocabulary,resetQuizSession,getQuizVocabulary,drawNav,vocabularyFilterState,getFilteredVocabulary,content,drawContent,show:id=>{currentLesson=id;}};\n})();');
-vm.runInContext(source,context);const app=context.window.test;
-assert.equal(app.importedMaterials.length,1);
-const words=app.collectVocabulary();assert(words.some(row=>row.chinese==='你想去哪裡？'&&row.sources.includes(approved.id)));
-const custom=words.find(row=>row.chinese==='你想去哪裡？');assert.equal(custom.audio,'');
-app.resetQuizSession([approved.id]);assert.equal(app.getQuizVocabulary().length,3);
-for(const key of Object.keys(app.vocabularyFilterState))app.vocabularyFilterState[key]=key===approved.id;
-assert.equal(app.getFilteredVocabulary(words).length,3);
-app.drawNav();assert(element('lessonNav').innerHTML.includes('User lesson &lt;unsafe&gt;'));
-app.show(approved.id);app.drawContent();assert(app.content.innerHTML.includes('data-custom-quiz'));assert(!app.content.innerHTML.includes('<unsafe>'));
-console.log('PASS: parsing, all source types, explicit approval, selection, limits, storage recovery, escaping, imported navigation/filter/quiz and no fabricated audio');
+// The parser output can now be saved through the same database API used by the application.
+const { openStore } = require('../server/material-store.cjs');
+const db = openStore(':memory:', { seed: false });
+const { sections } = db.createCollection({ lessonNumber: 10, dialogNumber: 1, title: approved.title });
+for (const row of approved.rows) {
+  const kind = row.kind === 'word' ? 'vocabulary' : row.kind === 'dialogue' ? 'dialogue' : 'examples';
+  db.addItem(sections.find(section => section.kind === kind).id, {
+    chineseTraditional: row.chinese, pinyin: row.pinyin || '', english: row.english || '', speaker: row.speaker || ''
+  });
+}
+assert.equal(db.snapshot().items.length, approved.rows.length);
+assert.equal(db.snapshot().assets.length, 0, 'Import must not invent recordings');
+assert.equal(db.snapshot().collections[0].title, 'User lesson <unsafe>');
+db.close();
+console.log('PASS: parsing, selection, review, limits, local import storage, escaping and saving imported rows to the material database');

@@ -19,10 +19,8 @@ const context = vm.createContext({
   document: { getElementById: element, querySelector: element, documentElement: element('root'), addEventListener() {} },
   localStorage: { getItem() { return null; }, setItem() {} }
 });
-for (const [, file] of fs.readFileSync('index.html', 'utf8').matchAll(/<script src="([^"]+)"/g)) {
-  if (file !== 'app.js') vm.runInContext(fs.readFileSync(file, 'utf8'), context);
-}
-let source = fs.readFileSync('app.js', 'utf8').replace('function draw() {', 'function actualDraw() {');
+require('./helpers/runtime.cjs').loadRuntime(context);
+let source = require('./helpers/runtime.cjs').appSource(context).replace('function draw() {', 'function actualDraw() {');
 source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { initialMode: currentLesson, actualDraw, setMode: mode => { currentLesson = mode; }, getMode: () => currentLesson, matchesVocabularySearch, getFilteredVocabulary, getQuizVocabulary, resetQuizSession, drawVocabulary, content, getPersonalList, vocabularyFilterState, rowHintState, setType: type => { vocabularyType = type; }, personalOnly: value => { personalListOnly = value; } };\n})();`);
 vm.runInContext(source, context);
 const app = context.window.test;
@@ -112,8 +110,8 @@ assert(!app.content.innerHTML.includes('data-vocabulary-search'));
 assert(app.content.innerHTML.includes('data-vocabulary-result-count'));
 const index = fs.readFileSync('index.html', 'utf8');
 assert(index.indexOf('data-vocabulary-search') < index.indexOf('<div class="shell">'));
-assert(!fs.readFileSync('app.js', 'utf8').includes('function drawHome'));
-assert(fs.readFileSync('app.js', 'utf8').includes("let currentLesson = 'vocabulary'"));
+assert(!require('./helpers/runtime.cjs').appSource(context).includes('function drawHome'));
+assert(require('./helpers/runtime.cjs').appSource(context).includes("let currentLesson = 'vocabulary'"));
 console.log('PASS: Traditional/Simplified and alias search, Pinyin tones/numbers/spaces/ü, combined filters, empty results, IME, stable input, Clear, filtered quiz and escaping');
 
 app.setMode('reading');

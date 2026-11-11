@@ -21,10 +21,8 @@ function load() {
     FormData: class { constructor(form) { this.form = form; } get(key) { return this.form.values[key]; } }, console
   };
   vm.createContext(context);
-  for (const [,file] of fs.readFileSync('index.html','utf8').matchAll(/<script src="([^"]+)"/g)) {
-    if (file !== 'app.js') vm.runInContext(fs.readFileSync(file,'utf8'),context);
-  }
-  let source = fs.readFileSync('app.js','utf8').replace('function draw() {', 'function actualDraw() {');
+  require('./helpers/runtime.cjs').loadRuntime(context);
+  let source = require('./helpers/runtime.cjs').appSource(context).replace('function draw() {', 'function actualDraw() {');
   source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { renderMaterialScope, renderLines, getMaterialAudio, drawVocabulary, content, personalLists, getPersonalList, renderPersonalListPicker, renderSaveButton, collectVocabulary, getFilteredVocabulary, sortVocabulary, vocabularySort, getWordStats, getQuizVocabulary, resetQuizSession, quizState, renderWords, persistPersonalList, filter: value => { personalListOnly = value; }, enterQuiz: () => { currentLesson = 'quiz'; } };\n})();`);
   vm.runInContext(source,context);
   const fire = (type, target) => {
@@ -142,7 +140,7 @@ assert(markup.includes('data-word-audio="single-line.mp3"'));
 assert(!markup.includes('data-material-play-all'));
 assert(!markup.includes('data-lesson-audio-player'));
 assert(app.renderLines([{ chinese: 'Missing audio' }], 'missing').includes('Recording not available yet'));
-assert.equal(app.getMaterialAudio({ chinese: '他們都會做甜點。' }), 'audio/listening/6-dialog1-example-01.mp3');
+assert.equal(app.getMaterialAudio({ chinese: '他們都會做甜點。' }), 'materials/audio/listening/6-dialog1-example-01.mp3');
 let pauses = 0;
 const played = [];
 const player = { pause() { pauses++; }, play() { played.push(this.src); return Promise.resolve(); } };
