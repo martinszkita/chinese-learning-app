@@ -79,9 +79,8 @@
   const quizStatsStorageKey = 'chinese-exam-quiz-stats-v3';
   const settingsStorageKey = 'chinese-exam-settings-v1';
   const vocabularyFilterState = Object.fromEntries([
-    ...Array.from({ length: lessonCount }, (_, index) => `lesson${index + 1}`),
-    'midterm1',
-    'midterm2'
+    ...Array.from({ length: lessonCount }, (_, index) => [`${index + 1}-dialog1`, `${index + 1}-dialog2`]).flat(),
+    'midterm1', 'midterm2'
   ].map((source) => [source, true]));
   const personalListStorageKey = 'chinese-exam-personal-lists-v2';
   const personalLists = (() => {
@@ -156,7 +155,7 @@
   const content = document.getElementById('content');
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
   const appSettings = (() => {
-    const defaults = { darkMode: false, autoAdvance: true, listPinyin: false, listEnglish: false, listeningChinese: false, quizEnglishFirst: false, quizPinyin: true };
+    const defaults = { characterScript: 'traditional', darkMode: false, autoAdvance: true, listPinyin: false, listEnglish: false, listeningChinese: false, quizEnglishFirst: false, quizPinyin: true };
     try {
       const saved = JSON.parse(localStorage.getItem(settingsStorageKey) || '{}');
       return { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
@@ -164,6 +163,31 @@
       return defaults;
     }
   })();
+  // Convert only presentation text. Original Chinese remains the identity for
+  // progress, saved lists, audio lookup, and Listening word selection.
+  const toSimplified = OpenCC.Converter({ from: 'tw', to: 'cn' });
+  function chineseText(value, script = appSettings.characterScript) {
+    const text = String(value ?? '');
+    return script === 'simplified' ? toSimplified(text) : text;
+  }
+  function chineseHtml(value, script) {
+    return escapeHtml(chineseText(value, script));
+  }
+  function chineseLang() {
+    return appSettings.characterScript === 'simplified' ? 'zh-Hans' : 'zh-Hant';
+  }
+  const characterScriptControl = document.getElementById('characterScript');
+  function updateCharacterScriptToggle() {
+    characterScriptControl.setAttribute('aria-pressed', String(appSettings.characterScript === 'simplified'));
+  }
+  updateCharacterScriptToggle();
+  characterScriptControl.addEventListener('click', () => {
+    appSettings.characterScript = appSettings.characterScript === 'simplified' ? 'traditional' : 'simplified';
+    updateCharacterScriptToggle();
+    saveSettings();
+    draw();
+  });
+
   const quizStats = (() => {
     try {
       const saved = JSON.parse(localStorage.getItem(quizStatsStorageKey) || '{}');
@@ -255,7 +279,7 @@
       const parts = ['dialog1', 'dialog2'].map((part, partIndex) => {
         const data = database[`${lesson}-${part}`];
         const isSelected = isCurrent && currentPart === part;
-        return `<button type="button" class="dialog-link ${isSelected ? 'active' : ''}" data-lesson-select="${lesson}" data-part="${part}" aria-current="${isSelected ? 'page' : 'false'}"><span>Dialog ${partIndex + 1}</span><small>${data?.title ? escapeHtml(data.title) : 'Not added yet'}</small></button>`;
+        return `<button type="button" class="dialog-link ${isSelected ? 'active' : ''}" data-lesson-select="${lesson}" data-part="${part}" aria-current="${isSelected ? 'page' : 'false'}"><span>Dialog ${partIndex + 1}</span><small>${data?.title ? chineseHtml(data.title) : 'Not added yet'}</small></button>`;
       }).join('');
       return `<div class="lesson-group ${isExpanded ? 'open' : ''}"><button type="button" class="lesson-link lesson-toggle ${isCurrent ? 'active' : ''}" data-lesson-toggle="${lesson}" aria-expanded="${isExpanded}" aria-controls="lesson-options-${lesson}"><span>Lesson ${lesson}</span><span class="nav-chevron" aria-hidden="true">⌄</span></button><div class="lesson-options" id="lesson-options-${lesson}" ${isExpanded ? '' : 'hidden'}>${parts}</div></div>`;
     }).join('');
@@ -306,7 +330,7 @@
   function renderMaterialAudio(item) {
     const audio = getMaterialAudio(item);
     if (!audio) return `<button type="button" class="word-audio material-audio" disabled aria-label="Recording not available yet" title="Recording not available yet">${renderSpeakerIcon()}</button>`;
-    return `<button type="button" class="word-audio material-audio" data-word-audio="${escapeHtml(audio)}" aria-label="Play at normal speed: ${escapeHtml(item.chinese)}" title="Play · 1×">${renderSpeakerIcon()}</button>`;
+    return `<button type="button" class="word-audio material-audio" data-word-audio="${escapeHtml(audio)}" aria-label="Play at normal speed: ${chineseHtml(item.chinese)}" title="Play · 1×">${renderSpeakerIcon()}</button>`;
   }
 
   function renderLines(lines, key) {
@@ -316,8 +340,8 @@
       const rowHints = rowHintState[rowKey] || hints;
       const showPinyin = rowHints.pinyin;
       const showEnglish = rowHints.english;
-      const ruby = showPinyin ? renderRuby(item.chinese, item.pinyin) : null;
-      return `<div class="line clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><div><div class="speaker">${escapeHtml(item.speaker || '例句')}</div>${showPinyin && item.speakerPinyin ? `<div class="speaker-pinyin">${escapeHtml(item.speakerPinyin)}</div>` : ''}</div><div><div class="hanzi ${ruby ? 'hanzi-ruby' : ''}" lang="zh-Hant">${ruby || escapeHtml(item.chinese)}</div>${renderMaterialAudio(item)}${renderSaveButton(item)}${showPinyin && !ruby ? `<div class="pinyin">${escapeHtml(item.pinyin)}</div>` : ''}${showEnglish ? `<div class="english">${escapeHtml(item.english)}</div>` : ''}</div></div>`;
+      const ruby = showPinyin ? renderRuby(chineseText(item.chinese), item.pinyin) : null;
+      return `<div class="line clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><div><div class="speaker">${chineseHtml(item.speaker || '例句')}</div>${showPinyin && item.speakerPinyin ? `<div class="speaker-pinyin">${escapeHtml(item.speakerPinyin)}</div>` : ''}</div><div><div class="hanzi ${ruby ? 'hanzi-ruby' : ''}" lang="${chineseLang()}">${ruby || chineseHtml(item.chinese)}</div>${renderMaterialAudio(item)}${renderSaveButton(item)}${showPinyin && !ruby ? `<div class="pinyin">${escapeHtml(item.pinyin)}</div>` : ''}${showEnglish ? `<div class="english">${escapeHtml(item.english)}</div>` : ''}</div></div>`;
     }).join('')}<audio data-word-audio-player preload="none"></audio>`;
   }
 
@@ -329,19 +353,22 @@
   function renderWords(words, key, options = {}) {
     const showStats = options.showStats ?? false;
     const hints = hintState[key] || { pinyin: false, english: false };
-    const statsHeader = showStats ? `<div class="word-stats-head"><span>#</span><span>Word or expression</span><span>Hints</span>${renderVocabularySort('Lesson', 'lesson')}${renderVocabularySort('Shown', 'shown')}${renderVocabularySort('Answers', 'answered')}${renderVocabularySort('Correct', 'correct')}${renderVocabularySort('Accuracy', 'accuracy')}</div>` : '';
+    const statsHeader = showStats ? `<div class="word-stats-head"><span>#</span><span lang="zh-Hant">Traditional · 繁體</span><span lang="zh-Hans">Simplified · 简体</span><span>Hints</span>${renderVocabularySort('Lesson', 'lesson')}${renderVocabularySort('Shown', 'shown')}${renderVocabularySort('Answers', 'answered')}${renderVocabularySort('Correct', 'correct')}${renderVocabularySort('Accuracy', 'accuracy')}</div>` : '';
     return `<div class="toolbar"><button class="toggle ${hints.pinyin ? 'active' : ''}" type="button" data-toggle="pinyin" data-key="${key}" aria-pressed="${hints.pinyin}">Pinyin ${hints.pinyin ? '✓' : '+'}</button><button class="toggle ${hints.english ? 'active' : ''}" type="button" data-toggle="english" data-key="${key}" aria-pressed="${hints.english}">English ${hints.english ? '✓' : '+'}</button><span class="hint">Click a row: Pinyin → both → hide</span></div>${statsHeader}<div class="word-list">${words.map((word, index) => {
       const rowKey = `${key}-${index}`;
       const rowHints = rowHintState[rowKey] || hints;
       const showPinyin = rowHints.pinyin;
       const showEnglish = rowHints.english;
-      const ruby = showPinyin ? renderRuby(word.chinese, word.pinyin) : null;
+      const ruby = showPinyin ? renderRuby(chineseText(word.chinese), word.pinyin) : null;
       if (showStats) {
+        const traditionalRuby = showPinyin ? renderRuby(word.chinese, word.pinyin) : null;
+        const simplified = chineseText(word.chinese, 'simplified');
+        const simplifiedRuby = showPinyin ? renderRuby(simplified, word.pinyin) : null;
         const stats = getWordStats(word.chinese);
-        const hintsContent = `${showPinyin && !ruby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}`;
-        return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row word-row-with-stats clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${ruby ? 'word-hanzi-ruby' : ''}" lang="zh-Hant">${ruby || escapeHtml(word.chinese)}${word.audio ? `<button type="button" class="word-audio" data-word-audio="${escapeHtml(word.audio)}" aria-label="Listen: ${escapeHtml(word.chinese)}" title="Play pronunciation">${renderSpeakerIcon()}</button>` : ''}${renderSaveButton(word)}</span><span class="word-details">${hintsContent}</span><span class="word-lesson" data-stat-label="Lesson">${word.sources.filter((source) => !source.startsWith('personal:')).map((source) => source.startsWith('lesson') ? `L${source.slice(6)}` : source === 'midterm1' ? 'Mid 1' : 'Mid 2').join(', ') || 'My list'}</span><span class="word-stat" data-stat-label="Shown">${stats.shown}</span><span class="word-stat" data-stat-label="Answers">${stats.answered}</span><span class="word-stat" data-stat-label="Correct">${stats.correct}</span><span class="word-stat word-accuracy" data-stat-label="Accuracy">${getAccuracy(stats)}%</span></div>`;
+        const hintsContent = `${showPinyin && !traditionalRuby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}`;
+        return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row word-row-with-stats clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${traditionalRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hant">${traditionalRuby || escapeHtml(word.chinese)}${word.audio ? `<button type="button" class="word-audio" data-word-audio="${escapeHtml(word.audio)}" aria-label="Listen: ${chineseHtml(word.chinese)}" title="Play pronunciation">${renderSpeakerIcon()}</button>` : ''}${renderSaveButton(word)}</span><span class="word-hanzi word-simplified ${simplifiedRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hans">${simplifiedRuby || escapeHtml(simplified)}</span><span class="word-details">${hintsContent}</span><span class="word-lesson" data-stat-label="Lesson">${word.sources.filter((source) => !source.startsWith('personal:')).map((source) => source.startsWith('lesson') ? `L${source.slice(6)}` : source === 'midterm1' ? 'Mid 1' : 'Mid 2').join(', ') || 'My list'}</span><span class="word-stat" data-stat-label="Shown">${stats.shown}</span><span class="word-stat" data-stat-label="Answers">${stats.answered}</span><span class="word-stat" data-stat-label="Correct">${stats.correct}</span><span class="word-stat word-accuracy" data-stat-label="Accuracy">${getAccuracy(stats)}%</span></div>`;
       }
-      return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${ruby ? 'word-hanzi-ruby' : ''}" lang="zh-Hant">${ruby || escapeHtml(word.chinese)}${word.aliases?.length ? `<small class="word-aliases"> (${word.aliases.map((alias) => escapeHtml(alias.chinese)).join(', ')})</small>` : ''}${renderMaterialAudio(word)}${renderSaveButton(word)}</span>${showPinyin && !ruby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}</div>`;
+      return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${ruby ? 'word-hanzi-ruby' : ''}" lang="${chineseLang()}">${ruby || chineseHtml(word.chinese)}${word.aliases?.length ? `<small class="word-aliases"> (${word.aliases.map((alias) => chineseHtml(alias.chinese)).join(', ')})</small>` : ''}${renderMaterialAudio(word)}${renderSaveButton(word)}</span>${showPinyin && !ruby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}</div>`;
     }).join('')}</div><audio data-word-audio-player preload="none"></audio>`;
   }
 
@@ -441,7 +468,7 @@
     const data = database[key];
     const dialogue = data?.dialogue || data?.lines || [];
     document.getElementById('lessonTitle').textContent = `Lesson ${currentLesson} · Dialog ${dialogNumber}`;
-    content.innerHTML = `<section class="section"><div class="section-head static-head"><span class="section-heading"><span class="section-num">0${dialogNumber}</span><span><span class="section-title">Dialog ${dialogNumber}</span><span class="section-meta">${data?.title ? escapeHtml(data.title) : 'Not added yet'}</span></span></span></div><div class="dialog-content">${renderSubsection('Dialogue', dialogue, `${key}-dialogue`, true)}${renderSupplement(data, `${key}-supplement`)}${(data?.screenshots || []).map((path, screenshotIndex) => `<a class="source-link" href="${encodeURI(path)}" target="_blank" rel="noopener">↗ View original screenshot ${screenshotIndex + 1}</a>`).join(' ')}${(data?.sources || []).map((source) => `<a class="source-link" href="${encodeURI(source.path)}" target="_blank" rel="noopener">↗ ${escapeHtml(source.label)}</a>`).join(' ')}</div></section>`;
+    content.innerHTML = `<section class="section"><div class="section-head static-head"><span class="section-heading"><span class="section-num">0${dialogNumber}</span><span><span class="section-title">Dialog ${dialogNumber}</span><span class="section-meta">${data?.title ? chineseHtml(data.title) : 'Not added yet'}</span></span></span></div><div class="dialog-content">${renderSubsection('Dialogue', dialogue, `${key}-dialogue`, true)}${renderSupplement(data, `${key}-supplement`)}${(data?.screenshots || []).map((path, screenshotIndex) => `<a class="source-link" href="${encodeURI(path)}" target="_blank" rel="noopener">↗ View original screenshot ${screenshotIndex + 1}</a>`).join(' ')}${(data?.sources || []).map((source) => `<a class="source-link" href="${encodeURI(source.path)}" target="_blank" rel="noopener">↗ ${escapeHtml(source.label)}</a>`).join(' ')}</div></section>`;
   }
 
   function drawHome() {
@@ -468,13 +495,15 @@
           const existing = seen.get(word.chinese);
           if (existing) {
             if (!existing.sources.includes(source)) existing.sources.push(source);
+            if (!existing.dialogSources.includes(`${lesson}-dialog${dialog}`)) existing.dialogSources.push(`${lesson}-dialog${dialog}`);
             return;
           }
           const item = {
             ...word,
             materialType: category === 'Phrases' ? 'expression' : 'word',
             category: '',
-            sources: [source]
+            sources: [source],
+            dialogSources: [`${lesson}-dialog${dialog}`]
           };
           vocabulary.push(item);
           seen.set(word.chinese, item);
@@ -521,20 +550,36 @@
     return type === 'all' || word.materialType === type;
   }
 
+  function matchesMaterialSource(word, source) {
+    return word.sources.includes(source) || (word.dialogSources || []).includes(source);
+  }
+
+  function materialSources() {
+    return [
+      ...Array.from({ length: lessonCount }, (_, index) => [1, 2].map((dialog) => ({ key: `${index + 1}-dialog${dialog}`, label: `Lesson ${index + 1} · Dialog ${dialog}` }))).flat(),
+      { key: 'midterm1', label: 'Mid Term 1' }, { key: 'midterm2', label: 'Mid Term 2' }
+    ];
+  }
+
+  function renderMaterialScope(mode) {
+    const selected = (key) => mode === 'vocabulary' ? vocabularyFilterState[key] : quizState.sourceKeys === null ? !key.startsWith('personal:') : quizState.sourceKeys.some((source) => source === key || source === `lesson${key.split('-')[0]}`);
+    const checkbox = (key, label) => `<label class="vocabulary-filter"><input type="checkbox" data-${mode}-scope="${escapeHtml(key)}" ${selected(key) ? 'checked' : ''}><span>${escapeHtml(label)}</span></label>`;
+    return `<div class="material-scope"><div class="vocabulary-filter-actions"><button type="button" class="filter-action" data-${mode}-scope-select="all">Select all</button><button type="button" class="filter-action" data-${mode}-scope-select="none">Clear all</button></div>${Array.from({ length: lessonCount }, (_, index) => {
+      const lesson = index + 1;
+      return `<div class="material-scope-lesson"><label class="vocabulary-filter"><input type="checkbox" data-${mode}-scope-lesson="${lesson}" ${selected(`${lesson}-dialog1`) && selected(`${lesson}-dialog2`) ? 'checked' : ''}><span>Lesson ${lesson}</span></label><div class="material-scope-dialogs">${[1, 2].map((dialog) => checkbox(`${lesson}-dialog${dialog}`, `Dialog ${dialog}`)).join('')}</div></div>`;
+    }).join('')}${checkbox('midterm1', 'Mid Term 1')}${checkbox('midterm2', 'Mid Term 2')}${mode === 'quiz' ? `<div class="material-scope-custom"><strong>Custom lists</strong>${personalLists.map((list) => checkbox(`personal:${list.id}`, `${list.name} (${list.items.length})`)).join('')}</div>` : ''}</div>`;
+  }
+
   function getFilteredVocabulary(words) {
     words = words.filter((word) => matchesVocabularyType(word, vocabularyType));
     if (personalListOnly) return words.filter((word) => word.sources.includes(`personal:${activePersonalListId}`)).map((word, index) => ({ ...word, category: index === 0 ? getPersonalList().name : '' }));
-    const sources = [
-      ...Array.from({ length: lessonCount }, (_, index) => ({ key: `lesson${index + 1}`, label: `Lesson ${index + 1}` })),
-      { key: 'midterm1', label: 'Mid Term Questions 1' },
-      { key: 'midterm2', label: 'Mid Term Questions 2' }
-    ];
+    const sources = materialSources();
     const emitted = new Set();
     const filtered = [];
     sources.filter((source) => vocabularyFilterState[source.key]).forEach((source) => {
       let firstInSource = true;
       words.forEach((word) => {
-        if (emitted.has(word.chinese) || !word.sources.includes(source.key)) return;
+        if (emitted.has(word.chinese) || !matchesMaterialSource(word, source.key)) return;
         filtered.push({ ...word, category: firstInSource ? source.label : '' });
         emitted.add(word.chinese);
         firstInSource = false;
@@ -565,14 +610,10 @@
     const words = collectVocabulary();
     const filteredWords = sortVocabulary(getFilteredVocabulary(words));
     const key = 'vocabulary-all';
-    const filters = [
-      ...Array.from({ length: lessonCount }, (_, index) => ({ key: `lesson${index + 1}`, label: `Lesson ${index + 1}` })),
-      { key: 'midterm1', label: 'Mid Term 1' },
-      { key: 'midterm2', label: 'Mid Term 2' }
-    ].map((filter) => `<label class="vocabulary-filter"><input type="checkbox" data-vocabulary-filter="${filter.key}" ${vocabularyFilterState[filter.key] ? 'checked' : ''}><span>${filter.label}</span></label>`).join('');
+    const filters = renderMaterialScope('vocabulary');
     document.getElementById('lessonTitle').textContent = 'All words & expressions';
     hintState[key] ||= { pinyin: appSettings.listPinyin, english: appSettings.listEnglish };
-    content.innerHTML = `<section class="midterm-intro"><div class="subtle">LESSONS 1–8 + MIDTERM QUESTIONS · MASTER VOCABULARY</div><p>Showing ${filteredWords.length} of ${words.length} unique words and expressions. Multi-character expressions stay together; a component is listed separately only when it also appears as an independent vocabulary item.</p><p class="stats-history-note">Answers counts new quiz responses. For older sessions, only saved correct answers are available.</p></section><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-type-switch" role="group" aria-label="Material type">${[['all', 'All'], ['word', 'Words'], ['expression', 'Expressions']].map(([value, label]) => `<button type="button" class="toggle ${vocabularyType === value ? 'active' : ''}" data-vocabulary-type="${value}" aria-pressed="${vocabularyType === value}">${label}</button>`).join('')}</div><div class="vocabulary-filter-actions"><button type="button" class="filter-action" data-vocabulary-select="all">Select all</button><button type="button" class="filter-action" data-vocabulary-select="none">Clear all</button><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls">${renderPersonalListPicker()}<form data-personal-create><label>New list <input name="listName" required maxlength="80" placeholder="List name"></label><button type="submit" class="filter-action">Create list</button></form><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(getPersonalList().name)} (${getPersonalList().items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(getPersonalList().name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${filteredWords.length ? renderWords(filteredWords, key, { showStats: true }) : `<div class="empty">${personalListOnly ? 'No items match this list and material type.' : 'No items match the selected lessons and material type.'}</div>`}</section>`;
+    content.innerHTML = `<section class="midterm-intro"><div class="subtle">LESSONS 1–8 + MIDTERM QUESTIONS · MASTER VOCABULARY</div><p>Showing ${filteredWords.length} of ${words.length} unique words and expressions. Multi-character expressions stay together; a component is listed separately only when it also appears as an independent vocabulary item.</p><p class="stats-history-note">Answers counts new quiz responses. For older sessions, only saved correct answers are available.</p></section><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-type-switch" role="group" aria-label="Material type">${[['all', 'All'], ['word', 'Words'], ['expression', 'Expressions']].map(([value, label]) => `<button type="button" class="toggle ${vocabularyType === value ? 'active' : ''}" data-vocabulary-type="${value}" aria-pressed="${vocabularyType === value}">${label}</button>`).join('')}</div><div class="vocabulary-filter-actions"><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls">${renderPersonalListPicker()}<form data-personal-create><label>New list <input name="listName" required maxlength="80" placeholder="List name"></label><button type="submit" class="filter-action">Create list</button></form><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(getPersonalList().name)} (${getPersonalList().items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(getPersonalList().name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${filteredWords.length ? renderWords(filteredWords, key, { showStats: true }) : `<div class="empty">${personalListOnly ? 'No items match this list and material type.' : 'No items match the selected lessons and material type.'}</div>`}</section>`;
   }
 
   function renderSetting(key, title, description) {
@@ -590,7 +631,7 @@
     const countLabel = passage.wordCount ? `${passage.wordCount} words` : `${characterCount} characters`;
     const passageButtons = readingPassages.map((item, index) => `<button type="button" class="toggle ${selectedReading === index ? 'active' : ''}" data-reading-passage="${index}" aria-pressed="${selectedReading === index}">${escapeHtml(item.label || `${characterCount} characters`)}</button>`).join('');
     document.getElementById('lessonTitle').textContent = 'Reading practice';
-    content.innerHTML = `<div class="reading-selector" role="group" aria-label="Choose reading text">${passageButtons}</div><article class="reading-card"><div class="reading-card-head"><div><div class="subtle">READING PRACTICE · LESSONS 1–7</div><h3 lang="zh-Hant">${escapeHtml(passage.title)}</h3><p class="reading-ai-note">This practice text was generated by AI from the course vocabulary.</p></div><span class="reading-count">${countLabel}</span></div><div class="reading-text" lang="zh-Hant">${passage.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph.replaceAll(' ', ''))}</p>`).join('')}</div></article>`;
+    content.innerHTML = `<div class="reading-selector" role="group" aria-label="Choose reading text">${passageButtons}</div><article class="reading-card"><div class="reading-card-head"><div><div class="subtle">READING PRACTICE · LESSONS 1–7</div><h3 lang="${chineseLang()}">${chineseHtml(passage.title)}</h3><p class="reading-ai-note">This practice text was generated by AI from the course vocabulary.</p></div><span class="reading-count">${countLabel}</span></div><div class="reading-text" lang="${chineseLang()}">${passage.paragraphs.map((paragraph) => `<p>${chineseHtml(paragraph.replaceAll(' ', ''))}</p>`).join('')}</div></article>`;
   }
 
   function collectListeningItems() {
@@ -667,7 +708,7 @@
       .map((word) => [word.chinese, word]));
     if (/^\p{Script=Han}+$/u.test(item.chinese)) dictionary.set(item.chinese, item);
     const candidates = [...dictionary.values()].sort((a, b) => b.chinese.length - a.chinese.length);
-    const ruby = renderRuby(item.chinese, item.pinyin);
+    const ruby = renderRuby(chineseText(item.chinese), item.pinyin);
     const syllables = ruby ? [...ruby.matchAll(/<rt>(.*?)<\/rt>/g)].map((match) => match[1]) : [];
     let hanIndex = 0;
     let result = '';
@@ -682,7 +723,7 @@
         chinese: character, pinyin: syllables[hanIndex] || '', english: ''
       };
       saveableItems.set(word.chinese, word);
-      result += `<button type="button" class="listening-word" data-listening-word="${escapeHtml(word.chinese)}" aria-label="Show word: ${escapeHtml(word.chinese)}">${escapeHtml(word.chinese)}</button>`;
+      result += `<button type="button" class="listening-word" data-listening-word="${escapeHtml(word.chinese)}" aria-label="Show word: ${chineseHtml(word.chinese)}">${chineseHtml(word.chinese)}</button>`;
       position += word.chinese.length;
       hanIndex += Array.from(word.chinese).length;
     }
@@ -707,7 +748,7 @@
     const revealLabel = listeningState.revealStage === 0 ? 'Show Chinese' : listeningState.revealStage === 1 ? 'Show Pinyin and English translation' : 'Hide answer';
     const revealedAnswer = listeningState.revealStage === 0
       ? '<span class="listening-hidden">Listen first, then click to reveal the Chinese text</span>'
-      : `<span class="listening-hanzi" lang="zh-Hant">${renderListeningWords(item)}</span>${listeningState.revealStage === 2 ? `<span class="listening-pinyin" lang="zh-Latn-pinyin">${escapeHtml(item.pinyin)}</span><span class="listening-english" lang="en">${escapeHtml(item.english)}</span>` : ''}`;
+      : `<span class="listening-hanzi" lang="${chineseLang()}">${renderListeningWords(item)}</span>${listeningState.revealStage === 2 ? `<span class="listening-pinyin" lang="zh-Latn-pinyin">${escapeHtml(item.pinyin)}</span><span class="listening-english" lang="en">${escapeHtml(item.english)}</span>` : ''}`;
     const transitionClass = listeningState.transitionDirection > 0 ? 'listening-slide-next' : listeningState.transitionDirection < 0 ? 'listening-slide-previous' : '';
     listeningState.transitionDirection = 0;
     content.innerHTML = `<div class="listening-layout"><section class="listening-panel"><div class="listening-card-frame ${transitionClass}"><div class="listening-card-meta"><span class="quiz-scope">${escapeHtml(item.sourceLabel)} · ${item.sourceIndex}</span><span class="listening-voice-badge">Voice · ${escapeHtml(item.voice)}</span></div><div class="quiz-progress"><strong>${listeningState.index + 1}</strong> / ${items.length}<span>Press the speaker or Space to play</span></div><div class="listening-flash-stage"><button type="button" class="quiz-arrow" data-listening-nav="-1" aria-label="Previous recording" ${listeningState.index === 0 ? 'disabled' : ''}>←</button><div class="listening-stage-center"><button type="button" class="listening-play-button" data-listening-play aria-label="Play recording">${renderSpeakerIcon()}<span>Play recording</span></button><button type="button" class="listening-slow" data-listening-slow aria-label="Play slowly at 0.75 speed" title="Play slowly · 0.75×"><span aria-hidden="true">🐢</span><span>0.75×</span></button><audio preload="metadata" data-listening-audio src="${encodeURI(item.audio)}">Your browser does not support audio playback.</audio></div><button type="button" class="quiz-arrow" data-listening-nav="1" aria-label="Next recording" ${listeningState.index === items.length - 1 ? 'disabled' : ''}>→</button></div><div role="button" tabindex="0" class="listening-answer-card stage-${listeningState.revealStage}" data-listening-reveal aria-label="${revealLabel}"><span class="listening-answer-action">${revealLabel}</span><span class="listening-answer-content">${revealedAnswer}</span></div><section class="listening-word-menu" data-listening-word-menu hidden aria-label="Selected word" aria-live="polite"></section><div class="listening-save">${renderSaveButton(item)}${renderPersonalListPicker()}</div><div class="listening-grades" role="group" aria-label="Learning status"><button type="button" class="toggle" data-listening-grade="learned" aria-pressed="false">✓ Learned</button><button type="button" class="toggle" data-listening-grade="unlearned" aria-pressed="false">Not learned yet</button></div></div></section><aside class="listening-controls" aria-label="Listening settings"><section class="listening-control-card"><span class="listening-control-title">Material</span><div class="listening-kind" role="group" aria-label="Listening material type">${kindButtons}</div>${scopeControls}<button type="button" class="toggle listening-random" data-listening-random ${items.length < 2 ? 'disabled' : ''}>Shuffle · Random ${listeningState.kind === 'words' ? 'word / expression' : 'sentence'}</button></section><section class="listening-control-card listening-shortcuts"><span class="listening-control-title">Keyboard</span><div><kbd>Space</kbd><span>Play / pause</span></div><div><kbd>←</kbd><kbd>→</kbd><span>Previous / next</span></div><div><kbd>↑</kbd><span>Reveal answer</span></div></section></aside></div>`;
@@ -734,11 +775,11 @@
   }
 
   function renderQuizFace(word, type, side) {
-    const pinyin = appSettings.quizPinyin ? `<span class="flashcard-pinyin" lang="zh-Latn-pinyin">${escapeHtml(word.pinyin)}</span>` : '';
+    const pinyin = type === 'chinese' && appSettings.quizPinyin ? `<span class="flashcard-pinyin" lang="zh-Latn-pinyin">${escapeHtml(word.pinyin)}</span>` : '';
     if (type === 'chinese') {
-      return `<span class="flashcard-face flashcard-${side} flashcard-chinese-face"><span class="flashcard-face-label">Chinese</span><span class="flashcard-hanzi" lang="zh-Hant">${escapeHtml(word.chinese)}</span>${pinyin}</span>`;
+      return `<span class="flashcard-face flashcard-${side} flashcard-chinese-face"><span class="flashcard-face-label">Chinese</span><span class="flashcard-hanzi" lang="${chineseLang()}">${chineseHtml(word.chinese)}</span>${pinyin}</span>`;
     }
-    return `<span class="flashcard-face flashcard-${side} flashcard-answer-face"><span class="flashcard-face-label">${appSettings.quizPinyin ? 'English + Pinyin' : 'English'}</span><span class="flashcard-english">${escapeHtml(word.english)}</span>${pinyin}${word.partOfSpeech ? `<span class="flashcard-pos">${escapeHtml(word.partOfSpeech)}</span>` : ''}</span>`;
+    return `<span class="flashcard-face flashcard-${side} flashcard-answer-face"><span class="flashcard-face-label">English</span><span class="flashcard-english">${escapeHtml(word.english)}</span>${pinyin}${word.partOfSpeech ? `<span class="flashcard-pos">${escapeHtml(word.partOfSpeech)}</span>` : ''}</span>`;
   }
 
   function shuffleWords(words) {
@@ -759,13 +800,13 @@
     quizState.needsViewRecord = true;
     quizState.advanceTimer = null;
     quizState.materialType = materialType;
-    quizState.sourceKeys = sourceKeys?.length ? [...sourceKeys] : null;
+    quizState.sourceKeys = sourceKeys === null ? null : [...sourceKeys];
     quizState.order = [];
   }
 
   function getQuizVocabulary() {
     let words = collectVocabulary().filter((word) => matchesVocabularyType(word, quizState.materialType || 'all'));
-    if (quizState.sourceKeys) words = words.filter((word) => word.sources.some((source) => quizState.sourceKeys.includes(source)));
+    if (quizState.sourceKeys) words = words.filter((word) => quizState.sourceKeys.some((source) => matchesMaterialSource(word, source)));
     if (quizState.unansweredOnly) words = words.filter((word) => getWordStats(word.chinese).correct === 0);
     if (!quizState.order.length) quizState.order = shuffleWords(words).map((word) => word.chinese);
     const wordsByChinese = new Map(words.map((word) => [word.chinese, word]));
@@ -776,11 +817,11 @@
 
   function drawQuiz() {
     const words = getQuizVocabulary();
-    const scope = quizState.sourceKeys ? `Selected filters: ${quizState.sourceKeys.map((source) => source.startsWith('lesson') ? `Lesson ${source.replace('lesson', '')}` : source.startsWith('personal:') ? (personalLists.find((list) => `personal:${list.id}` === source)?.name || 'My list') : source === 'midterm1' ? 'Mid Term 1' : 'Mid Term 2').join(', ')}` : 'All lessons and mid-terms';
-    const filter = `<span class="quiz-scope">${escapeHtml(scope)}</span><label class="quiz-filter"><input type="checkbox" data-quiz-unanswered ${quizState.unansweredOnly ? 'checked' : ''}><span>Only words never answered correctly</span></label>`;
+    const scope = quizState.sourceKeys ? `Selected filters: ${quizState.sourceKeys.map((source) => source.startsWith('lesson') ? `Lesson ${source.replace('lesson', '')}` : /^(\d+)-dialog([12])$/.test(source) ? source.replace(/^(\d+)-dialog([12])$/, 'Lesson $1 · Dialog $2') : source.startsWith('personal:') ? (personalLists.find((list) => `personal:${list.id}` === source)?.name || 'My list') : source === 'midterm1' ? 'Mid Term 1' : 'Mid Term 2').join(', ')}` : 'All lessons and mid-terms';
+    const filter = `<fieldset class="quiz-material-scope"><legend>Material scope</legend>${renderMaterialScope('quiz')}</fieldset><span class="quiz-scope">${escapeHtml(scope)}</span><label class="quiz-filter"><input type="checkbox" data-quiz-unanswered ${quizState.unansweredOnly ? 'checked' : ''}><span>Only words never answered correctly</span></label>`;
     document.getElementById('lessonTitle').textContent = 'Flashcard quiz';
     if (!words.length) {
-      content.innerHTML = `<section class="quiz-panel"><div class="quiz-options">${filter}</div><div class="quiz-complete"><strong>Everything is known!</strong><span>All words have at least one correct answer.</span></div></section>`;
+      content.innerHTML = `<section class="quiz-panel"><div class="quiz-options">${filter}</div><div class="quiz-complete"><strong>No matching cards</strong><span>Select material in the panel or adjust the unanswered filter.</span></div></section>`;
       drawModeSettings();
       return;
     }
@@ -937,6 +978,22 @@
   });
 
   document.querySelector('.shell').addEventListener('change', (event) => {
+    for (const mode of ['vocabulary', 'quiz']) {
+      const source = event.target.closest(`[data-${mode}-scope]`);
+      const lesson = event.target.closest(`[data-${mode}-scope-lesson]`);
+      if (!source && !lesson) continue;
+      const selected = mode === 'vocabulary' ? new Set(Object.keys(vocabularyFilterState).filter((key) => vocabularyFilterState[key])) : new Set(quizState.sourceKeys === null ? materialSources().map((item) => item.key) : quizState.sourceKeys.flatMap((key) => /^lesson\d+$/.test(key) ? [`${key.slice(6)}-dialog1`, `${key.slice(6)}-dialog2`] : [key]));
+      const keys = source ? [source.dataset[`${mode}Scope`]] : [1, 2].map((dialog) => `${lesson.dataset[`${mode}ScopeLesson`]}-dialog${dialog}`);
+      keys.forEach((key) => event.target.checked ? selected.add(key) : selected.delete(key));
+      if (mode === 'quiz') resetQuizSession([...selected], quizState.materialType);
+      else {
+        Object.keys(vocabularyFilterState).forEach((key) => { vocabularyFilterState[key] = selected.has(key); });
+        Object.keys(rowHintState).filter((key) => key.startsWith('vocabulary-all-')).forEach((key) => { delete rowHintState[key]; });
+      }
+      draw();
+      return;
+    }
+
     if (event.target.matches('[data-personal-list-select]')) {
       if (!personalLists.some((list) => list.id === event.target.value)) return;
       const selectedWord = content.querySelector('[data-listening-word-menu]:not([hidden]) strong')?.textContent;
@@ -997,6 +1054,16 @@
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
+    for (const mode of ['vocabulary', 'quiz']) {
+      const selection = event.target.closest(`[data-${mode}-scope-select]`);
+      if (!selection) continue;
+      const all = selection.dataset[`${mode}ScopeSelect`] === 'all';
+      if (mode === 'quiz') resetQuizSession(all ? materialSources().map((source) => source.key) : [], quizState.materialType);
+      else Object.keys(vocabularyFilterState).forEach((key) => { vocabularyFilterState[key] = all; });
+      draw();
+      return;
+    }
+
     const type = event.target.closest('[data-vocabulary-type]');
     if (type && ['all', 'word', 'expression'].includes(type.dataset.vocabularyType)) {
       vocabularyType = type.dataset.vocabularyType;
@@ -1035,7 +1102,7 @@
       const menu = content.querySelector('[data-listening-word-menu]');
       if (!word || !menu) return;
       menu.hidden = false;
-      menu.innerHTML = `<strong lang="zh-Hant">${escapeHtml(word.chinese)}</strong><span lang="zh-Latn-pinyin">${escapeHtml(word.pinyin)}</span><span>${escapeHtml(word.english || 'Translation unavailable in course vocabulary.')}</span>${renderSaveButton(word)}${renderPersonalListPicker()}<button type="button" class="filter-action" data-close-word-menu>Close</button>`;
+      menu.innerHTML = `<strong lang="${chineseLang()}">${chineseHtml(word.chinese)}</strong><span lang="zh-Latn-pinyin">${escapeHtml(word.pinyin)}</span><span>${escapeHtml(word.english || 'Translation unavailable in course vocabulary.')}</span>${renderSaveButton(word)}${renderPersonalListPicker()}<button type="button" class="filter-action" data-close-word-menu>Close</button>`;
       content.querySelectorAll('[data-listening-word]').forEach((button) => button.classList.toggle('selected', button === wordChoice));
       return;
     }

@@ -25,7 +25,7 @@ function load() {
     if (file !== 'app.js') vm.runInContext(fs.readFileSync(file,'utf8'),context);
   }
   let source = fs.readFileSync('app.js','utf8').replace('function draw() {', 'function actualDraw() {');
-  source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { renderLines, getMaterialAudio, drawVocabulary, content, personalLists, getPersonalList, renderPersonalListPicker, renderSaveButton, collectVocabulary, getFilteredVocabulary, sortVocabulary, vocabularySort, getWordStats, getQuizVocabulary, resetQuizSession, quizState, renderWords, persistPersonalList, filter: value => { personalListOnly = value; }, enterQuiz: () => { currentLesson = 'quiz'; } };\n})();`);
+  source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { renderMaterialScope, renderLines, getMaterialAudio, drawVocabulary, content, personalLists, getPersonalList, renderPersonalListPicker, renderSaveButton, collectVocabulary, getFilteredVocabulary, sortVocabulary, vocabularySort, getWordStats, getQuizVocabulary, resetQuizSession, quizState, renderWords, persistPersonalList, filter: value => { personalListOnly = value; }, enterQuiz: () => { currentLesson = 'quiz'; } };\n})();`);
   vm.runInContext(source,context);
   const fire = (type, target) => {
     target.matches ||= () => false;
@@ -157,3 +157,29 @@ assert.equal(played.at(-1), 'other-line.mp3');
 assert(pauses >= 3);
 assert.equal(player.onended, null);
 console.log('PASS: individual lesson recordings, shared Listening lookup, no queue, and replacement playback at 1×');
+
+app.filter(false);
+app.resetQuizSession(['2-dialog1']);
+const dialogWords = app.getQuizVocabulary();
+assert(dialogWords.length > 0);
+assert(dialogWords.every(word => word.dialogSources.includes('2-dialog1')));
+assert(dialogWords.some(word => word.chinese === '家人'));
+app.resetQuizSession([]);
+assert.equal(app.getQuizVocabulary().length, 0);
+const destinationBefore = app.getPersonalList().id;
+fire('change', { checked: true, closest: selector => selector === '[data-quiz-scope]' ? { dataset: { quizScope: `personal:${destinationBefore}` } } : null });
+assert.deepEqual(Array.from(app.quizState.sourceKeys), [`personal:${destinationBefore}`]);
+assert.equal(app.getPersonalList().id, destinationBefore);
+assert(app.getQuizVocabulary().every(word => word.sources.includes(`personal:${destinationBefore}`)));
+const scopeHtml = app.renderMaterialScope('quiz');
+assert(scopeHtml.includes('data-quiz-scope="2-dialog1"'));
+assert(scopeHtml.includes('data-quiz-scope="2-dialog2"'));
+assert(scopeHtml.includes(`data-quiz-scope="personal:${destinationBefore}"`));
+assert(!scopeHtml.includes('data-personal-create'));
+fire('click', { closest: selector => selector === '[data-vocabulary-scope-select]' ? { dataset: { vocabularyScopeSelect: 'none' } } : null });
+fire('change', { checked: true, closest: selector => selector === '[data-vocabulary-scope]' ? { dataset: { vocabularyScope: '2-dialog2' } } : null });
+const selectedDialog = app.getFilteredVocabulary(app.collectVocabulary());
+assert(selectedDialog.length > 0);
+assert(selectedDialog.every(word => word.dialogSources.includes('2-dialog2')));
+assert(!selectedDialog.some(word => word.chinese === '家人'));
+console.log('PASS: dialog scopes in list and quiz, empty selection, custom list scope independent of save destination');
