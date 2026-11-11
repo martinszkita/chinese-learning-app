@@ -92,3 +92,7 @@ Personal vocabulary supports multiple named lists. Create or rename them in All 
 The global **馬 / 马** toggle switches lessons, dialogues, example sentences, midterms, flashcards, Listening and Reading between Traditional and Simplified Chinese. The choice is saved in this browser and works offline. All words & expressions always shows separate Traditional and Simplified columns, including sentence entries. Progress, personal lists and audio keep the original material identity across script changes.
 
 In All words & expressions, click any Chinese character in either script column to open a large writing reference with a guide grid. Click outside the popup, press Escape or use its close button to dismiss it.
+
+Each lesson dialogue has a compact **Full dialogue** player. Play reads all turns in order at 1× and highlights the current turn. Stop pauses at the current position; Play resumes. Reset stops playback and returns to the first turn. Changing lessons or study modes stops the dialogue; pronunciation buttons play a single line independently.
+
+Run `node tests/dialogue-playback.cjs` to check sequential playback, highlighting, Stop/Reset, navigation, pronunciation interruption and recording errors.

@@ -353,15 +353,122 @@
     return `<button type="button" class="word-audio material-audio" data-word-audio="${escapeHtml(audio)}" aria-label="Play at normal speed: ${chineseHtml(item.chinese)}" title="Play · 1×">${renderSpeakerIcon()}</button>`;
   }
 
+  const dialogueQueues = new Map();
+  const dialoguePlayback = { key: null, lines: [], index: 0, loadedIndex: -1, playing: false, token: 0, error: '' };
+  const dialogueAudio = document.getElementById('dialogueAudio');
+
+  function renderDialoguePlayer(lines, key) {
+    dialogueQueues.set(key, lines);
+    const complete = lines.every((line) => getMaterialAudio(line));
+    return `<div class="dialogue-player" data-dialogue-player="${escapeHtml(key)}" role="group" aria-label="Full dialogue playback"><span class="dialogue-player-title">${renderSpeakerIcon()} Full dialogue · 1×</span><div class="dialogue-player-actions"><button type="button" class="toggle" data-dialogue-action="play" aria-pressed="false" ${complete ? '' : 'disabled'}>▶ Play</button><button type="button" class="toggle" data-dialogue-action="reset" aria-label="Reset dialogue to the beginning">↺ Reset</button></div><span class="dialogue-player-status" data-dialogue-status role="status">${complete ? `${lines.length} lines · Ready` : 'Some recordings are not available yet.'}</span></div>`;
+  }
+
+  function updateDialoguePlayer(scrollToLine = false) {
+    const state = dialoguePlayback;
+    const panel = content.querySelector('[data-dialogue-player]');
+    if (state.playing && (!panel || panel.dataset.dialoguePlayer !== state.key)) {
+      stopDialogueAudio();
+      return;
+    }
+    content.querySelectorAll('[data-dialogue-line]').forEach((row) => {
+      const active = state.playing && row.dataset.dialogueKey === state.key && Number(row.dataset.dialogueLine) === state.index;
+      row.classList.toggle('dialogue-line-playing', active);
+      if (active) {
+        row.setAttribute('aria-current', 'true');
+        if (scrollToLine) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      } else row.removeAttribute('aria-current');
+    });
+    if (!panel || panel.dataset.dialoguePlayer !== state.key) return;
+    const play = panel.querySelector('[data-dialogue-action="play"]');
+    play.textContent = state.playing ? '■ Stop' : '▶ Play';
+    play.setAttribute('aria-pressed', String(state.playing));
+    const finished = state.index >= state.lines.length;
+    panel.querySelector('[data-dialogue-status]').textContent = state.error || (finished
+      ? `Finished · ${state.lines.length} / ${state.lines.length}`
+      : `${state.playing ? 'Playing' : state.loadedIndex >= 0 ? 'Stopped' : 'Ready'} · ${state.index + 1} / ${state.lines.length}`);
+  }
+
+  function stopDialogueAudio(reset = false) {
+    const state = dialoguePlayback;
+    state.token++;
+    state.playing = false;
+    dialogueAudio.onended = null;
+    dialogueAudio.onerror = null;
+    dialogueAudio.pause();
+    if (reset) {
+      dialogueAudio.currentTime = 0;
+      state.index = 0;
+      state.loadedIndex = -1;
+      state.error = '';
+    }
+    updateDialoguePlayer();
+  }
+
+  function playDialogueLine() {
+    const state = dialoguePlayback;
+    const token = ++state.token;
+    state.playing = true;
+    state.error = '';
+    if (state.loadedIndex !== state.index) {
+      dialogueAudio.src = getMaterialAudio(state.lines[state.index]);
+      dialogueAudio.currentTime = 0;
+      state.loadedIndex = state.index;
+    }
+    dialogueAudio.defaultPlaybackRate = 1;
+    dialogueAudio.playbackRate = 1;
+    const fail = () => {
+      if (state.token !== token) return;
+      stopDialogueAudio();
+      state.loadedIndex = -1;
+      state.error = 'Recording could not be played. Press Play to retry.';
+      updateDialoguePlayer();
+    };
+    dialogueAudio.onerror = fail;
+    dialogueAudio.onended = () => {
+      if (state.token !== token || !state.playing) return;
+      state.index++;
+      if (state.index < state.lines.length) playDialogueLine();
+      else stopDialogueAudio();
+    };
+    updateDialoguePlayer(true);
+    dialogueAudio.play().catch(fail);
+  }
+
+  function handleDialogueAction(button) {
+    const key = button.closest('[data-dialogue-player]')?.dataset.dialoguePlayer;
+    const lines = dialogueQueues.get(key);
+    if (!lines?.length) return;
+    const state = dialoguePlayback;
+    if (state.key !== key) {
+      stopDialogueAudio(true);
+      state.key = key;
+      state.lines = lines;
+    }
+    if (button.dataset.dialogueAction === 'reset') {
+      stopDialogueAudio(true);
+      return;
+    }
+    if (state.playing) {
+      stopDialogueAudio();
+      return;
+    }
+    if (!lines.every((line) => getMaterialAudio(line))) return;
+    stopMaterialAudio();
+    content.querySelectorAll('[data-word-audio-player]').forEach((audio) => audio.pause());
+    if (state.index >= lines.length) stopDialogueAudio(true);
+    playDialogueLine();
+  }
+
   function renderLines(lines, key) {
     const hints = hintState[key] || { pinyin: false, english: false };
-    return `<div class="toolbar"><button class="toggle ${hints.pinyin ? 'active' : ''}" type="button" data-toggle="pinyin" data-key="${key}" aria-pressed="${hints.pinyin}">Pinyin ${hints.pinyin ? '✓' : '+'}</button><button class="toggle ${hints.english ? 'active' : ''}" type="button" data-toggle="english" data-key="${key}" aria-pressed="${hints.english}">English ${hints.english ? '✓' : '+'}</button><span class="hint">Click a row: Pinyin → both → hide</span></div>${lines.map((item, index) => {
+    const isDialogue = key.endsWith('-dialogue');
+    return `${isDialogue && lines.length ? renderDialoguePlayer(lines, key) : ''}<div class="toolbar"><button class="toggle ${hints.pinyin ? 'active' : ''}" type="button" data-toggle="pinyin" data-key="${key}" aria-pressed="${hints.pinyin}">Pinyin ${hints.pinyin ? '✓' : '+'}</button><button class="toggle ${hints.english ? 'active' : ''}" type="button" data-toggle="english" data-key="${key}" aria-pressed="${hints.english}">English ${hints.english ? '✓' : '+'}</button><span class="hint">Click a row: Pinyin → both → hide</span></div>${lines.map((item, index) => {
       const rowKey = `${key}-${index}`;
       const rowHints = rowHintState[rowKey] || hints;
       const showPinyin = rowHints.pinyin;
       const showEnglish = rowHints.english;
       const ruby = showPinyin ? renderRuby(chineseText(item.chinese), item.pinyin) : null;
-      return `<div class="line clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><div><div class="speaker">${chineseHtml(item.speaker || '例句')}</div>${showPinyin && item.speakerPinyin ? `<div class="speaker-pinyin">${escapeHtml(item.speakerPinyin)}</div>` : ''}</div><div><div class="hanzi ${ruby ? 'hanzi-ruby' : ''}" lang="${chineseLang()}">${ruby || chineseHtml(item.chinese)}</div>${renderMaterialAudio(item)}${renderSaveButton(item)}${showPinyin && !ruby ? `<div class="pinyin">${escapeHtml(item.pinyin)}</div>` : ''}${showEnglish ? `<div class="english">${escapeHtml(item.english)}</div>` : ''}</div></div>`;
+      return `<div class="line clickable-row" ${isDialogue ? `data-dialogue-key="${escapeHtml(key)}" data-dialogue-line="${index}"` : ''} data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><div><div class="speaker">${chineseHtml(item.speaker || '例句')}</div>${showPinyin && item.speakerPinyin ? `<div class="speaker-pinyin">${escapeHtml(item.speakerPinyin)}</div>` : ''}</div><div><div class="hanzi ${ruby ? 'hanzi-ruby' : ''}" lang="${chineseLang()}">${ruby || chineseHtml(item.chinese)}</div>${renderMaterialAudio(item)}${renderSaveButton(item)}${showPinyin && !ruby ? `<div class="pinyin">${escapeHtml(item.pinyin)}</div>` : ''}${showEnglish ? `<div class="english">${escapeHtml(item.english)}</div>` : ''}</div></div>`;
     }).join('')}<audio data-word-audio-player preload="none"></audio>`;
   }
 
@@ -409,6 +516,7 @@
   function draw() {
     drawContent();
     if (currentLesson !== 'listening' && currentLesson !== 'quiz') drawModeSettings();
+    updateDialoguePlayer();
   }
 
   function drawModeSettings() {
@@ -449,6 +557,12 @@
   }
 
   function drawContent() {
+    const dialogueKey = typeof currentLesson === 'number' ? `${currentLesson}-${currentPart}-dialogue` : null;
+    if (dialoguePlayback.key && dialoguePlayback.key !== dialogueKey) {
+      stopDialogueAudio(true);
+      dialoguePlayback.key = null;
+      dialoguePlayback.lines = [];
+    }
     stopMaterialAudio();
     drawNav();
     const isHome = currentLesson === 'home';
@@ -1074,6 +1188,11 @@
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
+    const dialogueAction = event.target.closest('[data-dialogue-action]');
+    if (dialogueAction) {
+      handleDialogueAction(dialogueAction);
+      return;
+    }
     const characterZoom = event.target.closest('[data-character-zoom]');
     if (characterZoom) {
       openCharacterZoom(characterZoom.dataset.characterZoom, characterZoom.dataset.characterLang);
@@ -1168,6 +1287,7 @@
 
     const wordAudio = event.target.closest('[data-word-audio]');
     if (wordAudio) {
+      if (dialoguePlayback.playing) stopDialogueAudio();
       stopMaterialAudio();
       content.querySelectorAll('[data-word-audio-player]').forEach((audio) => { audio.pause(); });
       const player = wordAudio.closest('.subsection-body')?.querySelector('[data-word-audio-player]') || content.querySelector('[data-word-audio-player]');
@@ -1332,7 +1452,7 @@
   });
 
   content.addEventListener('keydown', (event) => {
-    if (event.target.closest('[data-character-zoom], [data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
+    if (event.target.closest('[data-dialogue-action], [data-character-zoom], [data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
     if (event.key !== 'Enter' && event.key !== ' ') return;
     const row = event.target.closest('[data-hint-row]');
     if (!row) return;
@@ -1352,7 +1472,7 @@
   document.addEventListener('keydown', (event) => {
     if (event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
     const isArrow = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key);
-    if (!isArrow && event.target.closest('[data-character-zoom], [data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
+    if (!isArrow && event.target.closest('[data-dialogue-action], [data-character-zoom], [data-word-audio], [data-personal-save], [data-listening-word], [data-close-word-menu], [data-listening-grade], [data-listening-slow]')) return;
     if (currentLesson === 'listening') {
       const isSpace = event.code === 'Space';
       const isNavigation = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
