@@ -3,7 +3,7 @@
   const midterms = window.CHINESE_MIDTERMS || {};
   const audioExtension = window.CHINESE_AUDIO_EXTENSION === 'mp3' ? 'mp3' : 'm4a';
   const lessonCount = Math.max(1, ...Object.keys(database).map((key) => Number(/^(\d+)-dialog[12]$/.exec(key)?.[1]) || 0));
-  let currentLesson = 'home';
+  let currentLesson = 'vocabulary';
   let currentPart = 'dialog1';
   let expandedLesson = null;
   let selectedReading = 0;
@@ -308,14 +308,15 @@
     const quizLink = `<button type="button" class="lesson-link quiz-link ${currentLesson === 'quiz' ? 'active' : ''}" data-quiz="true" aria-current="${currentLesson === 'quiz' ? 'page' : 'false'}">Flashcard quiz<span class="mini">↻</span></button>`;
     const readingLink = `<button type="button" class="lesson-link reading-link ${currentLesson === 'reading' ? 'active' : ''}" data-reading="true" aria-current="${currentLesson === 'reading' ? 'page' : 'false'}">Reading<span class="mini">文</span></button>`;
     const listeningLink = `<button type="button" class="lesson-link listening-link ${currentLesson === 'listening' ? 'active' : ''}" data-listening="true" aria-current="${currentLesson === 'listening' ? 'page' : 'false'}">Listening<span class="mini">聽</span></button>`;
-    const settingsLink = `<button type="button" class="lesson-link settings-link ${currentLesson === 'settings' ? 'active' : ''}" data-settings="true" aria-current="${currentLesson === 'settings' ? 'page' : 'false'}">Settings<span class="mini">⚙</span></button>`;
+    const settingsLink = `<button type="button" class="lesson-link settings-link ${currentLesson === 'settings' ? 'active' : ''}" data-settings="true" aria-current="${currentLesson === 'settings' ? 'page' : 'false'}"><span class="settings-label">Settings</span><span class="mini">⚙</span></button>`;
     const midtermLinks = [1, 2].map((number) => {
       const key = `midterm${number}`;
       const isCurrent = currentLesson === key;
       return `<button type="button" class="lesson-link midterm-link ${isCurrent ? 'active' : ''}" data-midterm="${key}" aria-current="${isCurrent ? 'page' : 'false'}">Mid Term Questions ${number}<span class="mini">◆</span></button>`;
     }).join('');
     nav.innerHTML = lessons + midtermLinks;
-    toolsNav.innerHTML = vocabularyLink + quizLink + readingLink + listeningLink + settingsLink;
+    toolsNav.innerHTML = vocabularyLink + quizLink + readingLink + listeningLink;
+    document.getElementById('settingsNav').innerHTML = settingsLink;
   }
 
   function renderSaveButton(item) {
@@ -548,9 +549,9 @@
       ? renderSetting('autoAdvance', 'Automatic next card', 'Continue after choosing OK or X.')
       : currentLesson === 'vocabulary'
       ? renderSetting('listPinyin', 'Show Pinyin by default', 'Reveal pronunciation in the word list.') + renderSetting('listEnglish', 'Show English by default', 'Reveal meanings in the word list.')
-      : `<p class="mode-description">${currentLesson === 'home' ? 'Choose a mode above or study material on the left. Its controls will appear here.' : currentLesson === 'reading' ? 'Choose a passage below and read at your own pace.' : 'Click a sentence to reveal Pinyin and English. Use Hide all hints to practise without help.'}</p>`;
+      : `<p class="mode-description">${currentLesson === 'reading' ? 'Choose a passage below and read at your own pace.' : 'Click a sentence to reveal Pinyin and English. Use Hide all hints to practise without help.'}</p>`;
     panel.insertAdjacentHTML('afterbegin', `<section class="settings-card">${settings}</section>`);
-    if (!['quiz', 'listening', 'vocabulary', 'home'].includes(currentLesson)) panel.insertAdjacentHTML('beforeend', `<section class="settings-card personal-target-card">${renderPersonalListPicker()}</section>`);
+    if (!['quiz', 'listening', 'vocabulary'].includes(currentLesson)) panel.insertAdjacentHTML('beforeend', `<section class="settings-card personal-target-card">${renderPersonalListPicker()}</section>`);
     if (currentLesson === 'quiz') {
       const switches = panel.querySelector('.quiz-switches');
       if (switches) panel.querySelector('.settings-card').append(switches);
@@ -566,14 +567,9 @@
     }
     stopMaterialAudio();
     drawNav();
-    const isHome = currentLesson === 'home';
     document.querySelector('main').classList.toggle('listening-view', currentLesson === 'listening');
-    document.getElementById('hideAll').hidden = isHome;
-    document.getElementById('sourceFootnote').hidden = isHome || currentLesson === 'listening';
-    if (isHome) {
-      drawHome();
-      return;
-    }
+    document.getElementById('hideAll').hidden = false;
+    document.getElementById('sourceFootnote').hidden = ['vocabulary', 'quiz', 'reading', 'listening', 'settings'].includes(currentLesson);
     if (currentLesson === 'vocabulary') {
       drawVocabulary();
       return;
@@ -604,11 +600,6 @@
     const dialogue = data?.dialogue || data?.lines || [];
     document.getElementById('lessonTitle').textContent = `Lesson ${currentLesson} · Dialog ${dialogNumber}`;
     content.innerHTML = `<section class="section"><div class="section-head static-head"><span class="section-heading"><span class="section-num">0${dialogNumber}</span><span><span class="section-title">Dialog ${dialogNumber}</span><span class="section-meta">${data?.title ? chineseHtml(data.title) : 'Not added yet'}</span></span></span></div><div class="dialog-content">${renderSubsection('Dialogue', dialogue, `${key}-dialogue`, true)}${renderSupplement(data, `${key}-supplement`)}${(data?.screenshots || []).map((path, screenshotIndex) => `<a class="source-link" href="${encodeURI(path)}" target="_blank" rel="noopener">↗ View original screenshot ${screenshotIndex + 1}</a>`).join(' ')}${(data?.sources || []).map((source) => `<a class="source-link" href="${encodeURI(source.path)}" target="_blank" rel="noopener">↗ ${escapeHtml(source.label)}</a>`).join(' ')}</div></section>`;
-  }
-
-  function drawHome() {
-    document.getElementById('lessonTitle').textContent = 'Welcome';
-    content.innerHTML = `<section class="welcome-card"><div class="welcome-hero"><span class="welcome-symbol" aria-hidden="true">中文</span><div><div class="subtle">HOW TO USE THIS WEBSITE</div><h3>Study at your own pace</h3><p>Choose a lesson, reveal only the hints you need, and use the quiz to practise difficult words.</p></div></div><div class="welcome-steps"><article><span>1</span><h4>Choose material</h4><p>Open one lesson on the left, or select a study mode in the top navigation.</p></article><article><span>2</span><h4>Reveal hints</h4><p>Click a sentence or word once for Pinyin, twice for Pinyin and English, and again to hide both.</p></article><article><span>3</span><h4>Practise with cards</h4><p>Flip flashcards, mark your answer with OK or X, and track your results in the complete word list.</p></article><article><span>4</span><h4>Filter your study</h4><p>In the word list, select only the lessons you want and start a quiz from the current filters.</p></article></div></section>`;
   }
 
   function drawMidterm() {
@@ -764,19 +755,25 @@
 
   function updateVocabularySearch(value) {
     vocabularySearch = value;
+    document.querySelector('[data-vocabulary-search]').value = value;
+    document.querySelector('[data-vocabulary-search-clear]').disabled = !value;
     Object.keys(rowHintState).filter((key) => key.startsWith('vocabulary-all-')).forEach((key) => { delete rowHintState[key]; });
+    if (currentLesson !== 'vocabulary') {
+      currentLesson = 'vocabulary';
+      expandedLesson = null;
+      draw();
+      return;
+    }
     stopMaterialAudio();
     const words = collectVocabulary();
     const filtered = sortVocabulary(getFilteredVocabulary(words));
     content.querySelector('.vocabulary-list-panel').innerHTML = renderVocabularyResults(filtered);
-    content.querySelector('[data-vocabulary-result-count]').textContent = `Showing ${filtered.length} of ${words.length} unique words and expressions.`;
+    content.querySelector('[data-vocabulary-result-count]').textContent = `Showing ${filtered.length} of ${words.length} words and expressions`;
     const quizButton = document.querySelector('.shell').querySelector('[data-start-filtered-quiz]');
     if (quizButton) {
       quizButton.textContent = `Quiz selected · ${filtered.length}`;
       quizButton.disabled = !filtered.length;
     }
-    const clearButton = content.querySelector('[data-vocabulary-search-clear]');
-    if (clearButton) clearButton.disabled = !value;
   }
 
   function drawVocabulary() {
@@ -786,7 +783,7 @@
     const filters = renderMaterialScope('vocabulary');
     document.getElementById('lessonTitle').textContent = 'All words & expressions';
     hintState[key] ||= { pinyin: appSettings.listPinyin, english: appSettings.listEnglish };
-    content.innerHTML = `<section class="midterm-intro"><div class="subtle">LESSONS 1–${lessonCount} + MIDTERM QUESTIONS · MASTER VOCABULARY</div><p><span data-vocabulary-result-count role="status">Showing ${filteredWords.length} of ${words.length} unique words and expressions.</span> Multi-character expressions stay together; a component is listed separately only when it also appears as an independent vocabulary item.</p><p class="stats-history-note">Answers counts new quiz responses. For older sessions, only saved correct answers are available.</p></section><div class="vocabulary-search"><label for="vocabularySearch">Search characters or Pinyin</label><div class="vocabulary-search-input"><input type="search" id="vocabularySearch" data-vocabulary-search value="${escapeHtml(vocabularySearch)}" placeholder="e.g. 學校, 学校, xuéxiào, xuexiao" autocomplete="off" spellcheck="false" aria-describedby="vocabularySearchHelp"><button type="button" class="filter-action" data-vocabulary-search-clear ${vocabularySearch ? '' : 'disabled'}>Clear</button></div><small id="vocabularySearchHelp">Traditional or Simplified Chinese · Pinyin with or without tones, spaces or tone numbers.</small></div><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-type-switch" role="group" aria-label="Material type">${[['all', 'All'], ['word', 'Words'], ['expression', 'Expressions']].map(([value, label]) => `<button type="button" class="toggle ${vocabularyType === value ? 'active' : ''}" data-vocabulary-type="${value}" aria-pressed="${vocabularyType === value}">${label}</button>`).join('')}</div><div class="vocabulary-filter-actions"><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls">${renderPersonalListPicker()}<form data-personal-create><label>New list <input name="listName" required maxlength="80" placeholder="List name"></label><button type="submit" class="filter-action">Create list</button></form><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(getPersonalList().name)} (${getPersonalList().items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(getPersonalList().name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${renderVocabularyResults(filteredWords)}</section>`;
+    content.innerHTML = `<p class="vocabulary-result-count" data-vocabulary-result-count role="status">Showing ${filteredWords.length} of ${words.length} words and expressions</p><fieldset class="vocabulary-filters"><legend>Show content from</legend><div class="vocabulary-type-switch" role="group" aria-label="Material type">${[['all', 'All'], ['word', 'Words'], ['expression', 'Expressions']].map(([value, label]) => `<button type="button" class="toggle ${vocabularyType === value ? 'active' : ''}" data-vocabulary-type="${value}" aria-pressed="${vocabularyType === value}">${label}</button>`).join('')}</div><div class="vocabulary-filter-actions"><button type="button" class="filter-action start-filtered-quiz" data-start-filtered-quiz ${filteredWords.length ? '' : 'disabled'}>Quiz selected · ${filteredWords.length}</button></div>${filters}<div class="personal-list-controls">${renderPersonalListPicker()}<form data-personal-create><label>New list <input name="listName" required maxlength="80" placeholder="List name"></label><button type="submit" class="filter-action">Create list</button></form><label class="vocabulary-filter"><input type="checkbox" data-personal-filter ${personalListOnly ? 'checked' : ''}><span>Only: ${escapeHtml(getPersonalList().name)} (${getPersonalList().items.length})</span></label><form data-personal-rename><label>List name <input name="listName" value="${escapeHtml(getPersonalList().name)}" required maxlength="80"></label><button type="submit" class="filter-action">Rename</button></form><small>Use ☆ Save beside a word or sentence. Your list is saved in this browser.</small></div></fieldset><section class="vocabulary-list-panel">${renderVocabularyResults(filteredWords)}</section>`;
   }
 
   function renderSetting(key, title, description) {
@@ -1116,13 +1113,14 @@
 
   nav.addEventListener('click', handleNavigation);
   toolsNav.addEventListener('click', handleNavigation);
+  document.getElementById('settingsNav').addEventListener('click', handleNavigation);
   document.getElementById('themeToggle').addEventListener('click', () => {
     appSettings.darkMode = !appSettings.darkMode;
     saveSettings();
     applyTheme();
   });
   document.getElementById('homeButton').addEventListener('click', () => {
-    currentLesson = 'home';
+    currentLesson = 'vocabulary';
     expandedLesson = null;
     draw();
   });
@@ -1151,10 +1149,15 @@
     draw();
   });
 
-  document.querySelector('.shell').addEventListener('input', (event) => {
+  document.querySelector('[data-vocabulary-search-clear]').addEventListener('click', () => {
+    updateVocabularySearch('');
+    document.querySelector('[data-vocabulary-search]').focus();
+  });
+
+  document.querySelector('.vocabulary-search').addEventListener('input', (event) => {
     if (event.target.matches('[data-vocabulary-search]') && !event.isComposing) updateVocabularySearch(event.target.value);
   });
-  document.querySelector('.shell').addEventListener('compositionend', (event) => {
+  document.querySelector('.vocabulary-search').addEventListener('compositionend', (event) => {
     if (event.target.matches('[data-vocabulary-search]')) updateVocabularySearch(event.target.value);
   });
 
@@ -1235,13 +1238,6 @@
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
-    if (event.target.closest('[data-vocabulary-search-clear]')) {
-      const input = content.querySelector('[data-vocabulary-search]');
-      input.value = '';
-      updateVocabularySearch('');
-      input.focus();
-      return;
-    }
     const dialogueAction = event.target.closest('[data-dialogue-action]');
     if (dialogueAction) {
       handleDialogueAction(dialogueAction);

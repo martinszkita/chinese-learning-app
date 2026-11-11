@@ -111,7 +111,7 @@ process.chdir(path.join(__dirname, '..'));
   assert.equal(audio.onended, null);
   visiblePanel = panel;
   click('play');
-  app.setMode('home');
+  app.setMode('vocabulary');
   app.drawContent();
   assert(audio.paused);
   assert.equal(audio.onended, null);

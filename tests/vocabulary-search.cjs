@@ -6,7 +6,8 @@ process.chdir(path.join(__dirname, '..'));
 const elements = new Map();
 function element(key) {
   if (!elements.has(key)) elements.set(key, {
-    innerHTML: '', listeners: {}, value: '',
+    innerHTML: '', listeners: {}, value: '', dataset: {},
+    append() {}, insertAdjacentHTML() {},
     addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); },
     classList: { toggle() {} }, setAttribute() {}, focus() { this.focused = true; },
     querySelector: selector => element(selector), querySelectorAll() { return []; }
@@ -22,13 +23,18 @@ for (const [, file] of fs.readFileSync('index.html', 'utf8').matchAll(/<script s
   if (file !== 'app.js') vm.runInContext(fs.readFileSync(file, 'utf8'), context);
 }
 let source = fs.readFileSync('app.js', 'utf8').replace('function draw() {', 'function actualDraw() {');
-source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { matchesVocabularySearch, getFilteredVocabulary, getQuizVocabulary, resetQuizSession, drawVocabulary, content, getPersonalList, vocabularyFilterState, rowHintState, setType: type => { vocabularyType = type; }, personalOnly: value => { personalListOnly = value; } };\n})();`);
+source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { initialMode: currentLesson, actualDraw, setMode: mode => { currentLesson = mode; }, getMode: () => currentLesson, matchesVocabularySearch, getFilteredVocabulary, getQuizVocabulary, resetQuizSession, drawVocabulary, content, getPersonalList, vocabularyFilterState, rowHintState, setType: type => { vocabularyType = type; }, personalOnly: value => { personalListOnly = value; } };\n})();`);
 vm.runInContext(source, context);
 const app = context.window.test;
+assert.equal(app.initialMode, 'vocabulary');
+app.actualDraw();
+assert.equal(element('lessonTitle').textContent, 'All words & expressions');
+assert(element('content').innerHTML.includes('data-vocabulary-result-count'));
+assert(!element('content').innerHTML.includes('HOW TO USE THIS WEBSITE'));
 const input = element('[data-vocabulary-search]');
 input.matches = selector => selector === '[data-vocabulary-search]';
 function fire(type, target, extra = {}) {
-  for (const listener of element('.shell').listeners[type] || []) listener({ target, ...extra });
+  for (const listener of element(['input', 'compositionend'].includes(type) ? '.vocabulary-search' : '.shell').listeners[type] || []) listener({ target, ...extra });
 }
 function search(value) { input.value = value; fire('input', input); }
 const make = (chinese, pinyin, materialType = 'word') => ({ chinese, pinyin, english: 'test', materialType, sources: ['lesson1'], dialogSources: ['1-dialog1'] });
@@ -91,7 +97,7 @@ assert.equal(quiz.length, visibleCount);
 assert(quiz.every(item => app.matchesVocabularySearch(item, '學校')));
 app.resetQuizSession();
 assert(app.getQuizVocabulary().length > visibleCount);
-fire('click', { closest: selector => selector === '[data-vocabulary-search-clear]' ? {} : null });
+for (const listener of element('[data-vocabulary-search-clear]').listeners.click) listener();
 assert.equal(input.value, '');
 assert(input.focused);
 assert(element('[data-vocabulary-search-clear]').disabled);
@@ -99,5 +105,23 @@ assert.equal(app.getFilteredVocabulary(fixtures).length, fixtures.length);
 search('<img src=x onerror=alert(1)>');
 app.drawVocabulary();
 assert(!app.content.innerHTML.includes('<img src=x'));
-assert(app.content.innerHTML.includes('&lt;img src=x onerror=alert(1)&gt;'));
+assert.equal(input.value, '<img src=x onerror=alert(1)>');
+assert(!app.content.innerHTML.includes('Multi-character expressions stay together'));
+assert(!app.content.innerHTML.includes('Answers counts new quiz responses'));
+assert(!app.content.innerHTML.includes('data-vocabulary-search'));
+assert(app.content.innerHTML.includes('data-vocabulary-result-count'));
+const index = fs.readFileSync('index.html', 'utf8');
+assert(index.indexOf('data-vocabulary-search') < index.indexOf('<div class="shell">'));
+assert(!fs.readFileSync('app.js', 'utf8').includes('function drawHome'));
+assert(fs.readFileSync('app.js', 'utf8').includes("let currentLesson = 'vocabulary'"));
 console.log('PASS: Traditional/Simplified and alias search, Pinyin tones/numbers/spaces/ü, combined filters, empty results, IME, stable input, Clear, filtered quiz and escaping');
+
+app.setMode('reading');
+search('xuexiao');
+assert.equal(app.getMode(), 'vocabulary');
+app.actualDraw();
+assert(element('content').innerHTML.includes('data-character-zoom="學"'));
+app.setMode('reading');
+for (const listener of element('homeButton').listeners.click) listener();
+assert.equal(app.getMode(), 'vocabulary');
+console.log('PASS: list is the default page, brand returns to the list, navbar search opens results from another mode and explanatory page is removed');
