@@ -60,6 +60,13 @@
         });
       });
     });
+    for (const collection of catalog.customCollections || []) {
+      for (const word of collection.words || []) {
+        const existing = vocabulary.find(item => item.id === word.id);
+        if (existing) { if (!existing.sources.includes(collection.key)) existing.sources.push(collection.key); }
+        else vocabulary.push({...word, materialType: word.materialType || (collection.mode === 'word' ? 'word' : 'expression'), category:'', sources:[collection.key]});
+      }
+    }
     const listeningAudio = new Map(collectListeningItems().map((item) => [item.chinese, item.audio]));
     const result = vocabulary.map((item, index) => ({
       ...item,

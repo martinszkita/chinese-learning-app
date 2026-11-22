@@ -12,7 +12,7 @@ Classic JavaScript module wrappers are used to share code between the existing b
 
 | Table | Responsibility |
 | --- | --- |
-| `collections` | A lesson dialogue, midterm or reading passage; title and source metadata |
+| `collections` | A lesson dialogue, midterm, reading passage or custom text collection; title, revision and source metadata |
 | `sections` | Ordered dialogue/vocabulary/examples/questions/reading groups |
 | `items` | Stable content ID, Traditional Chinese, optional Simplified override, Pinyin, translation, aliases and revision |
 | `section_items` | Placement of content in a section: order, speaker, vocabulary category and recording |
@@ -36,7 +36,7 @@ All responses are JSON; error responses have `{ "error": "..." }`. The snapshot 
 | `PATCH /api/items/:id` | `expectedRevision` plus editable content fields; returns 409 on stale revisions |
 | `POST /api/placements/:id/audio` | `{path, provider?, voice?}` → attached audio asset; identical retries reuse the asset |
 
-After mutation, load a fresh snapshot to update views. API changes are durable without modifying files or redeploying the frontend. The current API intentionally has no delete operation, binary upload endpoint or administrative editing screen.
+After mutation, load a fresh snapshot to update views. API changes are durable without modifying files or redeploying the frontend. The text collection editor adds the endpoints below. There is no binary upload endpoint or authenticated administrative screen.
 
 ## Deployment boundary
 
@@ -55,3 +55,19 @@ Authentication, roles, multi-user ownership policies, cloud file storage and an 
 3. Implement import/TTS workers with retries, per-job status and cost controls.
 4. Migrate browser progress and lists to authenticated user records by stable item ID.
 5. Introduce PostgreSQL/Supabase behind the repository contract when cloud access is needed.
+
+
+## Custom text collections
+
+Migration `002-custom-collections.sql` expands collection kinds without changing existing IDs or references. The wire snapshot remains version 1 with additive collection `revision` and placement `wasNew` fields. Import metadata stores the source text, segmentation mode and import time. `import_requests` maps a unique request ID to the committed collection for safe creation retries.
+
+- `POST /api/translations`: `{texts: string[]}` → `{results: [{text, english?, needsReview?, error?}]}`. MyMemory access is server-side; errors are per entry, successful suggestions remain available.
+- `POST /api/custom-collections`: `{requestId,title,mode,rawText,reviewed,rows}` → `{collectionId}`. Each row supplies both Chinese scripts, Pinyin and English, optionally an existing `itemId` with `expectedRevision`, or `forceNew` to resolve an ambiguous match as separate content.
+- `PATCH /api/custom-collections/:id`: the same reviewed collection representation plus `expectedRevision`. Rows can retain `placementId`; omission detaches a position. The transaction updates title, shared content, order and membership together. Changed shared rows carry `confirmedImpact`, the reviewed number of affected collections. Stale revisions or changed impact return 409.
+
+Normalization preserves punctuation. The server recomputes matching and novelty during the transaction and rejects unresolved ambiguous matches. The persisted `wasNew` flag belongs to a placement and survives ordinary edits and reordering. Shared entry edits invalidate revisions of every affected collection. Position removal retains underlying items and existing progress IDs. Legacy collections continue through their original endpoints.
+
+`material-import.js` owns text review/editor state; `material-matching.js` provides local segmentation and script/alias matching. The repository owns all HTTP requests. Custom collections are projected separately from numbered lessons, and study material aggregation includes them in vocabulary and flashcards. No audio assets are generated.
+
+
+The initial import flow is separate from the saved-collection editor. `mountImport` validates required name/text fields, generates read-only suggestions, and accepts per-entry confirmation followed by importing confirmed entries, or a single import-all action. Source/mode changes invalidate generated rows. Importing existing entries preserves shared content and revisions. `mountEditor` continues to support later explicit edits to saved collections. Custom study views use lesson section wrappers, vocabulary rows for words, and the existing sentence renderer for sentence collections.

@@ -1,6 +1,9 @@
 window.ChineseApp.start = function start(snapshot) {
-  const materialCatalog = window.ChineseApp.model.createCatalog(snapshot);
-  const { lessons: database, midterms, lessonCount } = materialCatalog;
+  let materialCatalog = window.ChineseApp.model.createCatalog(snapshot);
+  let { lessons: database, midterms, lessonCount } = materialCatalog;
+  let disposeCollectionEditor = null;
+  let editingCollectionId = null;
+  let importStats = {total:0,newCount:0,mode:'word'};
   let currentLesson = 'vocabulary';
   let currentPart = 'dialog1';
   let expandedLesson = null;
@@ -79,7 +82,7 @@ window.ChineseApp.start = function start(snapshot) {
   const settingsStorageKey = 'chinese-exam-settings-v1';
   const vocabularyFilterState = Object.fromEntries([
     ...Array.from({ length: lessonCount }, (_, index) => [`${index + 1}-dialog1`, `${index + 1}-dialog2`]).flat(),
-    'midterm1', 'midterm2'
+    'midterm1', 'midterm2', ...materialCatalog.customCollections.map(c=>c.key)
   ].map((source) => [source, true]));
   const personalListStorageKey = 'chinese-exam-personal-lists-v2';
   const personalLists = window.ChineseApp.storage.loadPersonalLists(localStorage, personalListStorageKey, (item) => materialCatalog.itemById(item.id || materialCatalog.idForLegacyChinese(item.chinese)) || { ...item, id: materialCatalog.idForChinese(item.chinese) });
@@ -96,13 +99,13 @@ window.ChineseApp.start = function start(snapshot) {
 
   const saveableItems = new Map();
   let personalListOnly = false;
-  const readingPassages = materialCatalog.readings;
+  let readingPassages = materialCatalog.readings;
   const nav = document.getElementById('lessonNav');
   const toolsNav = document.getElementById('studyToolsNav');
   const content = document.getElementById('content');
   const { escapeHtml } = window.ChineseApp.text;
   const appSettings = window.ChineseApp.storage.readRecord(localStorage, settingsStorageKey, {
-    characterScript: 'traditional', darkMode: false, autoAdvance: true, listPinyin: false, listEnglish: false,
+    characterScript: 'traditional', darkMode: false, autoAdvance: true, listPinyin: true, listEnglish: true,
     listeningChinese: false, quizEnglishFirst: false, quizPinyin: true
   });
   // Convert only presentation text. Original Chinese remains the identity for
@@ -213,8 +216,10 @@ window.ChineseApp.start = function start(snapshot) {
       const isCurrent = currentLesson === key;
       return `<button type="button" class="lesson-link midterm-link ${isCurrent ? 'active' : ''}" data-midterm="${key}" aria-current="${isCurrent ? 'page' : 'false'}">Mid Term Questions ${number}<span class="mini">◆</span></button>`;
     }).join('');
+    const materialsActive=currentLesson==='my-materials'||currentLesson==='material-editor'||String(currentLesson).startsWith('custom:');
+    const materialsLink=`<button type="button" class="lesson-link ${materialsActive?'active':''}" data-my-materials aria-current="${materialsActive?'page':'false'}" ${materialsActive?'aria-pressed="true"':''}>My materials<span class="mini">＋</span></button>`;
     nav.innerHTML = lessons + midtermLinks;
-    toolsNav.innerHTML = vocabularyLink + quizLink + readingLink + listeningLink;
+    toolsNav.innerHTML = vocabularyLink + quizLink + readingLink + listeningLink + materialsLink;
     document.getElementById('settingsNav').innerHTML = settingsLink;
   }
 
@@ -292,9 +297,9 @@ window.ChineseApp.start = function start(snapshot) {
         const simplifiedRuby = showPinyin ? renderRuby(simplified, word.pinyin) : null;
         const stats = getWordStats(word.chinese);
         const hintsContent = `${showPinyin && !traditionalRuby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}`;
-        return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row word-row-with-stats clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${traditionalRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hant">${renderZoomableCharacters(word.chinese, word.pinyin, showPinyin, 'zh-Hant')}${word.audio ? `<button type="button" class="word-audio" data-word-audio="${escapeHtml(word.audio)}" aria-label="Listen: ${chineseHtml(word.chinese)}" title="Play pronunciation">${renderSpeakerIcon()}</button>` : ''}${renderSaveButton(word)}</span><span class="word-hanzi word-simplified ${simplifiedRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hans">${renderZoomableCharacters(simplified, word.pinyin, showPinyin, 'zh-Hans')}</span><span class="word-details">${hintsContent}</span><span class="word-lesson" data-stat-label="Lesson">${word.sources.filter((source) => !source.startsWith('personal:')).map((source) => source.startsWith('lesson') ? `L${source.slice(6)}` : source === 'midterm1' ? 'Mid 1' : 'Mid 2').join(', ') || 'My list'}</span><span class="word-stat" data-stat-label="Shown">${stats.shown}</span><span class="word-stat" data-stat-label="Answers">${stats.answered}</span><span class="word-stat" data-stat-label="Correct">${stats.correct}</span><span class="word-stat word-accuracy" data-stat-label="Accuracy">${getAccuracy(stats)}%</span></div>`;
+        return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row word-row-with-stats clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${traditionalRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hant">${renderZoomableCharacters(word.chinese, word.pinyin, showPinyin, 'zh-Hant')}${word.audio ? `<button type="button" class="word-audio" data-word-audio="${escapeHtml(word.audio)}" aria-label="Listen: ${chineseHtml(word.chinese)}" title="Play pronunciation">${renderSpeakerIcon()}</button>` : ''}${renderSaveButton(word)}</span><span class="word-hanzi word-simplified ${simplifiedRuby ? 'word-hanzi-ruby' : ''}" lang="zh-Hans">${renderZoomableCharacters(simplified, word.pinyin, showPinyin, 'zh-Hans')}</span><span class="word-details">${hintsContent}</span><span class="word-lesson" data-stat-label="Lesson">${word.sources.filter((source) => !source.startsWith('personal:')).map((source) => source.startsWith('lesson') ? `L${source.slice(6)}` : source === 'midterm1' ? 'Mid 1' : source === 'midterm2' ? 'Mid 2' : escapeHtml(materialCatalog.customCollections.find(c=>c.key===source)?.title || source)).join(', ') || 'My list'}</span><span class="word-stat" data-stat-label="Shown">${stats.shown}</span><span class="word-stat" data-stat-label="Answers">${stats.answered}</span><span class="word-stat" data-stat-label="Correct">${stats.correct}</span><span class="word-stat word-accuracy" data-stat-label="Accuracy">${getAccuracy(stats)}%</span></div>`;
       }
-      return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${ruby ? 'word-hanzi-ruby' : ''}" lang="${chineseLang()}">${ruby || chineseHtml(word.chinese)}${word.aliases?.length ? `<small class="word-aliases"> (${word.aliases.map((alias) => chineseHtml(alias.chinese)).join(', ')})</small>` : ''}${renderMaterialAudio(word)}${renderSaveButton(word)}</span>${showPinyin && !ruby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}</div>`;
+      return `${word.category ? `<div class="word-category">${escapeHtml(word.category)}</div>` : ''}<div class="word-row clickable-row" data-hint-row="${rowKey}" data-pinyin-default="${hints.pinyin}" data-english-default="${hints.english}" role="button" tabindex="0" aria-label="Cycle translation hints" title="Click: Pinyin → Pinyin and English → hide hints"><span class="word-number">${index + 1}</span><span class="word-hanzi ${ruby ? 'word-hanzi-ruby' : ''}" lang="${chineseLang()}">${ruby || chineseHtml(word.chinese)}${word.aliases?.length ? `<small class="word-aliases"> (${word.aliases.map((alias) => chineseHtml(alias.chinese)).join(', ')})</small>` : ''}${word.wasNew?'<small class="editor-badge">New when added</small>':''}${renderMaterialAudio(word)}${renderSaveButton(word)}</span>${showPinyin && !ruby ? `<span class="word-pinyin">${escapeHtml(word.pinyin)}</span>` : ''}${showEnglish ? `<span class="word-english">${word.partOfSpeech ? `<small>(${escapeHtml(word.partOfSpeech)})</small>` : ''}${escapeHtml(word.english)}</span>` : ''}</div>`;
     }).join('')}</div><audio data-word-audio-player preload="none"></audio>`;
   }
 
@@ -320,6 +325,10 @@ window.ChineseApp.start = function start(snapshot) {
 
   function drawModeSettings() {
     const panel = document.getElementById('modeSettings');
+    if(currentLesson==='material-editor'){
+      panel.innerHTML=editingCollectionId?'<p>Review both scripts, Pinyin and English before saving.</p>':`<section class="settings-card import-stats" aria-label="Import statistics"><h3>Import statistics</h3><dl aria-live="polite"><div><dt>Total ${importStats.mode==='sentence'?'sentences':'words'}</dt><dd data-import-total>${importStats.total}</dd></div><div><dt>New ${importStats.mode==='sentence'?'sentences':'words'}</dt><dd data-import-new>${importStats.newCount}</dd></div></dl><p>New entries are not yet in your database.</p></section>`;
+      return;
+    }
     panel.innerHTML = '';
     const selectors = currentLesson === 'listening' ? ['.listening-controls']
       : currentLesson === 'quiz' ? ['.quiz-options', '.quiz-mode']
@@ -345,9 +354,9 @@ window.ChineseApp.start = function start(snapshot) {
       : currentLesson === 'quiz'
       ? renderSetting('autoAdvance', 'Automatic next card', 'Continue after choosing OK or X.')
       : currentLesson === 'vocabulary'
-      ? renderSetting('listPinyin', 'Show Pinyin by default', 'Reveal pronunciation in the word list.') + renderSetting('listEnglish', 'Show English by default', 'Reveal meanings in the word list.')
+      ? ''
       : `<p class="mode-description">${currentLesson === 'reading' ? 'Choose a passage below and read at your own pace.' : 'Click a sentence to reveal Pinyin and English. Use Hide all hints to practise without help.'}</p>`;
-    panel.insertAdjacentHTML('afterbegin', `<section class="settings-card">${settings}</section>`);
+    if(settings) panel.insertAdjacentHTML('afterbegin', `<section class="settings-card">${settings}</section>`);
     if (!['quiz', 'listening', 'vocabulary'].includes(currentLesson)) panel.insertAdjacentHTML('beforeend', `<section class="settings-card personal-target-card">${renderPersonalListPicker()}</section>`);
     if (currentLesson === 'quiz') {
       const switches = panel.querySelector('.quiz-switches');
@@ -356,6 +365,8 @@ window.ChineseApp.start = function start(snapshot) {
   }
 
   function drawContent() {
+    if(disposeCollectionEditor){disposeCollectionEditor();disposeCollectionEditor=null;}
+
     const dialogueKey = typeof currentLesson === 'number' ? `${currentLesson}-${currentPart}-dialogue` : null;
     if (dialoguePlayback.key && dialoguePlayback.key !== dialogueKey) {
       stopDialogueAudio(true);
@@ -367,6 +378,38 @@ window.ChineseApp.start = function start(snapshot) {
     document.querySelector('main').classList.toggle('listening-view', currentLesson === 'listening');
     document.getElementById('hideAll').hidden = false;
     document.getElementById('sourceFootnote').hidden = ['vocabulary', 'quiz', 'reading', 'listening', 'settings'].includes(currentLesson);
+    if(currentLesson==='my-materials') {
+      document.getElementById('lessonTitle').textContent='My materials';
+      document.getElementById('sourceFootnote').hidden=true;
+      document.getElementById('hideAll').hidden=true;
+      content.innerHTML=`<section class="section" data-material-manager><div class="section-head static-head"><span class="section-heading"><span class="section-title">Your collections</span></span><button type="button" class="toggle active" data-add-materials>Add materials +</button></div><div class="dialog-content">${materialCatalog.customCollections.length?materialCatalog.customCollections.map(collection=>`<div class="material-manager-row"><button type="button" class="lesson-link" data-custom-collection="${escapeHtml(collection.key)}">${escapeHtml(collection.title)}<small>${(collection.words || []).length} ${collection.mode==='word'?'words':'sentences'}</small></button><button type="button" class="outline" data-edit-collection="${escapeHtml(collection.id)}">Edit</button></div>`).join(''):'<p class="empty">No collections yet. Choose Add materials to import your text.</p>'}</div></section>`;
+      return;
+    }
+    if (currentLesson === 'material-editor') {
+      document.getElementById('lessonTitle').textContent = editingCollectionId ? 'Edit collection' : 'Add materials';
+      document.getElementById('sourceFootnote').hidden = true;
+      document.getElementById('hideAll').hidden = true;
+      disposeCollectionEditor = window.CHINESE_IMPORTER.mount(content, {snapshot:materialCatalog.snapshot, repository:window.ChineseApp.materialRepository, collectionId:editingCollectionId, onStats:stats=>{importStats=stats;drawModeSettings();}, onSaved:(fresh,id)=>{
+        materialCatalog=window.ChineseApp.model.createCatalog(fresh);
+        ({lessons:database,midterms,lessonCount}=materialCatalog);readingPassages=materialCatalog.readings;
+        materialCatalog.customCollections.forEach(c=>{if(!(c.key in vocabularyFilterState))vocabularyFilterState[c.key]=true;});
+        currentLesson=materialCatalog.customCollections.find(c=>c.id===id).key;draw();
+      }});
+      return;
+    }
+    if (String(currentLesson).startsWith('custom:')) {
+      const collection=materialCatalog.customCollections.find(c=>c.key===currentLesson);
+      document.getElementById('lessonTitle').textContent=collection.title;
+      document.getElementById('sourceFootnote').hidden=true;
+      const sectionKey=`${collection.key}-material`;
+      const isWords=collection.mode==='word';
+      if(!(sectionKey in openState)) openState[sectionKey]=true;
+      const body=isWords
+        ? `<div class="subsection ${openState[sectionKey]?'open':''}"><button type="button" class="subsection-head" data-expand="${escapeHtml(sectionKey)}" aria-expanded="${openState[sectionKey]}"><span>Words<small>${collection.words.length} words</small></span><span class="chevron" aria-hidden="true">⌄</span></button>${openState[sectionKey]?`<div class="subsection-body">${renderWords(collection.words,sectionKey)}</div>`:''}</div>`
+        : renderSubsection('Sentences',collection.words,sectionKey,true);
+      content.innerHTML=`<section class="section"><div class="section-head static-head"><span class="section-heading"><span class="section-num">文</span><span><span class="section-title">${escapeHtml(collection.title)}</span><span class="section-meta">${collection.words.length} entries · New when added: ${collection.words.filter(w=>w.wasNew).length}</span></span></span><button type="button" class="outline" data-edit-collection="${escapeHtml(collection.id)}">Edit collection</button></div><div class="dialog-content">${body}</div></section>`;
+      return;
+    }
     if (currentLesson === 'vocabulary') {
       drawVocabulary();
       return;
@@ -405,7 +448,9 @@ window.ChineseApp.start = function start(snapshot) {
     content.innerHTML = `<section class="midterm-intro"><div class="subtle">${escapeHtml(data.subtitle)}</div><p>${escapeHtml(data.instructions)}</p></section>${data.sections.map((section, index) => renderSubsection(section.title, section.questions, `${currentLesson}-section-${index + 1}`)).join('')}<div class="midterm-followup"><strong>Follow-up:</strong> ${escapeHtml(data.followUps)}</div><a class="source-link" href="${encodeURI(data.source)}" target="_blank" rel="noopener">↗ View original PDF</a>`;
   }
 
-  const { collectVocabulary, collectListeningItems } = window.ChineseApp.studyMaterials.create({ catalog: materialCatalog, getPersonalLists: () => personalLists });
+  function studyService(){return window.ChineseApp.studyMaterials.create({catalog:materialCatalog,getPersonalLists:()=>personalLists});}
+  function collectVocabulary(){return studyService().collectVocabulary();}
+  function collectListeningItems(){return studyService().collectListeningItems();}
 
   function matchesVocabularyType(word, type) {
     return type === 'all' || word.materialType === type;
@@ -418,7 +463,7 @@ window.ChineseApp.start = function start(snapshot) {
   function materialSources() {
     return [
       ...Array.from({ length: lessonCount }, (_, index) => [1, 2].map((dialog) => ({ key: `${index + 1}-dialog${dialog}`, label: `Lesson ${index + 1} · Dialog ${dialog}` }))).flat(),
-      { key: 'midterm1', label: 'Mid Term 1' }, { key: 'midterm2', label: 'Mid Term 2' }
+      { key: 'midterm1', label: 'Mid Term 1' }, { key: 'midterm2', label: 'Mid Term 2' }, ...materialCatalog.customCollections.map(c=>({key:c.key,label:c.title}))
     ];
   }
 
@@ -428,7 +473,7 @@ window.ChineseApp.start = function start(snapshot) {
     return `<div class="material-scope"><div class="vocabulary-filter-actions"><button type="button" class="filter-action" data-${mode}-scope-select="all">Select all</button><button type="button" class="filter-action" data-${mode}-scope-select="none">Clear all</button></div>${Array.from({ length: lessonCount }, (_, index) => {
       const lesson = index + 1;
       return `<div class="material-scope-lesson"><label class="vocabulary-filter"><input type="checkbox" data-${mode}-scope-lesson="${lesson}" ${selected(`${lesson}-dialog1`) && selected(`${lesson}-dialog2`) ? 'checked' : ''}><span>Lesson ${lesson}</span></label><div class="material-scope-dialogs">${[1, 2].map((dialog) => checkbox(`${lesson}-dialog${dialog}`, `Dialog ${dialog}`)).join('')}</div></div>`;
-    }).join('')}${checkbox('midterm1', 'Mid Term 1')}${checkbox('midterm2', 'Mid Term 2')}${mode === 'quiz' ? `<div class="material-scope-custom"><strong>Custom lists</strong>${personalLists.map((list) => checkbox(`personal:${list.id}`, `${list.name} (${list.items.length})`)).join('')}</div>` : ''}</div>`;
+    }).join('')}${checkbox('midterm1', 'Mid Term 1')}${checkbox('midterm2', 'Mid Term 2')}${materialCatalog.customCollections.map(c=>checkbox(c.key,c.title)).join('')}${mode === 'quiz' ? `<div class="material-scope-custom"><strong>Custom lists</strong>${personalLists.map((list) => checkbox(`personal:${list.id}`, `${list.name} (${list.items.length})`)).join('')}</div>` : ''}</div>`;
   }
 
   const normalizeVocabularySearch = window.ChineseApp.text.normalizeSearch;
@@ -678,7 +723,7 @@ window.ChineseApp.start = function start(snapshot) {
 
   function drawQuiz() {
     const words = getQuizVocabulary();
-    const scope = quizState.sourceKeys ? `Selected filters: ${quizState.sourceKeys.map((source) => source.startsWith('lesson') ? `Lesson ${source.replace('lesson', '')}` : /^(\d+)-dialog([12])$/.test(source) ? source.replace(/^(\d+)-dialog([12])$/, 'Lesson $1 · Dialog $2') : source.startsWith('personal:') ? (personalLists.find((list) => `personal:${list.id}` === source)?.name || 'My list') : source === 'midterm1' ? 'Mid Term 1' : 'Mid Term 2').join(', ')}` : 'All lessons and mid-terms';
+    const scope = quizState.sourceKeys ? `Selected filters: ${quizState.sourceKeys.map((source) => source.startsWith('lesson') ? `Lesson ${source.replace('lesson', '')}` : /^(\d+)-dialog([12])$/.test(source) ? source.replace(/^(\d+)-dialog([12])$/, 'Lesson $1 · Dialog $2') : source.startsWith('personal:') ? (personalLists.find((list) => `personal:${list.id}` === source)?.name || 'My list') : source === 'midterm1' ? 'Mid Term 1' : source === 'midterm2' ? 'Mid Term 2' : (materialCatalog.customCollections.find(c=>c.key===source)?.title || source)).join(', ')}` : 'All study materials';
     const filter = `<fieldset class="quiz-material-scope"><legend>Material scope</legend>${renderMaterialScope('quiz')}</fieldset><span class="quiz-scope">${escapeHtml(scope)}${quizState.searchQuery ? ` · Search: ${escapeHtml(quizState.searchQuery)}` : ''}</span><label class="quiz-filter"><input type="checkbox" data-quiz-unanswered ${quizState.unansweredOnly ? 'checked' : ''}><span>Only words never answered correctly</span></label>`;
     document.getElementById('lessonTitle').textContent = 'Flashcard quiz';
     if (!words.length) {
@@ -735,6 +780,11 @@ window.ChineseApp.start = function start(snapshot) {
   }
 
   function handleNavigation(event) {
+    if(event.target.closest('[data-my-materials]')){currentLesson='my-materials';editingCollectionId=null;draw();return;}
+    const add=event.target.closest('[data-add-materials]');
+    const custom=event.target.closest('[data-custom-collection]');
+    if(add||custom){currentLesson=add?'material-editor':custom.dataset.customCollection;editingCollectionId=null;draw();return;}
+
     const listening = event.target.closest('[data-listening]');
     if (listening) {
       activePersonalListId = personalLists[personalLists.length - 1].id;
@@ -928,6 +978,9 @@ window.ChineseApp.start = function start(snapshot) {
   });
 
   document.querySelector('.shell').addEventListener('click', (event) => {
+    if(event.target.closest('[data-material-manager]') && event.target.closest('[data-add-materials], [data-custom-collection]')){handleNavigation(event);return;}
+    const edit=event.target.closest('[data-edit-collection]');
+    if(edit){editingCollectionId=edit.dataset.editCollection;currentLesson='material-editor';draw();return;}
     const dialogueAction = event.target.closest('[data-dialogue-action]');
     if (dialogueAction) {
       handleDialogueAction(dialogueAction);

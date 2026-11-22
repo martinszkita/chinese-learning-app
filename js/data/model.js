@@ -46,7 +46,7 @@
         if (!Array.isArray(meta.sources)) throw new TypeError('Invalid sources');
         meta.sources.forEach(source => { assetPath(source.path); text(source.label, 'source label', 500); });
       }
-      if (!['dialogue', 'midterm', 'reading'].includes(row.kind)) throw new TypeError('Invalid collection kind');
+      if (!['dialogue', 'midterm', 'reading', 'custom'].includes(row.kind)) throw new TypeError('Invalid collection kind');
       if (row.kind === 'dialogue' && (!Number.isInteger(row.lessonNumber) || row.lessonNumber < 1 || row.lessonNumber > 10000 || ![1, 2].includes(row.dialogNumber) || row.key !== `${row.lessonNumber}-dialog${row.dialogNumber}`)) throw new TypeError('Invalid lesson location');
     }
     for (const row of snapshot.sections) {
@@ -77,7 +77,7 @@
     const snapshot = validate(input);
     const assets = new Map(snapshot.assets.map(row => [row.id, row]));
     const items = new Map(snapshot.items.map(row => [row.id, row]));
-    const lessons = {}, midterms = {}, readings = [], audio = {}, byChinese = new Map(), legacyChinese = new Map(), byId = new Map();
+    const lessons = {}, midterms = {}, readings = [], customCollections = [], audio = {}, byChinese = new Map(), legacyChinese = new Map(), byId = new Map();
     const placements = new Map();
     const sections = new Map();
     for (const row of snapshot.sectionItems) {
@@ -100,7 +100,7 @@
           const row = { ...(item.metadata || {}), id: item.id, occurrenceId: placement.id, chinese: item.chineseTraditional, simplified: item.chineseSimplified,
             pinyin: item.pinyin, english: item.english, partOfSpeech: item.partOfSpeech, aliases: item.aliases,
             speaker: placement.speaker || '', speakerPinyin: placement.speakerPinyin || '', category: placement.category || '',
-            audio: asset?.path || '', voice: asset?.voice || '' };
+            wasNew: !!placement.wasNew, audio: asset?.path || '', voice: asset?.voice || '' };
           register.push({ row, priority: section.kind === 'vocabulary' ? 0 : 1 });
           return row;
         });
@@ -110,6 +110,7 @@
       }
       if (collection.kind === 'dialogue') lessons[collection.key] = data;
       else if (collection.kind === 'midterm') midterms[collection.key] = { ...data, sections: data.sections || [] };
+      else if (collection.kind === 'custom') customCollections.push({...data, key:collection.key, revision:collection.revision});
       else readings.push(data);
     }
     register.sort((a,b) => a.priority - b.priority).forEach(({row}) => {
@@ -118,7 +119,7 @@
       if (!byId.has(row.id)) byId.set(row.id, row);
       if (row.audio && !audio[row.chinese]) audio[row.chinese] = row.audio;
     });
-    return { snapshot, lessons, midterms, readings, audio,
+    return { snapshot, lessons, midterms, readings, customCollections, audio,
       lessonCount: Math.max(1, ...snapshot.collections.map(row => row.lessonNumber || 0)),
       idForChinese: chinese => byChinese.get(chinese) || legacyChinese.get(chinese),
       idForLegacyChinese: chinese => legacyChinese.get(chinese) || byChinese.get(chinese), itemById: id => byId.get(id) };

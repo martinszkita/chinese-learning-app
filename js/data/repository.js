@@ -14,6 +14,8 @@
       return response.json();
     }
     return {
+      suggestTranslations: texts => request('/translations', 'POST', {texts}),
+      saveCustomCollection: (data, id) => request(id ? `/custom-collections/${encodeURIComponent(id)}` : '/custom-collections', id ? 'PATCH' : 'POST', data),
       load: () => request('/materials'),
       createCollection: data => request('/collections', 'POST', data),
       addItem: (sectionId, data) => request(`/sections/${encodeURIComponent(sectionId)}/items`, 'POST', data),

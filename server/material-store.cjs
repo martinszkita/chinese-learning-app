@@ -10,6 +10,7 @@ function openStore(filename, { seed = true, root } = {}) {
   if (filename !== ':memory:') fs.mkdirSync(path.dirname(filename), { recursive: true });
   const db = new DatabaseSync(filename);
   db.exec(fs.readFileSync(path.join(__dirname, 'migrations/001-materials.sql'), 'utf8'));
+  if (!db.prepare("SELECT value FROM app_meta WHERE key='schema_version'").get() || db.prepare("SELECT value FROM app_meta WHERE key='schema_version'").get().value === '1') db.exec(fs.readFileSync(path.join(__dirname, 'migrations/002-custom-collections.sql'), 'utf8'));
   const run = (sql, ...args) => db.prepare(sql).run(...args);
   function transaction(work) {
     db.exec('BEGIN IMMEDIATE');
@@ -49,10 +50,10 @@ function openStore(filename, { seed = true, root } = {}) {
       return result;
     };
     return { schemaVersion: 1,
-      collections: db.prepare('SELECT id,key,kind,title,lesson_number AS lessonNumber,dialog_number AS dialogNumber,metadata FROM collections ORDER BY rowid').all().map(parse),
+      collections: db.prepare('SELECT id,key,kind,title,lesson_number AS lessonNumber,dialog_number AS dialogNumber,metadata,revision FROM collections ORDER BY rowid').all().map(parse),
       sections: db.prepare('SELECT id,collection_id AS collectionId,kind,title,position FROM sections ORDER BY rowid').all(),
       items: db.prepare('SELECT id,chinese_traditional AS chineseTraditional,chinese_simplified AS chineseSimplified,pinyin,english,part_of_speech AS partOfSpeech,aliases,metadata,revision FROM items ORDER BY rowid').all().map(parse),
-      sectionItems: db.prepare('SELECT id,section_id AS sectionId,item_id AS itemId,position,speaker,speaker_pinyin AS speakerPinyin,category,audio_asset_id AS audioAssetId FROM section_items ORDER BY rowid').all(),
+      sectionItems: db.prepare('SELECT id,section_id AS sectionId,item_id AS itemId,position,speaker,speaker_pinyin AS speakerPinyin,category,audio_asset_id AS audioAssetId,was_new AS wasNew FROM section_items ORDER BY rowid').all(),
       assets: db.prepare('SELECT id,kind,path,provider,voice FROM assets ORDER BY rowid').all()
     };
   }
@@ -76,7 +77,7 @@ function openStore(filename, { seed = true, root } = {}) {
     const position = Math.max(-1, ...existing.sectionItems.filter(row => row.sectionId === sectionId).map(row => row.position)) + 1;
     const placement = { id: randomUUID(), sectionId, itemId: item.id, position, speaker: input.speaker || '', speakerPinyin: input.speakerPinyin || '', category: input.category || '', audioAssetId: input.audioAssetId || null };
     validateWith({ items: input.itemId ? existing.items : [...existing.items, item], sectionItems: [...existing.sectionItems, placement] });
-    return transaction(() => { if (!input.itemId) insertItem(item); insertPlacement(placement); return { item, placement }; });
+    return transaction(() => { if (!input.itemId) insertItem(item); insertPlacement(placement); run('UPDATE collections SET revision=revision+1 WHERE id=(SELECT collection_id FROM sections WHERE id=?)', sectionId); return { item, placement }; });
   }
   function updateItem(id, input) {
     const existing = snapshot(); const row = existing.items.find(row => row.id === id);
@@ -88,6 +89,7 @@ function openStore(filename, { seed = true, root } = {}) {
     validateWith({ items: existing.items.map(row => row.id === id ? next : row) });
     const result = run('UPDATE items SET chinese_traditional=?,chinese_simplified=?,pinyin=?,english=?,part_of_speech=?,aliases=?,revision=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND revision=?', next.chineseTraditional, next.chineseSimplified, next.pinyin, next.english, next.partOfSpeech, JSON.stringify(next.aliases), next.revision, id, input.expectedRevision);
     if (!result.changes) throw new StoreError('Material changed; reload before saving', 409);
+    run('UPDATE collections SET revision=revision+1 WHERE id IN (SELECT s.collection_id FROM sections s JOIN section_items p ON p.section_id=s.id WHERE p.item_id=?)', id);
     return next;
   }
   function attachAudio(placementId, input) {
@@ -105,6 +107,7 @@ function openStore(filename, { seed = true, root } = {}) {
     importSnapshot(convertLegacy(loadLegacy(root)));
   }
   migrateMaterialPaths(db);
-  return { snapshot, importSnapshot, createCollection, addItem, updateItem, attachAudio, close: () => db.close() };
+  const custom = require('./custom-materials.cjs')({db,snapshot,transaction,updateItem,StoreError});
+  return { ...custom, snapshot, importSnapshot, createCollection, addItem, updateItem, attachAudio, close: () => db.close() };
 }
 module.exports = { openStore, StoreError };

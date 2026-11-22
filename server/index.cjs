@@ -4,12 +4,12 @@ const path = require('node:path');
 const { openStore, StoreError } = require('./material-store.cjs');
 const root = path.resolve(__dirname, '..');
 const mime = { '.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.pdf':'application/pdf','.mp3':'audio/mpeg','.m4a':'audio/mp4','.svg':'image/svg+xml','.json':'application/json' };
-function createServer({ store = openStore(process.env.MATERIAL_DB || path.join(root, 'data/materials.sqlite')) } = {}) {
+function createServer({ translator = require('./translations.cjs').createTranslator(), store = openStore(process.env.MATERIAL_DB || path.join(root, 'data/materials.sqlite')) } = {}) {
   const json = (res, status, data) => { res.writeHead(status, { 'Content-Type':'application/json', 'Cache-Control':'no-store' }); res.end(JSON.stringify(data)); };
-  async function body(req) {
+  async function body(req, limit = 1024 * 1024) {
     if (!(req.headers['content-type'] || '').startsWith('application/json')) throw new StoreError('Use application/json', 415);
     let length = 0, chunks = [];
-    for await (const chunk of req) { length += chunk.length; if (length > 1024 * 1024) throw new StoreError('Request too large', 413); chunks.push(chunk); }
+    for await (const chunk of req) { length += chunk.length; if (length > limit) throw new StoreError('Request too large', 413); chunks.push(chunk); }
     try { const value = JSON.parse(Buffer.concat(chunks).toString()); if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error(); return value; }
     catch { throw new StoreError('Invalid JSON'); }
   }
@@ -22,14 +22,17 @@ function createServer({ store = openStore(process.env.MATERIAL_DB || path.join(r
       const route = url.pathname;
       if (route === '/api/materials' && req.method === 'GET') return json(res, 200, store.snapshot());
       if (route === '/api/collections' && req.method === 'POST') return json(res, 201, store.createCollection(await body(req)));
+      if (route === '/api/translations' && req.method === 'POST') return json(res, 200, await translator.suggest(await body(req, 4 * 1024 * 1024)));
+      if (route === '/api/custom-collections' && req.method === 'POST') return json(res, 201, store.saveCustomCollection(await body(req, 8 * 1024 * 1024)));
       let match;
+      if ((match = /^\/api\/custom-collections\/([^/]+)$/.exec(route)) && req.method === 'PATCH') return json(res, 200, store.saveCustomCollection(await body(req, 8 * 1024 * 1024), decodeURIComponent(match[1])));
       if ((match = /^\/api\/sections\/([^/]+)\/items$/.exec(route)) && req.method === 'POST') return json(res, 201, store.addItem(decodeURIComponent(match[1]), await body(req)));
       if ((match = /^\/api\/items\/([^/]+)$/.exec(route)) && req.method === 'PATCH') return json(res, 200, store.updateItem(decodeURIComponent(match[1]), await body(req)));
       if ((match = /^\/api\/placements\/([^/]+)\/audio$/.exec(route)) && req.method === 'POST') return json(res, 201, store.attachAudio(decodeURIComponent(match[1]), await body(req)));
       if (route.startsWith('/api/')) throw new StoreError('API route not found', 404);
       if (!['GET','HEAD'].includes(req.method)) throw new StoreError('Method not allowed', 405);
       const relative = route === '/' ? 'index.html' : decodeURIComponent(route).slice(1);
-      const permitted = /^(?:index\.html|app\.js|bootstrap\.js|style\.css|dialog-sections\.css|js\/[\w/-]+\.js|vendor\/[\w./-]+|materials\/(?:audio\/[\w./-]+|lesson\d+\/dialog[12]\/(?:screenshots|sources)\/[\w./-]+|midterm\d+\/source\/[\w./-]+|reading\/images\/[\w./-]+))$/.test(relative);
+      const permitted = /^(?:index\.html|app\.js|material-import\.js|bootstrap\.js|style\.css|dialog-sections\.css|js\/[\w/-]+\.js|vendor\/[\w./-]+|materials\/(?:audio\/[\w./-]+|lesson\d+\/dialog[12]\/(?:screenshots|sources)\/[\w./-]+|midterm\d+\/source\/[\w./-]+|reading\/images\/[\w./-]+))$/.test(relative);
       if (!permitted || relative.split('/').includes('..')) throw new StoreError('File not found', 404);
       const file = path.resolve(root, relative);
       let actual, stat;
