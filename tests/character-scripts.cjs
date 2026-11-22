@@ -22,10 +22,8 @@ function load() {
     document: { getElementById: element, querySelector: element, documentElement: element('root'), addEventListener() {} },
     localStorage: { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value) }
   });
-  for (const [, file] of fs.readFileSync('index.html', 'utf8').matchAll(/<script src="([^"]+)"/g)) {
-    if (file !== 'app.js') vm.runInContext(fs.readFileSync(file, 'utf8'), context);
-  }
-  let source = fs.readFileSync('app.js', 'utf8').replace('function draw() {', 'function actualDraw() {');
+  require('./helpers/runtime.cjs').loadRuntime(context);
+  let source = require('./helpers/runtime.cjs').appSource(context).replace('function draw() {', 'function actualDraw() {');
   source = source.replace(/  draw\(\);\n\}\)\(\);\s*$/, `function draw() {}\nwindow.test = { appSettings, chineseText, renderLines, renderWords, renderListeningWords, renderQuizFace, drawReading, drawMidterm, content, hintState, openState, collectVocabulary, getWordStats, renderSaveButton, getPersonalList, setMode: mode => { currentLesson = mode; } };\n})();`);
   vm.runInContext(source, context);
   const control = element('characterScript');

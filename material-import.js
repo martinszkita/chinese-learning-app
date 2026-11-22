@@ -1,329 +1,243 @@
-/* Browser-local material import. Drafts never enter the study collection. */
-(function (root) {
-  'use strict';
-  const STORAGE_KEY = 'chinese-study-materials-v1';
-  const SOURCE_TYPES = ['screenshot', 'photo', 'text'];
-  const KINDS = ['word', 'sentence', 'dialogue'];
-  const MAX_ROWS = 500;
-  const MAX_TEXT = 100000;
-  const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
-  const cleanRow = (row) => ({ kind: KINDS.includes(row.kind) ? row.kind : 'sentence', speaker: String(row.speaker || '').trim().slice(0, 80), chinese: String(row.chinese || '').trim().slice(0, 2000), pinyin: String(row.pinyin || '').trim().slice(0, 4000), english: String(row.english || '').trim().slice(0, 4000) });
-  function validateMaterial(value) {
-    return value && typeof value.id === 'string' && /^import:[a-zA-Z0-9-]+$/.test(value.id) && typeof value.title === 'string' && value.title.trim() && SOURCE_TYPES.includes(value.sourceType) && Array.isArray(value.rows) && value.rows.length && value.rows.length <= MAX_ROWS && value.rows.every((row) => row && typeof row.chinese === 'string' && row.chinese.trim() && KINDS.includes(row.kind));
-  }
-  function getMaterials() {
-    try {
-      const stored = JSON.parse(root.localStorage.getItem(STORAGE_KEY) || '[]');
-      return Array.isArray(stored) ? stored.filter(validateMaterial).map((item) => ({ ...item, title: item.title.slice(0, 100), rows: item.rows.map(cleanRow) })) : [];
-    } catch { return []; }
-  }
-  function parseText(text, options = {}) {
-    if (String(text).length > MAX_TEXT) throw new Error('Use at most 100,000 characters per import.');
-    const rows = [];
-    const lookupKey = (text) => String(text).replace(/[\p{P}\p{Z}\s]/gu, '');
-    const known = new Map((options.knownItems || []).map((item) => [lookupKey(item.chinese), item]));
-    let previous = null;
-    for (let line of String(text).replace(/\r\n?/g, '\n').replace(/[\u200b\ufeff]/g, '').split('\n')) {
-      line = line.trim().replace(/^\d+[A-Za-z]?[.)、:：]?\s+/, '');
-      if (!line || /^(?:Vocabulary|Dialogue|Example sentences|Names|Phrases|生詞|詞彙|對話|例句)(?:\s*[IⅡⅠ一二12]*)$/i.test(line)) continue;
-      if (!/\p{Script=Han}/u.test(line)) {
-        if (previous && /[A-Za-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/u.test(line)) {
-          if (!previous.pinyin && /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/u.test(line)) previous.pinyin = line;
-          else if (!previous.english) previous.english = line;
+/* Text collection editor. Approved materials are persisted through the repository. */
+(function(root) {
+  const matching = root.ChineseApp.materialMatching;
+  const escape = root.ChineseApp.text.escapeHtml;
+  const drafts=new Map();
+  const fields=['chineseTraditional','chineseSimplified','pinyin','english'];
+  function mountEditor(container, {snapshot,repository,collectionId,onSaved}) {
+    let baseline=snapshot;
+    const collection=baseline.collections.find(c=>c.id===collectionId);
+    let revision=collection?.revision;
+    let requestId=root.crypto.randomUUID();
+    let title=collection?.title || '', rawText=collection?.metadata.rawText || '', mode=collection?.metadata.mode || 'word';
+    let reviewed=false, busy=false, message='', conflict=false, disposed=false, saved=false;
+    let rows=[];
+    const toTraditional=root.OpenCC.Converter({from:'cn',to:'tw'});
+    const toSimplified=root.OpenCC.Converter({from:'tw',to:'cn'});
+    function newRow(text='') {
+      const chineseTraditional=toTraditional(text);
+      return {chineseTraditional,chineseSimplified:toSimplified(chineseTraditional),pinyin:text?root.pinyinPro.pinyin(toSimplified(text),{toneType:'symbol',nonZh:'consecutive'}):'',english:'',included:true,itemId:null};
+    }
+    function candidates(row){return matching.matches(row,baseline.items);}
+    function useItem(row,id) {
+      const item=baseline.items.find(i=>i.id===id);
+      row.itemId=id || null; row.forceNew=!id;
+      if(item){for(const field of fields) row[field]=field==='chineseSimplified' ? (item[field] || toSimplified(item.chineseTraditional)) : (item[field] || '');row.expectedRevision=item.revision;}
+    }
+    function prepareRow(text) {
+      const row=newRow(text), found=candidates(row);
+      if(found.length===1) useItem(row,found[0].id);
+      return row;
+    }
+    const sectionIds=new Set(baseline.sections.filter(s=>s.collectionId===collectionId).map(s=>s.id));
+    rows=baseline.sectionItems.filter(p=>sectionIds.has(p.sectionId)).sort((a,b)=>a.position-b.position).map(p=>{
+      const item=baseline.items.find(i=>i.id===p.itemId);
+      return {...newRow(),...Object.fromEntries(fields.map(f=>[f,f==='chineseSimplified'?(item[f] || toSimplified(item.chineseTraditional)):(item[f] || '')])),itemId:item.id,expectedRevision:item.revision,placementId:p.id,wasNew:!!p.wasNew};
+    });
+    const draftKey=collectionId || 'new';
+    const draft=drafts.get(draftKey);
+    if(draft){({baseline,revision,requestId,title,rawText,mode,reviewed,rows,conflict,message}=draft);}
+    function impact(itemId) {
+      return new Set(baseline.sectionItems.filter(p=>p.itemId===itemId).map(p=>baseline.sections.find(s=>s.id===p.sectionId)?.collectionId)).size;
+    }
+    function changed(row){const original=baseline.items.find(i=>i.id===row.itemId);return original && fields.some(f=>(f==='chineseSimplified'?(original[f] || toSimplified(original.chineseTraditional)):(original[f]||''))!==row[f]);}
+    function render() {
+      if(disposed) return;
+      container.innerHTML=`<section class="collection-editor"><p>Paste Chinese text, review the suggestions, then save your collection. Shared entry edits apply to every collection using that entry.</p><label>Collection name<input data-editor-title maxlength="100" value="${escape(title)}"></label><div class="editor-source"><label>Split into<select data-editor-mode><option value="word" ${mode==='word'?'selected':''}>Words</option><option value="sentence" ${mode==='sentence'?'selected':''}>Sentences</option></select></label><label>Chinese text<textarea data-editor-text maxlength="20000" rows="6" placeholder="Paste Chinese text here">${escape(rawText)}</textarea></label><button type="button" class="toggle" data-editor-action="prepare">Prepare entries</button></div><p role="status" aria-live="polite">${escape(message)}</p>${conflict?'<button type="button" class="toggle" data-editor-action="refresh">Refresh draft against latest database</button><p>Your edits are kept. Refresh updates revisions and shared-entry impact; review differences before saving again.</p>':''}<div class="editor-actions"><button type="button" class="toggle" data-editor-action="translate">Suggest missing translations</button><button type="button" class="toggle" data-editor-action="add">Add entry</button></div><p>“New” means absent from the database. After saving, “New when added” records its status at import time.</p><div class="editor-rows">${rows.map((row,index)=>{
+        const found=candidates(row); const unresolved=!row.itemId&&!row.forceNew&&found.length>1;
+        const count=changed(row)?impact(row.itemId):0;
+        return `<article class="editor-row" data-editor-row="${index}"><div class="editor-row-head"><label><input type="checkbox" data-editor-field="included" ${row.included?'checked':''}> Include ${index+1}</label><span class="editor-badge">${row.placementId?(row.wasNew?'New when added':'In database'):(found.length?'In database':'New')}</span></div>${fields.map((field,i)=>`<label>${['Traditional Chinese','Simplified Chinese','Pinyin','English'][i]}<textarea rows="2" maxlength="${i<2?2000:4000}" data-editor-field="${field}" ${i===0?'lang="zh-Hant"':i===1?'lang="zh-Hans"':''}>${escape(row[field])}</textarea></label>`).join('')}${found.length>0?`<label>${unresolved?'Choose a matching entry before saving':'Shared entry'}<select data-editor-field="match"><option value="" ${!row.itemId&&!row.forceNew?'selected':''}>${unresolved?'Choose an entry…':'Automatic match'}</option><option value="new" ${row.forceNew?'selected':''}>Create a separate entry</option>${found.concat(row.itemId&&!found.some(i=>i.id===row.itemId)?baseline.items.filter(i=>i.id===row.itemId):[]).map(i=>`<option value="${escape(i.id)}" ${row.itemId===i.id?'selected':''}>${escape(i.chineseTraditional)} · ${escape(i.pinyin)} · ${escape(i.english)}</option>`).join('')}</select></label>`:''}<p class="editor-impact" ${count?'':'hidden'}>${count?`This edit changes the shared entry in ${count} collection(s).`:''}</p>${row.notice?`<p>${escape(row.notice)}</p>`:''}<div class="editor-actions">${[['up','↑ Move up'],['down','↓ Move down'],['merge','Merge with next'],['split','Split'],['remove','Remove']].map(([action,label])=>`<button type="button" class="filter-action" data-editor-action="${action}">${label}</button>`).join('')}</div></article>`;
+      }).join('')}</div><label class="editor-review"><input type="checkbox" data-editor-reviewed ${reviewed?'checked':''}> I reviewed these entries, translations and the impact of shared edits.</label><button type="button" class="toggle active" data-editor-action="save" ${!reviewed||!rows.some(r=>r.included)||conflict?'disabled':''}>${collectionId?'Save changes':'Save collection'}</button></section>`;
+      container.querySelectorAll('button,input,textarea,select').forEach(node=>{if(busy) node.disabled=true;});
+    }
+    async function translate() {
+      const missing=rows.filter(r=>r.included&&!r.english.trim()&&r.chineseTraditional.trim());
+      if(!missing.length){message='All included entries already have translations.';return;}
+      message='Requesting English suggestions…';
+      render();
+      const result=await repository.suggestTranslations(missing.map(r=>toSimplified(r.chineseTraditional)));
+      let failed=0;
+      missing.forEach((row,index)=>{const suggestion=result.results[index];if(suggestion.error){row.notice=suggestion.error;failed++;}else{row.english=suggestion.english;row.notice=suggestion.needsReview?'Translated in fragments — check this translation carefully.':'Suggested translation — please review.';}});
+      reviewed=false;message=failed?`${failed} translation(s) unavailable. Your entries are kept; retry missing translations or fill them in.`:'Translation suggestions ready. Review before saving.';
+    }
+    async function click(event) {
+      const button=event.target.closest('[data-editor-action]');if(!button||busy)return;
+      const action=button.dataset.editorAction;
+      const index=Number(button.closest('[data-editor-row]')?.dataset.editorRow);
+      try {
+        if(action==='prepare'){
+          if(rows.length&&!root.confirm('Replace the current entries with a fresh split of the pasted text?'))return;
+          rows=matching.segment(rawText,mode).map(prepareRow);reviewed=false;message=`${rows.length} entries prepared.`;
+          busy=true;render();await translate();
+        } else if(action==='translate'){busy=true;render();await translate();}
+        else if(action==='add'){if(rows.length>=500)throw Error('Use at most 500 entries.');rows.push(newRow());reviewed=false;}
+        else if(action==='remove'){rows.splice(index,1);reviewed=false;}
+        else if(action==='up'||action==='down'){const target=index+(action==='up'?-1:1);if(target>=0&&target<rows.length)[rows[index],rows[target]]=[rows[target],rows[index]];reviewed=false;}
+        else if(action==='merge'&&index<rows.length-1){const row=prepareRow(rows[index].chineseTraditional+rows[index+1].chineseTraditional);rows.splice(index,2,row);reviewed=false;}
+        else if(action==='split'){
+          const text=root.prompt('Separate the desired entries with |', rows[index].chineseTraditional);
+          if(text!==null){const parts=text.split('|').map(t=>t.trim()).filter(Boolean);if(!parts.length||rows.length-1+parts.length>500)throw Error('Use between 1 and 500 entries.');rows.splice(index,1,...parts.map(prepareRow));reviewed=false;}
+        } else if(action==='refresh'){
+          busy=true;baseline=await repository.load();revision=baseline.collections.find(c=>c.id===collectionId)?.revision;
+          rows.forEach(row=>{const item=baseline.items.find(i=>i.id===row.itemId);if(item){row.expectedRevision=item.revision;row.notice=`Latest database: ${item.chineseTraditional} · ${item.chineseSimplified||''} · ${item.pinyin} · ${item.english}. Your draft values are kept.`;}});
+          conflict=false;reviewed=false;message='Latest revisions loaded. Compare the database values with your draft and review again.';
+        } else if(action==='save'){
+          if(!reviewed||!title.trim())throw Error('Name the collection and review its entries.');
+          const selected=rows.filter(r=>r.included);
+          if(!selected.length)throw Error('Include at least one entry.');
+          if(selected.some(r=>!r.itemId&&!r.forceNew&&candidates(r).length>1))throw Error('Choose a match or a separate entry for each ambiguous entry.');
+          busy=true;render();
+          const result=await repository.saveCustomCollection({title,mode,rawText,reviewed,requestId,expectedRevision:revision,rows:selected.map(row=>({...row,confirmedImpact:changed(row)?impact(row.itemId):undefined}))},collectionId);
+          // Keep the idempotency key until both save and reload have succeeded.
+          const fresh=await repository.load();
+          saved=true;drafts.delete(draftKey);
+          if(!disposed) onSaved(fresh,result.collectionId);return;
         }
-        continue;
-      }
-      const columns = line.split(/\t+|\s*[|｜]\s*| {2,}/).map((column) => column.trim()).filter(Boolean);
-      let chinese = columns.shift() || '';
-      let speaker = '';
-      const dialogue = chinese.match(/^([\p{Script=Han}A-Za-z0-9\s"'“”‘’·]{1,20})[:：]\s*(.+)$/u);
-      if (dialogue) { speaker = dialogue[1].replace(/[^\p{Script=Han}A-Za-z0-9]/gu, ''); chinese = dialogue[2]; }
-      // Chinese OCR often inserts spaces between adjacent characters.
-      chinese = chinese.replace(/(\p{Script=Han})\s+(?=\p{Script=Han})/gu, '$1');
-      if (!/\p{Script=Han}/u.test(chinese)) continue;
-      const row = { kind: speaker ? 'dialogue' : (options.defaultKind || 'sentence'), speaker, chinese, pinyin: '', english: '', included: true };
-      if (columns.length >= 2) [row.pinyin, row.english] = [columns.shift(), columns.join(' ')];
-      else if (columns.length) {
-        if (/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/u.test(columns[0])) row.pinyin = columns[0];
-        else row.english = columns[0];
-      }
-      // Discard non-linguistic column noise (page numbers / Bopomofo) before filling known hints.
-      if (row.pinyin && !/\p{Script=Latin}/u.test(row.pinyin)) row.pinyin = '';
-      if (row.english && !/\p{Script=Latin}/u.test(row.english)) row.english = '';
-      rows.push(row); previous = row;
+      }catch(error){message=error.message;if(error.status===409)conflict=true;}
+      finally{busy=false;render();}
     }
-    if (rows.length > MAX_ROWS) throw new Error('Split this material into batches of at most 500 rows.');
-    for (const row of rows) {
-      const item = known.get(lookupKey(row.chinese));
-      row.pinyin ||= item?.pinyin || (options.pinyin ? options.pinyin(row.chinese) : '');
-      row.english ||= item?.english || '';
+    function input(event){
+      const target=event.target;
+      if(target.hasAttribute('data-editor-reviewed')){reviewed=target.checked;render();return;}
+      if(target.hasAttribute('data-editor-title'))title=target.value;
+      else if(target.hasAttribute('data-editor-text'))rawText=target.value;
+      else if(target.hasAttribute('data-editor-mode'))mode=target.value;
+      else if(target.dataset.editorField){
+        const row=rows[Number(target.closest('[data-editor-row]').dataset.editorRow)];
+        const field=target.dataset.editorField;
+        if(field==='match'){useItem(row,target.value==='new'?null:target.value);row.forceNew=target.value==='new';render();}
+        else {
+          row[field]=field==='included'?target.checked:target.value;
+          if(field!=='included' && row.itemId) rows.filter(other=>other!==row && other.itemId===row.itemId).forEach(other=>{other[field]=row[field];});
+        }
+        const warning=target.closest('[data-editor-row]')?.querySelector('.editor-impact');
+        if(warning){const count=changed(row)?impact(row.itemId):0;warning.hidden=!count;warning.textContent=count?`This edit changes the shared entry in ${count} collection(s).`:'';}
+      }
+      reviewed=false;
+      const checkbox=container.querySelector('[data-editor-reviewed]');if(checkbox)checkbox.checked=false;
+      const save=container.querySelector('[data-editor-action="save"]');if(save)save.disabled=true;
     }
-    return rows;
+    // Update badges and the impact warning after an edit without disrupting typing.
+    function change(event){if(event.target.dataset.editorField && event.target.dataset.editorField!=='match')render();}
+    container.addEventListener('click',click);container.addEventListener('input',input);container.addEventListener('change',change);
+    render();
+    return ()=>{disposed=true;if(!saved)drafts.set(draftKey,{baseline,revision,requestId,title,rawText,mode,reviewed,rows,conflict,message});container.removeEventListener('click',click);container.removeEventListener('input',input);container.removeEventListener('change',change);};
   }
-  function approve(input) {
-    if (input.reviewed !== true) throw new Error('Review the material and tick the confirmation before saving.');
-    if (!SOURCE_TYPES.includes(input.sourceType)) throw new Error('Choose a source type.');
-    const title = String(input.title || '').trim().slice(0, 100);
-    if (!title) throw new Error('Give your material a title.');
-    if (!Array.isArray(input.rows)) throw new Error('Prepare rows for review first.');
-    const selected = input.rows.filter((row) => row.included !== false);
-    if (!selected.length || selected.length > MAX_ROWS) throw new Error('Select between 1 and 500 rows.');
-    if (selected.some((row) => !String(row.chinese || '').trim())) throw new Error('Each selected row needs Chinese text.');
-    const id = `import:${root.crypto.randomUUID()}`;
-    const material = { id, title, sourceType: input.sourceType, createdAt: Date.now(), rows: selected.map(cleanRow), sourceNames: (input.sourceNames || []).map((name) => String(name).slice(0, 200)), rawText: String(input.rawText || '').slice(0, MAX_TEXT) };
-    const materials = getMaterials();
-    materials.push(material);
-    try { root.localStorage.setItem(STORAGE_KEY, JSON.stringify(materials)); }
-    catch { throw new Error('The material could not be saved. Browser storage may be full or unavailable. Your draft is still open.'); }
-    return material;
+  // Import suggestions are read-only. Editing saved collections is a separate flow.
+  function mountImport(container, {snapshot, repository, onSaved, onStats=()=>{}}) {
+    const draftKey='simple-import';
+    let state=drafts.get(draftKey) || {title:'',rawText:'',mode:'word',rows:[],requestId:root.crypto.randomUUID(),message:'',error:false};
+    let disposed=false, busy=false, saved=false, baseline=snapshot;
+    const toTraditional=root.OpenCC.Converter({from:'cn',to:'tw'});
+    const toSimplified=root.OpenCC.Converter({from:'tw',to:'cn'});
+    function validate() {
+      if(!state.title.trim()) return ['Enter a collection name before preparing or importing your text.','[data-import-title]'];
+      if(!state.rawText.trim()) return ['Paste Chinese text before preparing or importing your material.','[data-import-text]'];
+      if(state.title.length>100 || state.rawText.length>20000) return ['Use a name up to 100 characters and text up to 20,000 characters.','[data-import-text]'];
+      return null;
+    }
+    function renderPreview() {
+      const confirmed=state.rows.filter(row=>row.confirmed).length;
+      if(!state.rows.length) return '';
+      const actions=`<div class="editor-actions import-preview-actions"><button type="button" class="toggle active" data-import-action="all">Import all entries</button><button type="button" class="toggle" data-import-action="selected">Import confirmed entries (${confirmed})</button>${state.rows.some(row=>!row.english&&!row.itemId)?'<button type="button" class="filter-action" data-import-action="retry">Retry missing translations</button>':''}</div>`;
+      return `<section class="section import-preview"><div class="section-head static-head"><span class="section-heading"><span class="section-title">Import preview</span><span class="section-meta">${state.rows.length} entries · ${confirmed} confirmed</span></span></div><div class="dialog-content">${actions}<div class="import-table-scroll" role="region" aria-label="Import entries" tabindex="0"><table class="import-table"><caption class="sr-only">Read-only import suggestions. Confirm individual entries or import all entries.</caption><thead><tr><th scope="col">Chinese<br><small>Traditional / Simplified</small></th><th scope="col">Pinyin</th><th scope="col">English</th><th scope="col">Status</th><th scope="col">Confirm</th></tr></thead><tbody>${state.rows.map((row,index)=>`<tr><th scope="row"><span lang="zh-Hant">${escape(row.chineseTraditional)}</span><span class="import-simplified" lang="zh-Hans">${escape(row.chineseSimplified)}</span></th><td>${escape(row.pinyin)}</td><td>${escape(row.english || 'Translation unavailable')}${row.notice?`<details class="import-entry-notice"><summary>Note</summary><p>${escape(row.notice)}</p></details>`:''}</td><td><span class="editor-badge">${row.isNew?'New':'In database'}</span></td><td><button type="button" class="filter-action ${row.confirmed?'active':''}" data-import-action="confirm" data-import-index="${index}" aria-label="${row.confirmed?'Unconfirm':'Confirm'} entry ${index+1}" aria-pressed="${row.confirmed}">${row.confirmed?'✓':'Confirm'}</button></td></tr>`).join('')}</tbody></table></div></div></section>`;
+    }
+    function publishStats() {
+      onStats({total:state.rows.length,newCount:state.rows.filter(row=>row.isNew).length,mode:state.mode});
+    }
+    function render() {
+      if(disposed) return;
+      container.innerHTML=`<section class="collection-editor simple-import"><details class="import-source-form" ${state.rows.length?'':'open'}><summary>${state.rows.length?'Source text and import options':'Add your text'}</summary><p class="import-form-reminder" id="import-required">Collection name and Chinese text are required. Complete both fields to prepare your import.</p><div class="import-form-fields"><label>Collection name <span aria-hidden="true">*</span><input data-import-title required aria-invalid="${state.invalidField==='[data-import-title]'}" aria-describedby="import-required" maxlength="100" value="${escape(state.title)}"></label><label>Split into<select data-import-mode><option value="word" ${state.mode==='word'?'selected':''}>Words</option><option value="sentence" ${state.mode==='sentence'?'selected':''}>Sentences</option></select></label></div><label>Chinese text <span aria-hidden="true">*</span><textarea data-import-text required aria-invalid="${state.invalidField==='[data-import-text]'}" aria-describedby="import-required" rows="3" maxlength="20000" placeholder="Paste Chinese text here">${escape(state.rawText)}</textarea></label><button type="button" class="toggle" data-import-action="prepare">Prepare import</button></details><p class="import-message" role="${state.error?'alert':'status'}" aria-live="polite">${escape(state.message)}</p>${renderPreview()}</section>`;
+      if(busy) container.querySelectorAll('button,input,textarea,select').forEach(node=>{node.disabled=true;});
+      publishStats();
+    }
+    function checkForm() {
+      const invalid=validate();
+      if(!invalid) return true;
+      state.message=invalid[0];state.error=true;state.invalidField=invalid[1];render();
+      const field=container.querySelector(invalid[1]);
+      field?.closest?.('details')?.setAttribute('open','');field?.setAttribute('aria-invalid','true');field?.focus();return false;
+    }
+    function prepareRow(text) {
+      const chineseTraditional=toTraditional(text);
+      const row={chineseTraditional,chineseSimplified:toSimplified(chineseTraditional),pinyin:root.pinyinPro.pinyin(toSimplified(text),{toneType:'symbol',nonZh:'consecutive'}),english:'',confirmed:false};
+      const found=matching.matches(row,baseline.items);
+      row.isNew=found.length===0;
+      if(found.length===1){
+        const item=found[0];row.itemId=item.id;row.expectedRevision=item.revision;
+        for(const field of fields) row[field]=field==='chineseSimplified'?(item[field] || toSimplified(item.chineseTraditional)):(item[field] || '');
+        if(!row.english)row.notice='This database entry has no English translation. Importing keeps its existing content.';
+      } else if(found.length>1){row.forceNew=true;row.notice='Multiple database matches: this will be imported as a separate entry.';}
+      return row;
+    }
+    async function translate() {
+      const missing=state.rows.filter(row=>!row.english&&!row.itemId);
+      if(!missing.length){state.message='Confirm individual entries or import all entries.';return;}
+      state.message='Preparing English translations…';render();
+      try {
+        const response=await repository.suggestTranslations(missing.map(row=>toSimplified(row.chineseTraditional)));
+        missing.forEach((row,index)=>{
+          const result=response.results[index];
+          if(result.error) row.notice=result.error;
+          else {row.english=result.english;row.notice=result.needsReview?'Translated in fragments — please check before confirming.':row.forceNew?row.notice:'';}
+        });
+        const failed=missing.filter(row=>!row.english).length;
+        state.message=failed?`${failed} translation(s) unavailable. Retry missing translations, or import the available text.`:'Confirm individual entries or import all entries.';
+      } catch(error){state.message=`Translations unavailable: ${error.message}. Your text is kept; you can retry.`;state.error=true;}
+    }
+    async function click(event) {
+      const button=event.target.closest('[data-import-action]');if(!button||busy) return;
+      const action=button.dataset.importAction;
+      state.error=false;
+      try {
+        if(action==='prepare') {
+          if(!checkForm()) return;
+          const texts=matching.segment(state.rawText,state.mode);
+          if(!texts.length) throw Error('Paste text containing Chinese characters to prepare an import.');
+          if(texts.some(text=>text.length>2000)) throw Error('An entry is too long. Use shorter sentences or choose Words.');
+          state.rows=texts.map(prepareRow);state.requestId=root.crypto.randomUUID();busy=true;render();await translate();
+        } else if(action==='confirm') {
+          const row=state.rows[Number(button.dataset.importIndex)];
+          if(row) row.confirmed=!row.confirmed;
+        } else if(action==='retry') {state.rows.forEach(row=>{if(!row.english)row.confirmed=false;});busy=true;render();await translate();}
+        else if(action==='all'||action==='selected') {
+          if(!checkForm()) return;
+          const selected=action==='all'?state.rows:state.rows.filter(row=>row.confirmed);
+          if(!selected.length) throw Error('Confirm at least one entry, or choose Import all entries.');
+          busy=true;state.message='Importing your collection…';render();
+          const rows=selected.map(row=>{
+            if(!row.itemId) return row;
+            // Importing must never edit a shared entry, even when a missing translation was suggested.
+            const item=baseline.items.find(item=>item.id===row.itemId);
+            return {...row,...Object.fromEntries(fields.map(field=>[field,field==='chineseSimplified'?(item[field] || toSimplified(item.chineseTraditional)):(item[field] || '')]))};
+          });
+          const result=await repository.saveCustomCollection({title:state.title,rawText:state.rawText,mode:state.mode,reviewed:true,requestId:state.requestId,rows});
+          const fresh=await repository.load();saved=true;drafts.delete(draftKey);
+          if(!disposed) onSaved(fresh,result.collectionId);
+        }
+      } catch(error){
+        state.message=error.message;state.error=true;
+        if(error.status===409){
+          try {baseline=await repository.load();state.rows=state.rows.map(row=>prepareRow(row.chineseTraditional));state.requestId=root.crypto.randomUUID();state.message='The database changed. Review the refreshed preview and confirm your import again.';}
+          catch {state.message='Could not refresh the database. Your text is kept; prepare the import again to retry.';}
+        }
+      } finally {busy=false;render();if(state.invalidField){const field=container.querySelector(state.invalidField);field?.closest?.('details')?.setAttribute('open','');field?.focus();}}
+    }
+    function input(event) {
+      if(busy) return;
+      const target=event.target;
+      if(target.hasAttribute('data-import-title')) state.title=target.value;
+      else if(target.hasAttribute('data-import-text')) state.rawText=target.value;
+      else if(target.hasAttribute('data-import-mode')) state.mode=target.value;
+      else return;
+      // Clear generated entries immediately so outdated suggestions cannot be confirmed.
+      if(!target.hasAttribute('data-import-title') && state.rows.length){state.rows=[];state.message='Source changed. Choose Prepare import to generate a fresh preview.';container.querySelector('.simple-import .section')?.remove();const message=container.querySelector('.import-message');if(message)message.textContent=state.message;publishStats();}
+      state.error=false;state.invalidField=null;target.removeAttribute?.('aria-invalid');
+    }
+    container.addEventListener('click',click);container.addEventListener('input',input);
+    render();
+    return ()=>{disposed=true;if(!saved)drafts.set(draftKey,state);container.removeEventListener('click',click);container.removeEventListener('input',input);};
   }
 
-  const initialState = () => ({ sourceType: 'screenshot', defaultKind: 'sentence', title: '', rawText: '', rows: [], files: [], prepared: [], crops: [], busy: false, stage: 'input', reviewed: false, error: '', progress: '', confidence: [], run: 0 });
-  let state = initialState();
-  let container = null;
-  let callbacks = {};
-  let worker = null;
-  const assetBase = root.document?.currentScript?.src ? new URL('vendor/', root.document.currentScript.src).href : '';
-  const sourceLabels = { screenshot: 'Screenshot', photo: 'Book photo', text: 'Plain text' };
-  function attached() { return container?.querySelector('[data-material-importer]'); }
-  function progress(message) {
-    state.progress = message;
-    const node = attached()?.querySelector('[data-import-progress]');
-    if (node) node.textContent = message;
-  }
-  function controlsDisabled() { return state.busy ? 'disabled' : ''; }
-  function revokeFiles() {
-    for (const entry of state.files) URL.revokeObjectURL(entry.url);
-  }
-  function render() {
-    if (!container || (container.innerHTML && !attached())) return;
-    const disabled = controlsDisabled();
-    const typeCards = SOURCE_TYPES.map((type) => `<button type="button" class="import-source ${state.sourceType === type ? 'active' : ''}" data-import-source="${type}" aria-pressed="${state.sourceType === type}" ${disabled}><strong>${sourceLabels[type]}</strong><span>${type === 'screenshot' ? 'Keep layout → OCR → verify' : type === 'photo' ? 'Crop & rotate → improve contrast → OCR → verify' : 'Paste → split into rows → verify'}</span></button>`).join('');
-    const files = state.files.map((file, index) => `<article class="import-source-preview"><h4>${escape(file.file.name)}</h4><img src="${escape(file.url)}" alt="Original source ${index + 1}"><a class="import-source-open" href="${escape(file.url)}" target="_blank" rel="noopener">Open original full size ↗</a>${state.sourceType === 'photo' ? `<fieldset class="import-photo-options"><legend>Prepare photo ${index + 1}</legend><label>Rotate <select data-import-crop="rotation" data-file-index="${index}" ${disabled}>${[0, 90, 180, 270].map((angle) => `<option ${state.crops[index]?.rotation === angle ? 'selected' : ''} value="${angle}">${angle}°</option>`).join('')}</select></label>${['top', 'bottom', 'left', 'right'].map((side) => `<label>Crop ${side} (%) <input type="number" min="0" max="40" value="${state.crops[index]?.[side] || 0}" data-import-crop="${side}" data-file-index="${index}" ${disabled}></label>`).join('')}</fieldset>` : ''}${state.prepared[index] ? `<details open><summary>Prepared for OCR</summary><img src="${state.prepared[index]}" alt="Prepared image ${index + 1}"></details>` : ''}${state.confidence[index] !== undefined ? `<p>OCR confidence: ${Math.round(state.confidence[index])}% — check every line.</p>` : ''}</article>`).join('');
-    const rows = state.rows.map((row, index) => `<article class="import-review-row" data-import-row="${index}"><div class="import-review-row-head"><label><input type="checkbox" data-import-row-field="included" data-row-index="${index}" ${row.included !== false ? 'checked' : ''}> Include row ${index + 1}</label><button type="button" class="filter-action" data-import-remove-row="${index}">Remove</button></div><div class="import-row-fields"><label>Type <select data-import-row-field="kind" data-row-index="${index}">${KINDS.map((kind) => `<option ${row.kind === kind ? 'selected' : ''} value="${kind}">${kind}</option>`).join('')}</select></label><label>Speaker <input value="${escape(row.speaker)}" data-import-row-field="speaker" data-row-index="${index}" maxlength="80"></label><label class="import-wide">Chinese <textarea lang="zh-Hant" data-import-row-field="chinese" data-row-index="${index}" maxlength="2000">${escape(row.chinese)}</textarea></label><label class="import-wide">Pinyin <input value="${escape(row.pinyin)}" data-import-row-field="pinyin" data-row-index="${index}" maxlength="4000"></label><label class="import-wide">English <textarea data-import-row-field="english" data-row-index="${index}" maxlength="4000" placeholder="Add a translation if it was not present in the source">${escape(row.english)}</textarea></label></div></article>`).join('');
-    container.innerHTML = `<section class="material-importer" data-material-importer><div class="import-intro"><p>Import Chinese words, expressions or dialogue. Nothing enters your study collection until you verify and approve it.</p><p class="import-local-note">OCR runs on this device. Source images stay in this tab; approved text is saved in this browser.</p></div><div class="import-source-types" role="group" aria-label="Source type">${typeCards}</div><section class="import-panel" id="material-import-source"><div class="import-metadata"><label>Material title <input data-import-field="title" value="${escape(state.title)}" maxlength="100" placeholder="e.g. Lesson 9 · Food" ${disabled}></label><label>Default row type <select data-import-field="defaultKind" ${disabled}>${KINDS.map((kind) => `<option value="${kind}" ${state.defaultKind === kind ? 'selected' : ''}>${kind}</option>`).join('')}</select></label></div>${state.sourceType === 'text' ? `<label class="import-text-label">Paste text <textarea data-import-raw maxlength="100000" placeholder="你好 | nǐ hǎo | hello&#10;安同：你想去哪裡？" ${disabled}>${escape(state.rawText)}</textarea></label><p>One entry per line. Use tabs or | to separate Chinese, Pinyin and English. Speaker names followed by : create dialogue rows.</p><button class="toggle active" type="button" data-import-parse ${disabled}>Prepare text for review</button>` : `<label class="import-upload">${state.sourceType === 'photo' ? 'Choose book photos' : 'Choose screenshots'}<input type="file" accept="image/png,image/jpeg,image/webp" multiple data-import-files ${disabled}></label><p>PNG, JPEG or WebP · up to 6 images, 15 MB each. ${state.sourceType === 'photo' ? 'Crop the text area and correct rotation, then prepare the photos.' : 'Upload a clear screenshot. Its layout and colors are preserved.'}</p><div class="import-image-previews">${files}</div><div class="import-actions">${state.sourceType === 'photo' ? `<button type="button" class="toggle" data-import-prepare ${!state.files.length || state.busy ? 'disabled' : ''}>Prepare photos</button>` : ''}<button type="button" class="toggle active" data-import-ocr ${!state.files.length || state.busy || (state.sourceType === 'photo' && state.prepared.length !== state.files.length) ? 'disabled' : ''}>Run OCR & review</button></div>${root.location?.protocol === 'file:' ? '<p class="import-warning">Image OCR requires opening the app over HTTP. In the app folder run <code>python3 -m http.server 8000 --bind 127.0.0.1</code>, then open <a href="http://localhost:8000">localhost:8000</a>. Text import works here too.</p>' : ''}`}</section><p class="import-progress" data-import-progress role="status" aria-live="polite">${escape(state.progress)}</p>${state.busy ? '<button type="button" class="filter-action" data-import-cancel>Cancel processing</button>' : ''}<p class="import-error" data-import-error role="alert">${escape(state.error)}</p>${state.rows.length || state.stage === 'review' ? `<section class="import-panel import-review"><h3>Verify before saving</h3><a class="import-source-open" href="#material-import-source">Back to source preview ↑</a><p>Compare each row with the source. Correct Chinese, Pinyin and translations, and remove headings or unwanted rows. Suggested Pinyin can contain mistakes; missing translations are left blank.</p>${state.sourceType !== 'text' ? `<details class="import-raw-details"><summary>Original OCR text — edit and split again</summary><textarea data-import-raw maxlength="100000">${escape(state.rawText)}</textarea><button type="button" class="filter-action" data-import-parse>Rebuild rows from edited text</button></details>` : ''}<div class="import-review-rows">${rows}</div><button type="button" class="filter-action" data-import-add-row>Add row</button><label class="import-confirm"><input type="checkbox" data-import-reviewed ${state.reviewed ? 'checked' : ''}> I checked the selected rows against the source and approve this material.</label><button type="button" class="toggle active" data-import-approve ${!state.reviewed || !state.rows.some((row) => row.included !== false) ? 'disabled' : ''}>Approve & add to study materials</button></section>` : ''}</section>`;
-  }
-  function setError(error) {
-    state.error = error?.message || String(error);
-    const node = attached()?.querySelector('[data-import-error]');
-    if (node) node.textContent = state.error;
-  }
-  function invalidateReview() {
-    state.reviewed = false;
-    const checkbox = attached()?.querySelector('[data-import-reviewed]');
-    if (checkbox) checkbox.checked = false;
-    const approveButton = attached()?.querySelector('[data-import-approve]');
-    if (approveButton) approveButton.disabled = true;
-  }
-  function loadScript(path, ready) {
-    if (ready()) return Promise.resolve();
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = new URL(path, assetBase).href;
-      script.onload = () => ready() ? resolve() : reject(new Error('Import dependency could not be initialized.'));
-      script.onerror = () => { script.remove(); reject(new Error('Import files could not be loaded. Open the app using its HTTP server and try again.')); };
-      document.head.append(script);
-    });
-  }
-  async function makeRows(run = state.run) {
-    await loadScript('pinyin/pinyin-pro.js', () => !!root.pinyinPro);
-    if (run !== state.run) return;
-    await loadScript('pinyin/opencc.js', () => !!root.OpenCC);
-    if (run !== state.run) return;
-    const simplified = root.OpenCC.Converter({ from: 'tw', to: 'cn' });
-    state.rows = parseText(state.rawText, { defaultKind: state.defaultKind, knownItems: callbacks.knownItems?.() || [], pinyin: (text) => root.pinyinPro.pinyin(simplified(text), { toneType: 'symbol', nonZh: 'consecutive' }).replace(/\s+([，。！？、；：,.!?;:])/g, '$1') });
-    state.stage = 'review';
-    state.reviewed = false;
-    state.error = state.rows.length ? '' : 'No Chinese entries were found. Edit the text or add a row manually.';
-    render();
-    attached()?.querySelector('.import-review')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-  }
-  async function parseForReview() {
-    state.busy = true; state.error = ''; const run = ++state.run; render();
-    try { await makeRows(run); }
-    catch (error) { if (run === state.run) setError(error); }
-    finally { if (run === state.run) { state.busy = false; render(); } }
-  }
-  async function prepareImage(file, type, crop = {}) {
-    const bitmap = await createImageBitmap(file);
-    try {
-      const rotation = Number(crop.rotation || 0);
-      if (bitmap.width * bitmap.height > 50000000) throw new Error('This image is too large. Resize it below 50 megapixels first.');
-      const rotated = document.createElement('canvas');
-      rotated.width = rotation % 180 ? bitmap.height : bitmap.width;
-      rotated.height = rotation % 180 ? bitmap.width : bitmap.height;
-      if (rotated.width * rotated.height > 50000000) throw new Error('This image is too large. Resize it below 50 megapixels first.');
-      const rc = rotated.getContext('2d');
-      rc.translate(rotated.width / 2, rotated.height / 2); rc.rotate(rotation * Math.PI / 180);
-      rc.drawImage(bitmap, -bitmap.width / 2, -bitmap.height / 2);
-      const left = Math.max(0, Math.min(40, Number(crop.left) || 0)) / 100;
-      const top = Math.max(0, Math.min(40, Number(crop.top) || 0)) / 100;
-      const width = rotated.width * (1 - left - Math.max(0, Math.min(40, Number(crop.right) || 0)) / 100);
-      const height = rotated.height * (1 - top - Math.max(0, Math.min(40, Number(crop.bottom) || 0)) / 100);
-      const targetWidth = type === 'photo' ? 2400 : 1800;
-      const scale = Math.min(targetWidth / width, Math.sqrt(6000000 / (width * height)), 3);
-      const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(width * scale)); canvas.height = Math.max(1, Math.round(height * scale));
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(rotated, rotated.width * left, rotated.height * top, width, height, 0, 0, canvas.width, canvas.height);
-      if (type === 'photo') {
-        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const histogram = new Uint32Array(256);
-        for (let i = 0; i < pixels.data.length; i += 4) histogram[Math.round(.299 * pixels.data[i] + .587 * pixels.data[i + 1] + .114 * pixels.data[i + 2])]++;
-        const count = canvas.width * canvas.height;
-        let low = 0, high = 255, sum = 0;
-        while (low < 254 && sum < count * .01) sum += histogram[low++];
-        sum = 0; while (high > low + 1 && sum < count * .01) sum += histogram[high--];
-        for (let i = 0; i < pixels.data.length; i += 4) {
-          const value = Math.max(0, Math.min(255, (pixels.data[i] * .299 + pixels.data[i + 1] * .587 + pixels.data[i + 2] * .114 - low) * 255 / Math.max(1, high - low)));
-          pixels.data[i] = pixels.data[i + 1] = pixels.data[i + 2] = value;
-        }
-        ctx.putImageData(pixels, 0, 0);
-      }
-      return canvas.toDataURL('image/png');
-    } finally { bitmap.close(); }
-  }
-  async function preparePhotos() {
-    state.busy = true; state.error = ''; const run = ++state.run; render();
-    try {
-      const prepared = [];
-      for (const [index, entry] of state.files.entries()) {
-        progress(`Preparing photo ${index + 1} of ${state.files.length}…`);
-        prepared.push(await prepareImage(entry.file, 'photo', state.crops[index]));
-        if (run !== state.run) return;
-      }
-      state.prepared = prepared; progress('Photos prepared. Check the previews, then run OCR.');
-    } catch (error) { setError(error); }
-    finally { if (run === state.run) { state.busy = false; render(); } }
-  }
-  async function runOCR() {
-    if (root.location.protocol === 'file:') throw new Error('For image OCR, open the app at http://localhost:8000 using python3 -m http.server 8000.');
-    state.busy = true; state.error = ''; state.confidence = []; const run = ++state.run; render();
-    let timeout;
-    let localWorker = null;
-    try {
-      await loadScript('ocr/tesseract.min.js', () => !!root.Tesseract);
-      if (run !== state.run) return;
-      let imageIndex = 0;
-      timeout = setTimeout(() => { if (run === state.run) { cancelProcessing(); setError(new Error('OCR timed out. Try a smaller image or paste the text instead.')); } }, 180000);
-      localWorker = await root.Tesseract.createWorker(['chi_tra', 'eng'], 1, {
-        workerPath: new URL('ocr/worker.min.js', assetBase).href,
-        corePath: new URL('ocr/core/', assetBase).href,
-        langPath: new URL('ocr/lang/', assetBase).href,
-        workerBlobURL: false,
-        logger: (entry) => { if (run === state.run) progress(`Image ${imageIndex + 1}/${state.files.length}: ${entry.status} ${Math.round((entry.progress || 0) * 100)}%`); },
-        errorHandler: () => {}
-      });
-      if (run !== state.run) { await localWorker.terminate(); return; }
-      worker = localWorker;
-      await localWorker.setParameters({ tessedit_pageseg_mode: state.sourceType === 'screenshot' ? '6' : '3', preserve_interword_spaces: '1' });
-      const texts = [];
-      for (const [index, entry] of state.files.entries()) {
-        imageIndex = index;
-        const image = state.prepared[index] || await prepareImage(entry.file, 'screenshot');
-        if (run !== state.run) return;
-        const result = await localWorker.recognize(image);
-        if (run !== state.run) return;
-        texts.push(result.data.text); state.confidence.push(result.data.confidence);
-      }
-      state.rawText = texts.join('\n\n');
-      if (state.rawText.length > MAX_TEXT) throw new Error('OCR found too much text. Import fewer pages at once.');
-      progress('OCR complete. Review and correct the text before approving.');
-      await makeRows();
-    } catch (error) { if (run === state.run) setError(new Error(`OCR failed: ${error.message}. Your images are still available; retry or paste text instead.`)); }
-    finally {
-      clearTimeout(timeout);
-      if (run === state.run) {
-        if (localWorker) await localWorker.terminate().catch(() => {});
-        if (worker === localWorker) worker = null; state.busy = false; render();
-      }
-    }
-  }
-  function cancelProcessing() {
-    state.run++; state.busy = false; state.progress = 'Processing cancelled. Nothing was saved.';
-    if (worker) { worker.terminate().catch(() => {}); worker = null; }
-    render();
-  }
-  async function click(event) {
-    if (!event.target.closest('[data-material-importer]')) return;
-    const button = event.target.closest('button');
-    if (!button || button.disabled) return;
-    try {
-      if (button.hasAttribute('data-import-cancel')) { cancelProcessing(); return; }
-      if (state.busy) return;
-      if (button.dataset.importSource) {
-        state.sourceType = button.dataset.importSource;
-        state.prepared = []; state.rows = []; state.stage = 'input'; state.reviewed = false; state.error = ''; state.progress = ''; render();
-      } else if (button.hasAttribute('data-import-prepare')) await preparePhotos();
-      else if (button.hasAttribute('data-import-ocr')) await runOCR();
-      else if (button.hasAttribute('data-import-parse')) await parseForReview();
-      else if (button.hasAttribute('data-import-add-row')) { state.rows.push({ kind: state.defaultKind, speaker: '', chinese: '', pinyin: '', english: '', included: true }); state.stage = 'review'; state.reviewed = false; render(); }
-      else if (button.hasAttribute('data-import-remove-row')) { state.rows.splice(Number(button.dataset.importRemoveRow), 1); state.reviewed = false; render(); }
-      else if (button.hasAttribute('data-import-approve')) {
-        const material = approve({ ...state, sourceNames: state.sourceType === 'text' ? [] : state.files.map((entry) => entry.file.name) });
-        revokeFiles(); state = initialState(); callbacks.onSaved?.(material);
-      }
-    } catch (error) { setError(error); }
-  }
-  async function change(event) {
-    const input = event.target;
-    if (!input.closest('[data-material-importer]')) return;
-    if (input.hasAttribute('data-import-files')) {
-      try {
-        const files = Array.from(input.files || []);
-        if (!files.length) return;
-        if (files.length > 6) throw new Error('Choose at most 6 images at once.');
-        if (files.some((file) => !['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 15 * 1024 * 1024)) throw new Error('Choose PNG, JPEG or WebP images up to 15 MB each.');
-        revokeFiles(); state.files = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
-        state.crops = files.map(() => ({ rotation: 0, top: 0, bottom: 0, left: 0, right: 0 }));
-        state.prepared = []; state.rows = []; state.rawText = ''; state.stage = 'input'; state.reviewed = false; state.confidence = []; state.error = '';
-        state.title ||= files[0].name.replace(/\.[^.]+$/, '').slice(0, 100);
-        render();
-      } catch (error) { setError(error); }
-    } else if (input.hasAttribute('data-import-crop')) {
-      const value = Number(input.value);
-      state.crops[Number(input.dataset.fileIndex)][input.dataset.importCrop] = Number.isFinite(value) ? value : 0;
-      state.prepared = []; invalidateReview(); render();
-    } else if (input.hasAttribute('data-import-reviewed')) {
-      state.reviewed = input.checked;
-      const button = attached()?.querySelector('[data-import-approve]');
-      if (button) button.disabled = !state.reviewed || !state.rows.some((row) => row.included !== false);
-    } else if (input.dataset.importField === 'defaultKind') {
-      state.defaultKind = input.value; invalidateReview();
-    } else if (input.dataset.importRowField === 'included' || input.dataset.importRowField === 'kind') updateInput(event);
-  }
-  function updateInput(event) {
-    const input = event.target;
-    if (!input.closest('[data-material-importer]') || state.busy) return;
-    if (input.hasAttribute('data-import-crop')) {
-      const index = Number(input.dataset.fileIndex);
-      if (!state.crops[index]) return;
-      state.crops[index][input.dataset.importCrop] = Number(input.value) || 0;
-      state.prepared = []; invalidateReview();
-      const ocrButton = attached()?.querySelector('[data-import-ocr]');
-      if (ocrButton) ocrButton.disabled = true;
-    }
-    else if (input.hasAttribute('data-import-raw')) { state.rawText = input.value; invalidateReview(); }
-    else if (input.dataset.importField === 'title') { state.title = input.value; invalidateReview(); }
-    else if (input.dataset.importRowField) {
-      const row = state.rows[Number(input.dataset.rowIndex)];
-      if (!row) return;
-      row[input.dataset.importRowField] = input.dataset.importRowField === 'included' ? input.checked : input.value;
-      invalidateReview();
-    }
-  }
-  function mount(target, options) {
-    container = target; callbacks = options || {};
-    container.innerHTML = '';
-    if (!container.dataset.importerBound) {
-      container.addEventListener('click', click);
-      container.addEventListener('change', change);
-      container.addEventListener('input', updateInput);
-      container.dataset.importerBound = 'true';
-    }
-    render();
-  }
-  const api = { getMaterials, parseText, approve, validateMaterial, mount, escape };
-  if (typeof module !== 'undefined' && module.exports) module.exports = api;
-  else root.CHINESE_IMPORTER = api;
-})(typeof window !== 'undefined' ? window : globalThis);
+  root.CHINESE_IMPORTER={mount:(container,options)=>options.collectionId?mountEditor(container,options):mountImport(container,options)};
+})(typeof window!=='undefined'?window:globalThis);

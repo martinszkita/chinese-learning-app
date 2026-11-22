@@ -16,10 +16,8 @@ const context = vm.createContext({
   document: { getElementById: element, querySelector: element, documentElement: element('root'), addEventListener() {} },
   localStorage: { getItem() { return null; }, setItem() {} }
 });
-for (const [, file] of fs.readFileSync('index.html', 'utf8').matchAll(/<script src="([^"]+)"/g)) {
-  if (file !== 'app.js') vm.runInContext(fs.readFileSync(file, 'utf8'), context);
-}
-let source = fs.readFileSync('app.js', 'utf8').replace(/  draw\(\);\n\}\)\(\);\s*$/, `window.test = { lessonCount, drawNav, drawContent, renderMaterialScope, renderLines, renderRuby, renderSupplement, collectVocabulary, collectListeningItems, resetQuizSession, getQuizVocabulary, chineseText, appSettings, showLesson: (part = 'dialog1') => { currentLesson = 9; currentPart = part; expandedLesson = 9; } };\n})();`);
+require('./helpers/runtime.cjs').loadRuntime(context);
+let source = require('./helpers/runtime.cjs').appSource(context).replace(/  draw\(\);\n\}\)\(\);\s*$/, `window.test = { lessonCount, drawNav, drawContent, renderMaterialScope, renderLines, renderRuby, renderSupplement, collectVocabulary, collectListeningItems, resetQuizSession, getQuizVocabulary, chineseText, appSettings, showLesson: (part = 'dialog1') => { currentLesson = 9; currentPart = part; expandedLesson = 9; } };\n})();`);
 vm.runInContext(source, context);
 const app = context.window.test;
 const lesson = context.window.CHINESE_LESSONS['9-dialog1'];
@@ -73,7 +71,7 @@ assert.equal(app.getQuizVocabulary().length, 10);
 const listening = app.collectListeningItems().filter(item => item.sourceKey === '9-dialog1');
 assert.equal(listening.length, 14);
 assert.deepEqual(Array.from(listening, item => item.chinese), Array.from(lesson.examples, item => item.chinese));
-for (const item of listening) assert(item.audio.startsWith('audio/lesson9/'));
+for (const item of listening) assert(item.audio.startsWith('materials/audio/lesson9/'));
 const supplement = app.renderSupplement(lesson, '9-dialog1-supplement');
 assert(supplement.includes('14 words'));
 assert(supplement.includes('Example sentences'));
@@ -93,10 +91,10 @@ app.appSettings.characterScript = 'simplified';
 html = app.renderLines(lesson.dialogue, '9-dialog1-dialogue');
 assert(html.includes('台东。听说那里的风景非常漂亮。'));
 assert(html.includes('lang="zh-Hans"'));
-assert(html.includes('data-word-audio="audio/dialogues/9-dialog1-dialogue-11.mp3"'));
+assert(html.includes('data-word-audio="materials/audio/dialogues/9-dialog1-dialogue-11.mp3"'));
 console.log('PASS: Lesson 9.1 dialogue, 14 vocabulary entries, 14 PDF examples, aligned Pinyin, source files, word/phrase quiz scopes, Listening, dialogue playback and Simplified Chinese');
 
-const audioManifest = JSON.parse(fs.readFileSync('audio/lesson9/manifest.json', 'utf8'));
+const audioManifest = JSON.parse(fs.readFileSync('materials/audio/lesson9/manifest.json', 'utf8'));
 assert.equal(audioManifest.items.filter(item => item.sourceKey === '9-dialog1').length, 28);
 assert.equal(audioManifest.voiceId, 'JBFqnCBsd6RMkjVDRZzb');
 assert.deepEqual(audioManifest.items.filter(item => item.sourceKey === '9-dialog1').map(item => item.chinese), Array.from([...lesson.words, ...lesson.examples], item => item.chinese));
@@ -157,7 +155,7 @@ assert(html.includes('我女朋友九月三十号要来台湾看我。'));
 assert(html.includes('你们可以去猫空。那里的风景很美。'));
 console.log('PASS: Lesson 9.2 source transcription, 11 dialogue turns, 16 words, 18 example turns, A/B grouping, Pinyin, navigation, quiz, Listening and both scripts');
 for (const item of [...second.dialogue, ...second.words, ...second.examples]) assert(fs.statSync(item.audio).size > 1000, `Lesson 9.2 recording: ${item.audio}`);
-const updatedManifest = JSON.parse(fs.readFileSync('audio/lesson9/manifest.json', 'utf8'));
+const updatedManifest = JSON.parse(fs.readFileSync('materials/audio/lesson9/manifest.json', 'utf8'));
 assert.equal(updatedManifest.items.length, 62);
 assert.deepEqual(updatedManifest.items.filter(item => item.sourceKey === '9-dialog2').map(item => item.chinese), Array.from([...second.words, ...second.examples], item => item.chinese));
 console.log('PASS: 45 complete George recordings for Lesson 9.2 and matching supplement manifest');

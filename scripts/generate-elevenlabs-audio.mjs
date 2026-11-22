@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import vm from 'node:vm';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
+const require = createRequire(import.meta.url);
+const { openAudioDatabase, audioItems } = require('../server/audio-materials.cjs');
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // Shell values take priority, then .env.local, then .env.
 for (const filename of ['.env.local', '.env']) {
@@ -67,42 +69,9 @@ async function createSpeech(text) {
   throw new Error('ElevenLabs generation failed.');
 }
 
+const materialStore = openAudioDatabase();
 function loadManifest(name) {
-  const manifestPath = path.join(repoRoot, 'audio', name, 'manifest.json');
-  if (name === 'dialogues') {
-    const context = vm.createContext({ window: {} });
-    vm.runInContext(fs.readFileSync(path.join(repoRoot, 'audio/materials.js'), 'utf8'), context);
-    const recordings = context.window.CHINESE_MATERIAL_AUDIO || {};
-    const items = [];
-    const lessonFiles = [...fs.readFileSync(path.join(repoRoot, 'index.html'), 'utf8').matchAll(/<script src="(lesson\d+\/dialog[12]\/data\.js)"/g)].map((match) => match[1]);
-    for (const file of lessonFiles) {
-      const [, lesson, dialog] = /^lesson(\d+)\/dialog([12])\/data\.js$/.exec(file);
-      const sourceKey = `${lesson}-dialog${dialog}`;
-      vm.runInContext(fs.readFileSync(path.join(repoRoot, file), 'utf8'), context);
-      const data = context.window.CHINESE_LESSONS[sourceKey];
-      (data.dialogue || data.lines || []).forEach((item, index) => {
-        const audio = item.audio || recordings[item.chinese] || `audio/dialogues/${sourceKey}-dialogue-${String(index + 1).padStart(2, '0')}.mp3`;
-        recordings[item.chinese] = audio;
-        items.push({ chinese: item.chinese, pinyin: item.pinyin, english: item.english, audio, sourceKey, kind: 'dialogue' });
-      });
-    }
-    return { manifestPath, data: { items } };
-  }
-  if (name === 'lesson8' || name === 'lesson9') {
-    const context = vm.createContext({ window: {} });
-    const dialogs = name === 'lesson9' ? [1, 2] : [1];
-    const items = dialogs.flatMap((dialog) => {
-      const sourceKey = `${name.slice(6)}-dialog${dialog}`;
-      vm.runInContext(fs.readFileSync(path.join(repoRoot, `${name}/dialog${dialog}/data.js`), 'utf8'), context);
-      const lesson = context.window.CHINESE_LESSONS[sourceKey];
-      return ['words', 'examples'].flatMap((kind) => (lesson[kind] || []).map((item) => ({
-        chinese: item.chinese, pinyin: item.pinyin, english: item.english,
-        audio: item.audio, sourceKey, kind
-      })));
-    });
-    return { manifestPath, data: { items } };
-  }
-  return { manifestPath, data: JSON.parse(fs.readFileSync(manifestPath, 'utf8')) };
+  return { manifestPath: path.join(repoRoot, 'materials', 'audio', name, 'manifest.json'), data: { items: audioItems(materialStore.snapshot(), name) } };
 }
 
 function mp3Path(audioPath) {
@@ -136,15 +105,8 @@ for (const name of scopes) {
     await sleep(120);
   }
   process.stdout.write('\n');
-  if (!dryRun && ['dialogues', 'lesson9'].includes(name)) {
-    const context = vm.createContext({ window: {} });
-    const mappingPath = path.join(repoRoot, 'audio/materials.js');
-    vm.runInContext(fs.readFileSync(mappingPath, 'utf8'), context);
-    const mapping = { ...context.window.CHINESE_MATERIAL_AUDIO };
-    items.forEach((item) => { mapping[item.chinese] = item.audio; });
-    fs.writeFileSync(mappingPath, `window.CHINESE_MATERIAL_AUDIO = ${JSON.stringify(mapping, null, 2)};\n`);
-  }
   if (!dryRun) {
+    for (const item of items) materialStore.attachAudio(item.occurrenceId, { path: item.audio, voice: voiceId === 'JBFqnCBsd6RMkjVDRZzb' ? 'George' : voiceId, provider: 'ElevenLabs' });
     fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
     fs.writeFileSync(manifestPath, `${JSON.stringify({
       provider: 'ElevenLabs',
@@ -165,8 +127,10 @@ const allMp3FilesExist = ['listening', 'vocabulary'].every((name) => {
 });
 
 if (!dryRun && allMp3FilesExist) {
-  fs.writeFileSync(path.join(repoRoot, 'audio', 'config.js'), "window.CHINESE_AUDIO_EXTENSION = 'mp3';\n");
+  fs.writeFileSync(path.join(repoRoot, 'materials', 'audio', 'config.js'), "window.CHINESE_AUDIO_EXTENSION = 'mp3';\n");
 }
 
 console.log(`${dryRun ? 'Would generate' : 'Generated'} ${generated} files; skipped ${skipped}.`);
 console.log(allMp3FilesExist ? 'High-quality MP3 audio is active.' : 'AAC audio remains active until both scopes are complete.');
+
+materialStore.close();
